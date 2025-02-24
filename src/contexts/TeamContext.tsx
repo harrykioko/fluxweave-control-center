@@ -44,9 +44,9 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const loadTeamMembers = async (teamId: string): Promise<void> => {
+  const loadTeamMembers = async (teamId: string) => {
     try {
-      const members = await fetchTeamMembers(teamId) as TeamMember[];
+      const members = await fetchTeamMembers(teamId);
       setTeamMembers(members);
     } catch (error: any) {
       toast({
@@ -57,7 +57,7 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addTeamMember = async (teamId: string, email: string, role: TeamRole): Promise<void> => {
+  const addTeamMember = async (teamId: string, email: string, role: TeamRole) => {
     try {
       await addNewTeamMember(teamId, email, role);
       await loadTeamMembers(teamId);

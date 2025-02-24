@@ -38,10 +38,8 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
 
   if (error) throw error;
   
-  // Explicitly cast the raw data
-  const rawMembers = (rawData || []) as RawTeamMember[];
+  const rawMembers = rawData || [];
 
-  // Explicitly construct TeamMember objects without spread operator
   const teamMembers: TeamMember[] = rawMembers.map(member => ({
     id: member.id,
     team_id: member.team_id,
