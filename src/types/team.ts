@@ -9,12 +9,12 @@ interface BaseEntity {
 export interface Team extends BaseEntity {
   name: string;
   description: string | null;
-  created_by: string;
+  created_by: string; // Just storing the user ID
 }
 
 export interface TeamMember extends BaseEntity {
   team_id: string;
-  user_id: string;
+  user_id: string; // Just storing the user ID
   role: TeamRole;
 }
 

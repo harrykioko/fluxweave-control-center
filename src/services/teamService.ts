@@ -33,7 +33,7 @@ export const createNewTeam = async (name: string, description?: string): Promise
 export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> => {
   const { data, error } = await supabase
     .from("team_members")
-    .select("id, user_id, role, created_at, team_id")
+    .select("id, team_id, user_id, role, created_at")
     .eq('team_id', teamId);
 
   if (error) throw error;
@@ -45,15 +45,17 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
 };
 
 export const addNewTeamMember = async (teamId: string, email: string, role: TeamRole): Promise<void> => {
+  // First, find the user by email
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("id")
     .eq("email", email)
-    .maybeSingle();
+    .single();
     
   if (profileError) throw profileError;
   if (!profile) throw new Error("User not found");
 
+  // Then create the team member
   const { error: insertError } = await supabase
     .from("team_members")
     .insert({
