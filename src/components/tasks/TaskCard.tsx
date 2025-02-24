@@ -1,5 +1,5 @@
 
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, CheckCircle2 } from "lucide-react";
 
 interface User {
@@ -29,11 +29,9 @@ export function TaskCard({ task }: TaskCardProps) {
             <span>{task.dueDate}</span>
           </div>
         </div>
-        <Avatar
-          className="ring-2 ring-white"
-          src={task.assignee.avatar}
-          alt={task.assignee.name}
-        />
+        <Avatar className="ring-2 ring-white">
+          <AvatarImage src={task.assignee.avatar} alt={task.assignee.name} />
+        </Avatar>
       </div>
       <div className="mt-4 flex items-center justify-between">
         <div className={`flex items-center space-x-1.5 text-sm ${

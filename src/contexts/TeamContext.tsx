@@ -62,9 +62,16 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
 
   const createTeam = async (name: string, description?: string): Promise<Team> => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No authenticated user");
+
       const { data, error } = await supabase
         .from("teams")
-        .insert([{ name, description }])
+        .insert({
+          name,
+          description,
+          created_by: user.id
+        })
         .select()
         .single();
 
@@ -90,7 +97,14 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
         .eq("team_id", teamId);
 
       if (error) throw error;
-      setTeamMembers(data);
+      
+      // Ensure the data matches the TeamMember type
+      const typedMembers = data.map(member => ({
+        ...member,
+        role: member.role as "owner" | "admin" | "member"
+      }));
+      
+      setTeamMembers(typedMembers);
     } catch (error: any) {
       toast({
         title: "Error loading team members",
@@ -114,11 +128,11 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
       // Then add them to the team
       const { error } = await supabase
         .from("team_members")
-        .insert([{
+        .insert({
           team_id: teamId,
           user_id: userData.id,
           role
-        }]);
+        });
 
       if (error) throw error;
       

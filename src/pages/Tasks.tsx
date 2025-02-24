@@ -1,6 +1,6 @@
 
 import { AppSidebar } from "@/components/layout/AppSidebar";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { Plus, Share2, Calendar } from "lucide-react";
@@ -80,12 +80,9 @@ export default function Tasks() {
           {/* Team Members */}
           <div className="flex -space-x-2 overflow-hidden">
             {teamMembers.map((member) => (
-              <Avatar
-                key={member.id}
-                className="inline-block ring-2 ring-white"
-                src={member.avatar}
-                alt={member.name}
-              />
+              <Avatar key={member.id} className="inline-block ring-2 ring-white">
+                <AvatarImage src={member.avatar} alt={member.name} />
+              </Avatar>
             ))}
             <button className="inline-flex items-center justify-center w-8 h-8 text-xs font-medium text-white bg-gray-700 rounded-full ring-2 ring-white hover:bg-gray-600">
               +3
