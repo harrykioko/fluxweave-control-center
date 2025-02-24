@@ -67,7 +67,7 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
 
-    return data.map((member): TeamMember => ({
+    return data.map((member) => ({
       id: member.id,
       team_id: member.team_id,
       user_id: member.user_id,

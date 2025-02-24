@@ -20,10 +20,12 @@ export interface TeamWithMemberActions extends Team {
 }
 
 // Matches team_members table schema exactly
-export interface TeamMember extends BaseEntity {
+export interface TeamMember {
+  id: string;
   team_id: string;
   user_id: string;
   role: TeamRole;
+  created_at?: string;
 }
 
 // Context value type without circular references
