@@ -51,7 +51,7 @@ export const createNewTeam = async (name: string, description?: string): Promise
 };
 
 // Standalone conversion function with explicit type handling
-function convertTeamMember(rawMember: any): TeamMember {
+function convertTeamMember(rawMember: RawTeamMember): TeamMember {
   let computedRole: TeamRole;
   if (isValidTeamRole(rawMember.role)) {
     computedRole = rawMember.role as TeamRole;
@@ -71,15 +71,16 @@ function convertTeamMember(rawMember: any): TeamMember {
 export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> => {
   try {
     const { data, error } = await supabase
-      .from('team_members')
-      .select('id, team_id, user_id, role, created_at')
-      .eq('team_id', teamId);
+      .from("team_members")
+      .select("id, team_id, user_id, role, created_at")
+      .eq("team_id", teamId);
 
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
 
-    // Convert the raw data to TeamMember objects
-    return data.map(convertTeamMember);
+    // Break deep inference by using intermediate casting
+    const rawMembers = data as any as RawTeamMember[];
+    return rawMembers.map(convertTeamMember);
   } catch (error) {
     console.error("[TeamService] fetchTeamMembers error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error fetching team members", error);
