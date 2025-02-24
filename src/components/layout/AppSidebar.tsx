@@ -1,4 +1,5 @@
-import { Home, BrainCircuit, CheckSquare, BarChart3, BookOpen, Settings, Menu, LogOut, Users } from "lucide-react";
+
+import { Home, BrainCircuit, CheckSquare, BarChart3, BookOpen, Menu, LogOut, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -32,10 +33,6 @@ const menuItems = [{
   icon: BookOpen,
   label: "Resources",
   href: "/resources"
-}, {
-  icon: Settings,
-  label: "Settings",
-  href: "/settings"
 }];
 
 export function AppSidebar() {
@@ -44,7 +41,7 @@ export function AppSidebar() {
   const [newTeamName, setNewTeamName] = useState("");
   const [newTeamDescription, setNewTeamDescription] = useState("");
   const [isNewTeamDialogOpen, setIsNewTeamDialogOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState<{ first_name?: string; last_name?: string } | null>(null);
+  const [userProfile, setUserProfile] = useState<{ first_name?: string; last_name?: string; avatar_url?: string } | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { currentTeam, setCurrentTeam, teams, createTeam } = useTeam();
@@ -73,7 +70,7 @@ export function AppSidebar() {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("first_name, last_name")
+        .select("first_name, last_name, avatar_url")
         .eq("id", userId)
         .single();
 
@@ -203,12 +200,16 @@ export function AppSidebar() {
 
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="icon"
                   className="hover:bg-transparent p-0"
                   onClick={() => navigate('/profile')}
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback>{getInitials()}</AvatarFallback>
+                    {userProfile?.avatar_url ? (
+                      <AvatarImage src={userProfile.avatar_url} alt={getInitials()} />
+                    ) : (
+                      <AvatarFallback>{getInitials()}</AvatarFallback>
+                    )}
                   </Avatar>
                 </Button>
 
