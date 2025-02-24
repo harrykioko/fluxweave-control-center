@@ -46,7 +46,7 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
 
   const loadTeamMembers = async (teamId: string): Promise<void> => {
     try {
-      const members = await fetchTeamMembers(teamId);
+      const members = await fetchTeamMembers(teamId) as TeamMember[];
       setTeamMembers(members);
     } catch (error: any) {
       toast({
