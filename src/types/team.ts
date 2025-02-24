@@ -6,6 +6,14 @@ interface BaseEntity {
   created_at?: string;
 }
 
+export interface RawTeamMember {
+  id: string;
+  team_id: string;
+  user_id: string;
+  role: string;
+  created_at: string;
+}
+
 export interface Team extends BaseEntity {
   name: string;
   description: string | null;

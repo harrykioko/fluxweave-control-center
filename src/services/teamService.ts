@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Team, TeamMember, TeamRole } from "@/types/team";
+import { Team, TeamMember, TeamRole, RawTeamMember } from "@/types/team";
 import { isValidTeamRole } from "@/utils/teamUtils";
 
 export const fetchTeams = async (): Promise<Team[]> => {
@@ -38,10 +38,18 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
 
   if (error) throw error;
   
-  return (data || []).map(member => ({
-    ...member,
+  const rawMembers = data as RawTeamMember[];
+
+  // Rebuild the object explicitly rather than using spread to help TypeScript's inference
+  const teamMembers: TeamMember[] = rawMembers.map(member => ({
+    id: member.id,
+    team_id: member.team_id,
+    user_id: member.user_id,
+    created_at: member.created_at,
     role: isValidTeamRole(member.role) ? member.role : 'member'
   }));
+
+  return teamMembers;
 };
 
 export const addNewTeamMember = async (teamId: string, email: string, role: TeamRole): Promise<void> => {
