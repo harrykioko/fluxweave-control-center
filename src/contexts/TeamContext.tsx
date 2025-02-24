@@ -3,58 +3,50 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
-// Define base types with minimal required fields
-interface UserBase {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email?: string;
+// Define roles as an enum for better type safety
+export enum TeamRole {
+  Owner = "owner",
+  Admin = "admin",
+  Member = "member"
 }
 
-// Define team member roles as a union type
-type TeamMemberRole = "owner" | "admin" | "member";
-
-// Helper function to validate role strings
-const isValidTeamRole = (role: string): role is TeamMemberRole => {
-  return ["owner", "admin", "member"].includes(role);
-};
-
-// Define focused interfaces for different contexts
-interface TeamBase {
+// Minimal interfaces without circular references
+interface BaseEntity {
   id: string;
+  created_at?: string;
+}
+
+interface Team extends BaseEntity {
   name: string;
   description: string | null;
-  created_at: string;
   created_by: string;
 }
 
-interface TeamMemberBase {
-  id: string;
+interface TeamMember extends BaseEntity {
   team_id: string;
   user_id: string;
-  role: TeamMemberRole;
-  created_at: string;
+  role: TeamRole;
 }
 
-// Define context value interface separately
+// Simplified context interface focusing only on essential operations
 interface TeamContextValue {
-  currentTeam: TeamBase | null;
-  setCurrentTeam: (team: TeamBase | null) => void;
-  teams: TeamBase[];
+  currentTeam: Team | null;
+  setCurrentTeam: (team: Team | null) => void;
+  teams: Team[];
   loadTeams: () => Promise<void>;
-  createTeam: (name: string, description?: string) => Promise<TeamBase>;
-  teamMembers: TeamMemberBase[];
+  createTeam: (name: string, description?: string) => Promise<Team>;
+  teamMembers: TeamMember[];
   loadTeamMembers: (teamId: string) => Promise<void>;
-  addTeamMember: (teamId: string, email: string, role: TeamMemberRole) => Promise<void>;
+  addTeamMember: (teamId: string, email: string, role: TeamRole) => Promise<void>;
 }
 
 // Create context with explicit type
 const TeamContext = createContext<TeamContextValue | undefined>(undefined);
 
 export function TeamProvider({ children }: { children: React.ReactNode }) {
-  const [currentTeam, setCurrentTeam] = useState<TeamBase | null>(null);
-  const [teams, setTeams] = useState<TeamBase[]>([]);
-  const [teamMembers, setTeamMembers] = useState<TeamMemberBase[]>([]);
+  const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const { toast } = useToast();
 
   const loadTeams = async () => {
@@ -79,7 +71,7 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const createTeam = async (name: string, description?: string): Promise<TeamBase> => {
+  const createTeam = async (name: string, description?: string): Promise<Team> => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No authenticated user");
@@ -117,14 +109,11 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error;
       
-      // Validate and transform the roles
-      const validatedMembers = (data || []).map(member => {
-        if (!isValidTeamRole(member.role)) {
-          console.warn(`Invalid role "${member.role}" found for team member. Defaulting to "member".`);
-          return { ...member, role: "member" as TeamMemberRole };
-        }
-        return { ...member, role: member.role as TeamMemberRole };
-      });
+      // Map and validate the roles
+      const validatedMembers = (data || []).map(member => ({
+        ...member,
+        role: validateTeamRole(member.role)
+      }));
 
       setTeamMembers(validatedMembers);
     } catch (error: any) {
@@ -136,25 +125,31 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addTeamMember = async (teamId: string, email: string, role: TeamMemberRole): Promise<void> => {
+  // Helper function to validate and convert role strings
+  const validateTeamRole = (role: string): TeamRole => {
+    if (Object.values(TeamRole).includes(role as TeamRole)) {
+      return role as TeamRole;
+    }
+    console.warn(`Invalid role "${role}" found for team member. Defaulting to "member".`);
+    return TeamRole.Member;
+  };
+
+  const addTeamMember = async (teamId: string, email: string, role: TeamRole): Promise<void> => {
     try {
-      // First query to get the user ID based on email
-      const profileQuery = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("id")
         .eq("email", email)
-        .limit(1)
-        .single();
+        .maybeSingle();
         
-      if (profileQuery.error) throw profileQuery.error;
-      if (!profileQuery.data) throw new Error("User not found");
+      if (profileError) throw profileError;
+      if (!profile) throw new Error("User not found");
 
-      // Insert the team member with the found user ID
       const { error: insertError } = await supabase
         .from("team_members")
         .insert({
           team_id: teamId,
-          user_id: profileQuery.data.id,
+          user_id: profile.id,
           role
         });
 
@@ -206,3 +201,4 @@ export function useTeam() {
   }
   return context;
 }
+
