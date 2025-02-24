@@ -105,3 +105,4 @@ export const addNewTeamMember = async (teamId: string, email: string, role: Team
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error adding team member", error);
   }
 };
+
