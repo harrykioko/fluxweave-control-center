@@ -7,6 +7,15 @@ export interface BaseEntity {
   created_at?: string;
 }
 
+// Simple interface for raw data from Supabase
+export interface RawTeamMember {
+  id: string;
+  team_id: string;
+  user_id: string;
+  role: string;
+  created_at?: string;
+}
+
 // Matches teams table schema exactly
 export interface Team extends BaseEntity {
   name: string;

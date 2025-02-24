@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Team, TeamMember, TeamRole } from "@/types/team";
+import { Team, TeamMember, TeamRole, RawTeamMember } from "@/types/team";
 import { isValidTeamRole } from "@/utils/teamUtils";
 
 // Custom error class for team-related errors
@@ -60,12 +60,15 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
 
-    // Explicitly ensure each member has the correct role type
-    return data.map(member => ({
+    // First cast to RawTeamMember to avoid deep type instantiation
+    const rawMembers = data as RawTeamMember[];
+    
+    // Then map to TeamMember with explicit role validation
+    return rawMembers.map(member => ({
       id: member.id,
       team_id: member.team_id,
       user_id: member.user_id,
-      role: member.role as TeamRole, // This cast is safe because we validate the role in the DB
+      role: isValidTeamRole(member.role) ? member.role : 'member',
       created_at: member.created_at
     }));
   } catch (error) {
