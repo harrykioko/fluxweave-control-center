@@ -31,24 +31,26 @@ export const createNewTeam = async (name: string, description?: string): Promise
 };
 
 export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> => {
-  const { data: rawData, error } = await supabase
+  const { data, error } = await supabase
     .from("team_members")
     .select("id, team_id, user_id, role, created_at")
     .eq('team_id', teamId);
 
   if (error) throw error;
+
+  const rawMembers = data || [];
   
-  const rawMembers = rawData || [];
-
-  const teamMembers: TeamMember[] = rawMembers.map(member => ({
-    id: member.id,
-    team_id: member.team_id,
-    user_id: member.user_id,
-    created_at: member.created_at,
-    role: isValidTeamRole(member.role) ? member.role as TeamRole : 'member'
-  }));
-
-  return teamMembers;
+  // Use type assertion to help TypeScript understand the structure
+  return rawMembers.map((member): TeamMember => {
+    const role = isValidTeamRole(member.role) ? member.role : 'member';
+    return {
+      id: member.id,
+      team_id: member.team_id,
+      user_id: member.user_id,
+      created_at: member.created_at,
+      role: role
+    };
+  });
 };
 
 export const addNewTeamMember = async (teamId: string, email: string, role: TeamRole): Promise<void> => {
@@ -73,3 +75,4 @@ export const addNewTeamMember = async (teamId: string, email: string, role: Team
 
   if (insertError) throw insertError;
 };
+
