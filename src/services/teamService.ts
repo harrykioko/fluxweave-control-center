@@ -2,7 +2,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Team, TeamMember, TeamRole } from "@/types/team";
 import { isValidTeamRole } from "@/utils/teamUtils";
-import { Database } from "@/integrations/supabase/types";
 
 // Custom error class for team-related errors
 export class TeamServiceError extends Error {
@@ -26,7 +25,7 @@ export const fetchTeams = async (): Promise<Team[]> => {
   }
 };
 
-export const createNewTeam = async (name: string, description?: string): Promise<Team> => {
+export const createNewTeam = async (name: string, description?: string): Promise<Team & { addTeamMember: (email: string, role: TeamRole) => Promise<void> }> => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new TeamServiceError("No authenticated user");
@@ -44,7 +43,13 @@ export const createNewTeam = async (name: string, description?: string): Promise
     if (error) throw new TeamServiceError("Failed to create team", error);
     if (!data) throw new TeamServiceError("No data returned after team creation");
     
-    return data;
+    // Return the team data with the addTeamMember method
+    return {
+      ...data,
+      addTeamMember: async (email: string, role: TeamRole) => {
+        await addNewTeamMember(data.id, email, role);
+      }
+    };
   } catch (error) {
     console.error("[TeamService] createNewTeam error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error creating team", error);
@@ -61,7 +66,6 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
 
-    // Map the raw data to TeamMember type with explicit type assertions
     return data.map((member): TeamMember => ({
       id: member.id,
       team_id: member.team_id,
