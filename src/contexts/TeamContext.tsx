@@ -106,4 +106,3 @@ export function useTeam() {
   }
   return context;
 }
-

@@ -26,6 +26,7 @@ export interface TeamMember extends BaseEntity {
   role: TeamRole;
 }
 
+// Context value type without circular references
 export interface TeamContextValue {
   currentTeam: Team | null;
   setCurrentTeam: (team: Team | null) => void;
@@ -36,4 +37,3 @@ export interface TeamContextValue {
   loadTeamMembers: (teamId: string) => Promise<void>;
   addTeamMember: (teamId: string, email: string, role: TeamRole) => Promise<void>;
 }
-
