@@ -1,24 +1,4 @@
 
-// Database types that exactly match Supabase schema
-export interface DbTeam {
-  id: uuid;
-  name: string;
-  description: string | null;
-  created_by: uuid;
-  created_at: string | null;
-}
-
-export interface DbTeamMember {
-  id: uuid;
-  team_id: uuid;
-  user_id: uuid;
-  role: string;
-  created_at: string | null;
-}
-
-// Define uuid type for strict typing
-type uuid = string;
-
 // Domain types used in the application
 export type TeamRole = 'owner' | 'admin' | 'member';
 
