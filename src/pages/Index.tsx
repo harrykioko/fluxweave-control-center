@@ -8,7 +8,7 @@ export default function Index() {
   return (
     <div className="min-h-screen">
       <AppSidebar />
-      <main className="pl-16 lg:pl-64 p-8">
+      <main className="pt-20 px-4 md:px-8">
         <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
           {/* Header */}
           <div className="bg-white/95 backdrop-blur-md border border-slate-200/20 rounded-xl p-6 shadow-lg">
