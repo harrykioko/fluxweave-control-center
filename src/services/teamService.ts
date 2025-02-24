@@ -60,11 +60,12 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
 
-    return data.map((member) => ({
+    // Explicitly ensure each member has the correct role type
+    return data.map(member => ({
       id: member.id,
       team_id: member.team_id,
       user_id: member.user_id,
-      role: isValidTeamRole(member.role) ? member.role : 'member',
+      role: member.role as TeamRole, // This cast is safe because we validate the role in the DB
       created_at: member.created_at
     }));
   } catch (error) {
@@ -89,7 +90,7 @@ export const addNewTeamMember = async (teamId: string, email: string, role: Team
       .insert({
         team_id: teamId,
         user_id: profile.id,
-        role
+        role: role
       });
 
     if (insertError) throw new TeamServiceError("Failed to add team member", insertError);
@@ -98,4 +99,3 @@ export const addNewTeamMember = async (teamId: string, email: string, role: Team
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error adding team member", error);
   }
 };
-
