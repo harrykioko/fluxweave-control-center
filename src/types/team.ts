@@ -1,4 +1,5 @@
 
+// Basic types that match exactly what's in the database
 export type TeamRole = 'owner' | 'admin' | 'member';
 
 export interface BaseEntity {
@@ -6,12 +7,14 @@ export interface BaseEntity {
   created_at?: string;
 }
 
+// Matches teams table schema exactly
 export interface Team extends BaseEntity {
   name: string;
   description: string | null;
   created_by: string;
 }
 
+// Matches team_members table schema exactly
 export interface TeamMember extends BaseEntity {
   team_id: string;
   user_id: string;

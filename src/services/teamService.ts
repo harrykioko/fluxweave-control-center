@@ -2,6 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Team, TeamMember, TeamRole } from "@/types/team";
 import { isValidTeamRole } from "@/utils/teamUtils";
+import { Database } from "@/integrations/supabase/types";
 
 // Custom error class for team-related errors
 export class TeamServiceError extends Error {
@@ -50,15 +51,6 @@ export const createNewTeam = async (name: string, description?: string): Promise
   }
 };
 
-// Simplified raw data type
-type RawTeamMemberData = {
-  id: string;
-  team_id: string;
-  user_id: string;
-  role: string;
-  created_at: string;
-};
-
 export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> => {
   try {
     const { data, error } = await supabase
@@ -69,13 +61,13 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
 
-    // Process each team member with explicit type casting for the role
-    return data.map((rawMember: RawTeamMemberData) => ({
-      id: rawMember.id,
-      team_id: rawMember.team_id,
-      user_id: rawMember.user_id,
-      created_at: rawMember.created_at,
-      role: isValidTeamRole(rawMember.role) ? (rawMember.role as TeamRole) : ('member' as TeamRole)
+    // Map the raw data to TeamMember type with explicit type assertions
+    return data.map((member): TeamMember => ({
+      id: member.id,
+      team_id: member.team_id,
+      user_id: member.user_id,
+      role: isValidTeamRole(member.role) ? member.role : 'member',
+      created_at: member.created_at
     }));
   } catch (error) {
     console.error("[TeamService] fetchTeamMembers error:", error);
