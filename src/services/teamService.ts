@@ -50,7 +50,7 @@ export const createNewTeam = async (name: string, description?: string): Promise
   }
 };
 
-// Separated function with explicit type handling and no inline conditionals
+// Standalone conversion function with explicit type handling
 function convertTeamMember(member: RawTeamMember): TeamMember {
   let computedRole: TeamRole;
   if (isValidTeamRole(member.role)) {
@@ -71,18 +71,14 @@ function convertTeamMember(member: RawTeamMember): TeamMember {
 export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> => {
   try {
     const { data, error } = await supabase
-      .from("team_members")
+      .from<RawTeamMember>("team_members")  // Explicitly set row type
       .select("id, team_id, user_id, role, created_at")
       .eq('team_id', teamId);
 
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
 
-    // Two-step cast via unknown to avoid deep type inference
-    const rawMembers = data as unknown as RawTeamMember[];
-    
-    // Use the standalone conversion function
-    return rawMembers.map(convertTeamMember);
+    return data.map(convertTeamMember);
   } catch (error) {
     console.error("[TeamService] fetchTeamMembers error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error fetching team members", error);
