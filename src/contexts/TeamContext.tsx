@@ -3,14 +3,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
-// Define roles as an enum for better type safety
-export enum TeamRole {
-  Owner = "owner",
-  Admin = "admin",
-  Member = "member"
-}
+// Define roles as simple string literals
+export type TeamRole = 'owner' | 'admin' | 'member';
 
-// Minimal interfaces without circular references
+// Simple base interfaces
 interface BaseEntity {
   id: string;
   created_at?: string;
@@ -28,7 +24,7 @@ interface TeamMember extends BaseEntity {
   role: TeamRole;
 }
 
-// Simplified context interface focusing only on essential operations
+// Context value interface without complex nesting
 interface TeamContextValue {
   currentTeam: Team | null;
   setCurrentTeam: (team: Team | null) => void;
@@ -40,8 +36,13 @@ interface TeamContextValue {
   addTeamMember: (teamId: string, email: string, role: TeamRole) => Promise<void>;
 }
 
-// Create context with explicit type
+// Create context with undefined default value
 const TeamContext = createContext<TeamContextValue | undefined>(undefined);
+
+// Helper function to validate roles
+const isValidTeamRole = (role: string): role is TeamRole => {
+  return ['owner', 'admin', 'member'].includes(role);
+};
 
 export function TeamProvider({ children }: { children: React.ReactNode }) {
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
@@ -58,7 +59,6 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
       setTeams(data || []);
       
-      // Set current team to the first team if none is selected
       if (!currentTeam && data && data.length > 0) {
         setCurrentTeam(data[0]);
       }
@@ -109,10 +109,9 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error;
       
-      // Map and validate the roles
       const validatedMembers = (data || []).map(member => ({
         ...member,
-        role: validateTeamRole(member.role)
+        role: isValidTeamRole(member.role) ? member.role : 'member'
       }));
 
       setTeamMembers(validatedMembers);
@@ -123,15 +122,6 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
         variant: "destructive",
       });
     }
-  };
-
-  // Helper function to validate and convert role strings
-  const validateTeamRole = (role: string): TeamRole => {
-    if (Object.values(TeamRole).includes(role as TeamRole)) {
-      return role as TeamRole;
-    }
-    console.warn(`Invalid role "${role}" found for team member. Defaulting to "member".`);
-    return TeamRole.Member;
   };
 
   const addTeamMember = async (teamId: string, email: string, role: TeamRole): Promise<void> => {
@@ -201,4 +191,3 @@ export function useTeam() {
   }
   return context;
 }
-
