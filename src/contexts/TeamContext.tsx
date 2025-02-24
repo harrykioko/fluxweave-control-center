@@ -29,7 +29,7 @@ interface TeamContextType {
   createTeam: (name: string, description?: string) => Promise<Team>;
   teamMembers: TeamMember[];
   loadTeamMembers: (teamId: string) => Promise<void>;
-  addTeamMember: (teamId: string, email: string, role: Exclude<TeamMemberRole, "owner">) => Promise<void>;
+  addTeamMember: (teamId: string, email: string, role: TeamMemberRole) => Promise<void>;
 }
 
 const TeamContext = createContext<TeamContextType | undefined>(undefined);
@@ -95,21 +95,18 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error } = await supabase
         .from("team_members")
-        .select("*")
-        .eq("team_id", teamId);
+        .select(`
+          id,
+          user_id,
+          role,
+          created_at,
+          team_id
+        `)
+        .eq('team_id', teamId);
 
       if (error) throw error;
       
-      // Convert the raw data to TeamMember type
-      const typedMembers: TeamMember[] = data.map(member => ({
-        id: member.id,
-        team_id: member.team_id,
-        user_id: member.user_id,
-        role: member.role as TeamMemberRole,
-        created_at: member.created_at
-      }));
-      
-      setTeamMembers(typedMembers);
+      setTeamMembers(data as TeamMember[]);
     } catch (error: any) {
       toast({
         title: "Error loading team members",
@@ -119,7 +116,7 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addTeamMember = async (teamId: string, email: string, role: Exclude<TeamMemberRole, "owner">) => {
+  const addTeamMember = async (teamId: string, email: string, role: TeamMemberRole) => {
     try {
       // First, get the user ID from their email
       const { data: userData, error: userError } = await supabase
