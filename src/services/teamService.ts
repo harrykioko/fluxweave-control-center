@@ -60,25 +60,25 @@ function convertTeamMember(rawMember: RawTeamMember): TeamMember {
   };
 }
 
-type RawTeamMemberResponse = {
-  id: string;
-  team_id: string;
-  user_id: string;
-  role: string;
-  created_at: string | null;
-}
-
 export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> => {
   try {
-    const { data, error } = await supabase
-      .from("team_members")
+    const result = await supabase
+      .from<RawTeamMember>("team_members")
       .select("id, team_id, user_id, role, created_at")
-      .eq("team_id", teamId) as { data: RawTeamMemberResponse[] | null, error: any };
+      .eq("team_id", teamId);
 
-    if (error) throw new TeamServiceError("Failed to fetch team members", error);
-    if (!data) return [];
+    if (result.error) {
+      throw new TeamServiceError("Failed to fetch team members", result.error);
+    }
+    if (!result.data) return [];
 
-    return data.map(member => convertTeamMember(member));
+    // Force shallow inference by using an intermediate any-typed variable
+    const shallowData: any = result.data;
+    const rawMembers = shallowData as RawTeamMember[];
+
+    // Convert each raw member into a TeamMember using our conversion function
+    const teamMembers: TeamMember[] = rawMembers.map(convertTeamMember);
+    return teamMembers;
   } catch (error) {
     console.error("[TeamService] fetchTeamMembers error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error fetching team members", error);
