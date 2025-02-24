@@ -8,13 +8,44 @@ import { DomainDetailDialog } from "@/components/portfolio/DomainDetailDialog";
 import { SocialDetailDialog } from "@/components/portfolio/SocialDetailDialog";
 import { Globe, Users } from "lucide-react";
 
-// Mock data - replace with real data later
-const projects = [{
+// Define proper types for entities
+interface Project {
+  id: string;
+  name: string;
+  logo: string;
+  description: string;
+  status: "live" | "build" | "paused";
+  url: string;
+  teamMembers: {
+    id: string;
+    name: string;
+    avatar: string;
+  }[];
+}
+
+interface Domain {
+  id: string;
+  name: string;
+  url: string;
+  pageViews: number;
+  avgTime: string;
+}
+
+interface SocialAccount {
+  id: string;
+  platform: string;
+  handle: string;
+  followers: number;
+  engagement: string;
+}
+
+// Mock data with correct types
+const projects: Project[] = [{
   id: "1",
   name: "Project Alpha",
   logo: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
   description: "A revolutionary SaaS platform for enterprise productivity",
-  status: "live",
+  status: "live", // Now explicitly using the correct type
   url: "https://alpha-project.com",
   teamMembers: [
     { id: "1", name: "John Doe", avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1" },
@@ -22,7 +53,7 @@ const projects = [{
   ]
 }];
 
-const domains = [{
+const domains: Domain[] = [{
   id: "1",
   name: "alpha-project.com",
   url: "https://alpha-project.com",
@@ -30,7 +61,7 @@ const domains = [{
   avgTime: "2:30"
 }];
 
-const socialAccounts = [{
+const socialAccounts: SocialAccount[] = [{
   id: "1",
   platform: "Twitter",
   handle: "@alphaproject",
@@ -38,15 +69,10 @@ const socialAccounts = [{
   engagement: "4.8%"
 }];
 
-interface Entity {
-  id: string;
-  [key: string]: any;
-}
-
 export default function Portfolio() {
-  const [selectedProject, setSelectedProject] = useState<Entity | null>(null);
-  const [selectedDomain, setSelectedDomain] = useState<Entity | null>(null);
-  const [selectedSocial, setSelectedSocial] = useState<Entity | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
+  const [selectedSocial, setSelectedSocial] = useState<SocialAccount | null>(null);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80 p-8">
