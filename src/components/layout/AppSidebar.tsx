@@ -17,20 +17,21 @@ export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/20 shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/20">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between px-4 h-16">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
             <span className="text-xl font-bold text-slate-800">FluxWeave</span>
-            <nav className="hidden md:flex items-center space-x-1">
+            <nav className="hidden md:flex items-center space-x-2">
               {menuItems.map((item) => (
                 <a
                   key={item.label}
                   href={item.href}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors"
+                  className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 active:bg-slate-200/50 transition-colors relative group"
                 >
                   <item.icon className="h-4 w-4" />
                   <span>{item.label}</span>
+                  <div className="absolute inset-0 border-b-2 border-transparent group-hover:border-slate-400 group-active:border-slate-600 transition-colors" />
                 </a>
               ))}
             </nav>
@@ -53,7 +54,7 @@ export function AppSidebar() {
               <a
                 key={item.label}
                 href={item.href}
-                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors"
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 active:bg-slate-200/50 transition-colors"
               >
                 <item.icon className="h-4 w-4" />
                 <span>{item.label}</span>
@@ -65,3 +66,4 @@ export function AppSidebar() {
     </header>
   );
 }
+
