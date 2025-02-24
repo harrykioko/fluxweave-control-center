@@ -14,6 +14,11 @@ interface UserBase {
 // Define team member roles as a union type
 type TeamMemberRole = "owner" | "admin" | "member";
 
+// Helper function to validate role strings
+const isValidTeamRole = (role: string): role is TeamMemberRole => {
+  return ["owner", "admin", "member"].includes(role);
+};
+
 // Define focused interfaces for different contexts
 interface TeamBase {
   id: string;
@@ -112,7 +117,16 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error;
       
-      setTeamMembers(data || []);
+      // Validate and transform the roles
+      const validatedMembers = (data || []).map(member => {
+        if (!isValidTeamRole(member.role)) {
+          console.warn(`Invalid role "${member.role}" found for team member. Defaulting to "member".`);
+          return { ...member, role: "member" as TeamMemberRole };
+        }
+        return { ...member, role: member.role as TeamMemberRole };
+      });
+
+      setTeamMembers(validatedMembers);
     } catch (error: any) {
       toast({
         title: "Error loading team members",
