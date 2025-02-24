@@ -7,6 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { CreateTeamDialog } from "@/components/team/CreateTeamDialog";
+import { Users } from "lucide-react";
+import { useTeam } from "@/contexts/TeamContext";
 
 interface Profile {
   id: string;
@@ -23,6 +26,8 @@ export default function Profile() {
   const [username, setUsername] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [createTeamOpen, setCreateTeamOpen] = useState(false);
+  const { teams } = useTeam();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -143,7 +148,7 @@ export default function Profile() {
         <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
           <div className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
             <h1 className="text-3xl font-bold text-slate-800">Profile</h1>
-            <p className="text-slate-500 mt-2">Manage your personal information.</p>
+            <p className="text-slate-500 mt-2">Manage your personal information and teams.</p>
           </div>
 
           <div className="bg-white/30 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
@@ -213,8 +218,50 @@ export default function Profile() {
               </Button>
             </div>
           </div>
+
+          <div className="bg-white/30 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-800">Teams</h2>
+                <p className="text-slate-500">Teams you're a member of</p>
+              </div>
+              <Button onClick={() => setCreateTeamOpen(true)} className="bg-purple-600 hover:bg-purple-700">
+                <Users className="h-4 w-4 mr-2" />
+                New Team
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              {teams.length === 0 ? (
+                <p className="text-slate-500 text-center py-8">
+                  You haven't joined any teams yet. Create one to get started!
+                </p>
+              ) : (
+                <div className="grid gap-4">
+                  {teams.map((team) => (
+                    <div
+                      key={team.id}
+                      className="flex items-center justify-between p-4 bg-white/50 backdrop-blur-md rounded-lg"
+                    >
+                      <div>
+                        <h3 className="font-medium text-slate-800">{team.name}</h3>
+                        {team.description && (
+                          <p className="text-sm text-slate-500">{team.description}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </main>
+
+      <CreateTeamDialog
+        open={createTeamOpen}
+        onOpenChange={setCreateTeamOpen}
+      />
     </div>
   );
 }
