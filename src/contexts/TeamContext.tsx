@@ -3,11 +3,19 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
-// Define team member roles as a union type instead of array
+// Define base types with minimal required fields
+interface UserBase {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email?: string;
+}
+
+// Define team member roles as a union type
 type TeamMemberRole = "owner" | "admin" | "member";
 
-// Define interfaces
-interface Team {
+// Define focused interfaces for different contexts
+interface TeamBase {
   id: string;
   name: string;
   description: string | null;
@@ -15,7 +23,7 @@ interface Team {
   created_by: string;
 }
 
-interface TeamMember {
+interface TeamMemberBase {
   id: string;
   team_id: string;
   user_id: string;
@@ -25,12 +33,12 @@ interface TeamMember {
 
 // Define context value interface separately
 interface TeamContextValue {
-  currentTeam: Team | null;
-  setCurrentTeam: (team: Team | null) => void;
-  teams: Team[];
+  currentTeam: TeamBase | null;
+  setCurrentTeam: (team: TeamBase | null) => void;
+  teams: TeamBase[];
   loadTeams: () => Promise<void>;
-  createTeam: (name: string, description?: string) => Promise<Team>;
-  teamMembers: TeamMember[];
+  createTeam: (name: string, description?: string) => Promise<TeamBase>;
+  teamMembers: TeamMemberBase[];
   loadTeamMembers: (teamId: string) => Promise<void>;
   addTeamMember: (teamId: string, email: string, role: TeamMemberRole) => Promise<void>;
 }
@@ -39,16 +47,16 @@ interface TeamContextValue {
 const TeamContext = createContext<TeamContextValue | undefined>(undefined);
 
 export function TeamProvider({ children }: { children: React.ReactNode }) {
-  const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [currentTeam, setCurrentTeam] = useState<TeamBase | null>(null);
+  const [teams, setTeams] = useState<TeamBase[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMemberBase[]>([]);
   const { toast } = useToast();
 
   const loadTeams = async () => {
     try {
       const { data, error } = await supabase
         .from("teams")
-        .select("*");
+        .select("id, name, description, created_at, created_by");
 
       if (error) throw error;
       setTeams(data);
@@ -66,7 +74,7 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const createTeam = async (name: string, description?: string): Promise<Team> => {
+  const createTeam = async (name: string, description?: string): Promise<TeamBase> => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No authenticated user");
@@ -104,7 +112,7 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error;
       
-      setTeamMembers(data as TeamMember[]);
+      setTeamMembers(data as TeamMemberBase[]);
     } catch (error: any) {
       toast({
         title: "Error loading team members",
@@ -120,9 +128,10 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
         .from("profiles")
         .select("id")
         .eq("email", email)
-        .single();
+        .maybeSingle();
 
       if (userError) throw userError;
+      if (!userData) throw new Error("User not found");
 
       const { error } = await supabase
         .from("team_members")
