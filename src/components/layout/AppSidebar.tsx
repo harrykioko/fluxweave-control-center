@@ -1,9 +1,9 @@
-
 import { Home, BrainCircuit, CheckSquare, BarChart3, BookOpen, Settings, Menu, LogOut, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -44,6 +44,7 @@ export function AppSidebar() {
   const [newTeamName, setNewTeamName] = useState("");
   const [newTeamDescription, setNewTeamDescription] = useState("");
   const [isNewTeamDialogOpen, setIsNewTeamDialogOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState<{ first_name?: string; last_name?: string } | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { currentTeam, setCurrentTeam, teams, createTeam } = useTeam();
@@ -51,16 +52,42 @@ export function AppSidebar() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAuthenticated(!!session);
+      if (session?.user) {
+        loadUserProfile(session.user.id);
+      }
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_, session) => {
       setIsAuthenticated(!!session);
+      if (session?.user) {
+        loadUserProfile(session.user.id);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const loadUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("first_name, last_name")
+        .eq("id", userId)
+        .single();
+
+      if (error) throw error;
+      setUserProfile(data);
+    } catch (error) {
+      console.error("Error loading user profile:", error);
+    }
+  };
+
+  const getInitials = () => {
+    if (!userProfile) return "";
+    return `${userProfile.first_name?.[0] || ""}${userProfile.last_name?.[0] || ""}`.toUpperCase();
+  };
 
   const handleSignOut = async () => {
     try {
@@ -173,6 +200,17 @@ export function AppSidebar() {
                     </DialogContent>
                   </Dialog>
                 </div>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hover:bg-transparent p-0"
+                  onClick={() => navigate('/profile')}
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback>{getInitials()}</AvatarFallback>
+                  </Avatar>
+                </Button>
 
                 <Button
                   variant="ghost"

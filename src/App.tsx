@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import Ideation from "./pages/Ideation";
 import Portfolio from "./pages/Portfolio";
 import Tasks from "./pages/Tasks";
+import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -82,6 +83,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Tasks />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               }
             />
