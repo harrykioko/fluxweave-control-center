@@ -1,14 +1,14 @@
 
-// Basic types that match exactly what's in the database
-export type TeamRole = 'owner' | 'admin' | 'member';
-
-export interface BaseEntity {
+// Database types that exactly match Supabase schema
+export interface DbTeam {
   id: string;
+  name: string;
+  description: string | null;
+  created_by: string;
   created_at?: string;
 }
 
-// Simple interface for raw data from Supabase
-export interface RawTeamMember {
+export interface DbTeamMember {
   id: string;
   team_id: string;
   user_id: string;
@@ -16,14 +16,17 @@ export interface RawTeamMember {
   created_at?: string;
 }
 
-// Matches teams table schema exactly
-export interface Team extends BaseEntity {
+// Domain types used in the application
+export type TeamRole = 'owner' | 'admin' | 'member';
+
+export interface Team {
+  id: string;
   name: string;
   description: string | null;
   created_by: string;
+  created_at?: string;
 }
 
-// Matches team_members table schema exactly
 export interface TeamMember {
   id: string;
   team_id: string;
@@ -32,7 +35,7 @@ export interface TeamMember {
   created_at?: string;
 }
 
-// Context value type without circular references
+// Context value type
 export interface TeamContextValue {
   currentTeam: Team | null;
   setCurrentTeam: (team: Team | null) => void;
