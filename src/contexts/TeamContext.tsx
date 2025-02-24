@@ -3,7 +3,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
-// Define interfaces first to avoid circular dependencies
+// Define team member roles as a union type instead of array
+type TeamMemberRole = "owner" | "admin" | "member";
+
+// Define interfaces
 interface Team {
   id: string;
   name: string;
@@ -11,10 +14,6 @@ interface Team {
   created_at: string;
   created_by: string;
 }
-
-// Use a const assertion to define the role type
-const TEAM_MEMBER_ROLES = ["owner", "admin", "member"] as const;
-type TeamMemberRole = typeof TEAM_MEMBER_ROLES[number];
 
 interface TeamMember {
   id: string;
