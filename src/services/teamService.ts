@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Team, TeamMember, TeamRole, RawTeamMember } from "@/types/team";
+import { Team, TeamMember, TeamRole } from "@/types/team";
 import { isValidTeamRole } from "@/utils/teamUtils";
 
 export const fetchTeams = async (): Promise<Team[]> => {
@@ -30,6 +30,14 @@ export const createNewTeam = async (name: string, description?: string): Promise
   return data;
 };
 
+type RawTeamMemberResponse = {
+  id: string;
+  team_id: string;
+  user_id: string;
+  role: string;
+  created_at: string;
+};
+
 export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> => {
   const { data, error } = await supabase
     .from("team_members")
@@ -38,19 +46,17 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
 
   if (error) throw error;
 
-  const rawMembers = data || [];
+  // Explicitly type the raw data
+  const rawMembers = (data as RawTeamMemberResponse[]) || [];
   
-  // Use type assertion to help TypeScript understand the structure
-  return rawMembers.map((member): TeamMember => {
-    const role = isValidTeamRole(member.role) ? member.role : 'member';
-    return {
-      id: member.id,
-      team_id: member.team_id,
-      user_id: member.user_id,
-      created_at: member.created_at,
-      role: role
-    };
-  });
+  // Convert raw members to TeamMember type
+  return rawMembers.map(member => ({
+    id: member.id,
+    team_id: member.team_id,
+    user_id: member.user_id,
+    created_at: member.created_at,
+    role: isValidTeamRole(member.role) ? member.role : 'member'
+  }));
 };
 
 export const addNewTeamMember = async (teamId: string, email: string, role: TeamRole): Promise<void> => {
@@ -75,4 +81,3 @@ export const addNewTeamMember = async (teamId: string, email: string, role: Team
 
   if (insertError) throw insertError;
 };
-
