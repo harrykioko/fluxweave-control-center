@@ -40,7 +40,7 @@ export default function Ideation() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-slate-800"></h1>
-              <p className="text-slate-500 mt-2 text-center">Explore and develop your innovative ideas</p>
+              <p className="text-slate-500 mt-2 text-center font-extralight px-[240px]">What are we building next??</p>
             </div>
             <Button className="bg-white/50 hover:bg-white/60" onClick={() => setIsNewIdeaOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
