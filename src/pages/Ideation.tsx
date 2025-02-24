@@ -46,20 +46,18 @@ export default function Ideation() {
       <main className="pt-20 px-4 md:px-8">
         <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
           {/* Header */}
-          <div className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
-            <div className="flex justify-between items-center">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-800">Ideation Hub</h1>
-                <p className="text-slate-500 mt-2">Explore and develop your innovative ideas</p>
-              </div>
-              <Button 
-                className="bg-white/50 hover:bg-white/60"
-                onClick={() => setIsNewIdeaOpen(true)}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Idea
-              </Button>
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-800">Ideation Hub</h1>
+              <p className="text-slate-500 mt-2">Explore and develop your innovative ideas</p>
             </div>
+            <Button 
+              className="bg-white/50 hover:bg-white/60"
+              onClick={() => setIsNewIdeaOpen(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              New Idea
+            </Button>
           </div>
 
           {/* Ideas Grid */}
