@@ -1,17 +1,9 @@
 
 export type TeamRole = 'owner' | 'admin' | 'member';
 
-interface BaseEntity {
+export interface BaseEntity {
   id: string;
   created_at?: string;
-}
-
-export interface RawTeamMember {
-  id: string;
-  team_id: string;
-  user_id: string;
-  role: string;
-  created_at: string;
 }
 
 export interface Team extends BaseEntity {

@@ -30,13 +30,13 @@ export const createNewTeam = async (name: string, description?: string): Promise
   return data;
 };
 
-type RawTeamMemberResponse = {
+interface RawTeamMemberData {
   id: string;
   team_id: string;
   user_id: string;
   role: string;
   created_at: string;
-};
+}
 
 export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> => {
   const { data, error } = await supabase
@@ -46,11 +46,7 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
 
   if (error) throw error;
 
-  // Explicitly type the raw data
-  const rawMembers = (data as RawTeamMemberResponse[]) || [];
-  
-  // Convert raw members to TeamMember type
-  return rawMembers.map(member => ({
+  return (data as RawTeamMemberData[]).map(member => ({
     id: member.id,
     team_id: member.team_id,
     user_id: member.user_id,
