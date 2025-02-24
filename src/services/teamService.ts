@@ -50,13 +50,15 @@ export const createNewTeam = async (name: string, description?: string): Promise
   }
 };
 
-function convertTeamMember(rawMember: RawTeamMember): TeamMember {
+// Separate conversion function to handle type casting
+function convertTeamMember(raw: any): TeamMember {
+  const role = isValidTeamRole(raw.role) ? raw.role : 'member';
   return {
-    id: rawMember.id,
-    team_id: rawMember.team_id,
-    user_id: rawMember.user_id,
-    role: isValidTeamRole(rawMember.role) ? rawMember.role : 'member',
-    created_at: rawMember.created_at,
+    id: raw.id,
+    team_id: raw.team_id,
+    user_id: raw.user_id,
+    role: role as TeamRole,
+    created_at: raw.created_at,
   };
 }
 
@@ -70,7 +72,8 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
     
-    return data.map(rawMember => convertTeamMember(rawMember));
+    // Convert the raw data to TeamMember type
+    return (data as any[]).map(convertTeamMember);
   } catch (error) {
     console.error("[TeamService] fetchTeamMembers error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error fetching team members", error);
