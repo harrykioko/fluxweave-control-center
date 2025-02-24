@@ -69,25 +69,14 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
 
-    // First validate and transform the data
-    const validatedMembers: TeamMember[] = [];
-    
-    for (const rawMember of data as RawTeamMemberData[]) {
-      if (!isValidTeamRole(rawMember.role)) {
-        console.warn(`Invalid role "${rawMember.role}" found for team member ${rawMember.id}`);
-        continue;
-      }
-
-      validatedMembers.push({
-        id: rawMember.id,
-        team_id: rawMember.team_id,
-        user_id: rawMember.user_id,
-        role: rawMember.role,
-        created_at: rawMember.created_at
-      });
-    }
-
-    return validatedMembers;
+    // Process each team member with explicit type casting for the role
+    return data.map((rawMember: RawTeamMemberData) => ({
+      id: rawMember.id,
+      team_id: rawMember.team_id,
+      user_id: rawMember.user_id,
+      created_at: rawMember.created_at,
+      role: isValidTeamRole(rawMember.role) ? (rawMember.role as TeamRole) : ('member' as TeamRole)
+    }));
   } catch (error) {
     console.error("[TeamService] fetchTeamMembers error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error fetching team members", error);
