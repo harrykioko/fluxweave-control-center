@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
+// Define interfaces first to avoid circular dependencies
 interface Team {
   id: string;
   name: string;
@@ -11,8 +12,9 @@ interface Team {
   created_by: string;
 }
 
-// Define the role type as a literal union type
-type TeamMemberRole = "owner" | "admin" | "member";
+// Use a const assertion to define the role type
+const TEAM_MEMBER_ROLES = ["owner", "admin", "member"] as const;
+type TeamMemberRole = typeof TEAM_MEMBER_ROLES[number];
 
 interface TeamMember {
   id: string;
@@ -22,7 +24,8 @@ interface TeamMember {
   created_at: string;
 }
 
-interface TeamContextType {
+// Define context value interface separately
+interface TeamContextValue {
   currentTeam: Team | null;
   setCurrentTeam: (team: Team | null) => void;
   teams: Team[];
@@ -33,7 +36,8 @@ interface TeamContextType {
   addTeamMember: (teamId: string, email: string, role: TeamMemberRole) => Promise<void>;
 }
 
-const TeamContext = createContext<TeamContextType | undefined>(undefined);
+// Create context with explicit type
+const TeamContext = createContext<TeamContextValue | undefined>(undefined);
 
 export function TeamProvider({ children }: { children: React.ReactNode }) {
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
@@ -92,17 +96,11 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const loadTeamMembers = async (teamId: string) => {
+  const loadTeamMembers = async (teamId: string): Promise<void> => {
     try {
       const { data, error } = await supabase
         .from("team_members")
-        .select(`
-          id,
-          user_id,
-          role,
-          created_at,
-          team_id
-        `)
+        .select("id, user_id, role, created_at, team_id")
         .eq('team_id', teamId);
 
       if (error) throw error;
@@ -117,9 +115,8 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addTeamMember = async (teamId: string, email: string, role: TeamMemberRole) => {
+  const addTeamMember = async (teamId: string, email: string, role: TeamMemberRole): Promise<void> => {
     try {
-      // First, get the user ID from their email
       const { data: userData, error: userError } = await supabase
         .from("profiles")
         .select("id")
@@ -128,7 +125,6 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
 
       if (userError) throw userError;
 
-      // Then add them to the team
       const { error } = await supabase
         .from("team_members")
         .insert({
@@ -164,7 +160,7 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     }
   }, [currentTeam]);
 
-  const value = {
+  const contextValue: TeamContextValue = {
     currentTeam,
     setCurrentTeam,
     teams,
@@ -175,7 +171,7 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     addTeamMember,
   };
 
-  return <TeamContext.Provider value={value}>{children}</TeamContext.Provider>;
+  return <TeamContext.Provider value={contextValue}>{children}</TeamContext.Provider>;
 }
 
 export function useTeam() {
