@@ -1,11 +1,16 @@
 
-import { Home, BrainCircuit, CheckSquare, BarChart3, BookOpen, Settings, Menu, LogOut } from "lucide-react";
+import { Home, BrainCircuit, CheckSquare, BarChart3, BookOpen, Settings, Menu, LogOut, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { useTeam } from "@/contexts/TeamContext";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const menuItems = [{
   icon: Home,
@@ -36,8 +41,12 @@ const menuItems = [{
 export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [newTeamName, setNewTeamName] = useState("");
+  const [newTeamDescription, setNewTeamDescription] = useState("");
+  const [isNewTeamDialogOpen, setIsNewTeamDialogOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { currentTeam, setCurrentTeam, teams, createTeam } = useTeam();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -67,6 +76,25 @@ export function AppSidebar() {
     }
   };
 
+  const handleCreateTeam = async () => {
+    try {
+      await createTeam(newTeamName, newTeamDescription);
+      setIsNewTeamDialogOpen(false);
+      setNewTeamName("");
+      setNewTeamDescription("");
+      toast({
+        title: "Team created",
+        description: "Successfully created new team",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error creating team",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return <header className="fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b border-slate-200/20 bg-white/[0.01] my-[10px] px-[20px] mx-[20px]">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between px-4 h-16">
@@ -81,17 +109,81 @@ export function AppSidebar() {
             </nav>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-4">
             {isAuthenticated && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleSignOut}
-                className="hidden md:flex"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
+              <>
+                <div className="hidden md:flex items-center space-x-4">
+                  <Select
+                    value={currentTeam?.id}
+                    onValueChange={(value) => {
+                      const team = teams.find(t => t.id === value);
+                      if (team) setCurrentTeam(team);
+                    }}
+                  >
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder="Select a team" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Your Teams</SelectLabel>
+                        {teams.map(team => (
+                          <SelectItem key={team.id} value={team.id}>
+                            {team.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  
+                  <Dialog open={isNewTeamDialogOpen} onOpenChange={setIsNewTeamDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Users className="h-4 w-4 mr-2" />
+                        New Team
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Create New Team</DialogTitle>
+                        <DialogDescription>
+                          Create a new team to collaborate with others.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="name">Team Name</Label>
+                          <Input
+                            id="name"
+                            value={newTeamName}
+                            onChange={(e) => setNewTeamName(e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="description">Description</Label>
+                          <Input
+                            id="description"
+                            value={newTeamDescription}
+                            onChange={(e) => setNewTeamDescription(e.target.value)}
+                          />
+                        </div>
+                        <Button onClick={handleCreateTeam} disabled={!newTeamName}>
+                          Create Team
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="hidden md:flex"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              </>
             )}
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setCollapsed(!collapsed)}>
               <Menu className="h-5 w-5" />
@@ -105,13 +197,45 @@ export function AppSidebar() {
                 <span>{item.label}</span>
               </a>)}
             {isAuthenticated && (
-              <button
-                onClick={handleSignOut}
-                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 active:bg-slate-200/50 transition-colors w-full"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Sign Out</span>
-              </button>
+              <>
+                <Select
+                  value={currentTeam?.id}
+                  onValueChange={(value) => {
+                    const team = teams.find(t => t.id === value);
+                    if (team) setCurrentTeam(team);
+                  }}
+                >
+                  <SelectTrigger className="w-full my-2">
+                    <SelectValue placeholder="Select a team" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Your Teams</SelectLabel>
+                      {teams.map(team => (
+                        <SelectItem key={team.id} value={team.id}>
+                          {team.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mb-2"
+                  onClick={() => setIsNewTeamDialogOpen(true)}
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  New Team
+                </Button>
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 active:bg-slate-200/50 transition-colors w-full"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Sign Out</span>
+                </button>
+              </>
             )}
           </nav>}
       </div>
