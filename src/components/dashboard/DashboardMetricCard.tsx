@@ -12,12 +12,12 @@ interface DashboardMetricCardProps {
 export function DashboardMetricCard({ title, value, change, icon, className }: DashboardMetricCardProps) {
   return (
     <div className={cn(
-      "bg-white/95 backdrop-blur-md border border-slate-200/20 rounded-xl p-6 shadow-lg transition-all duration-200 hover:shadow-xl hover:translate-y-[-2px]",
+      "bg-white/50 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg transition-all duration-200 hover:shadow-xl hover:translate-y-[-2px] hover:bg-white/60",
       className
     )}>
       <div className="flex items-start justify-between space-x-4">
         {icon && (
-          <div className="p-3 bg-slate-100/80 rounded-xl">
+          <div className="p-3 bg-white/50 backdrop-blur-md rounded-xl">
             {icon}
           </div>
         )}

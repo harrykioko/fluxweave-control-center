@@ -15,13 +15,13 @@ export function QuickActionCard({ title, description, icon, onClick, className }
   return (
     <div 
       className={cn(
-        "bg-white/95 backdrop-blur-md border border-slate-200/20 rounded-xl p-6 shadow-lg transition-all duration-200 hover:shadow-xl hover:translate-y-[-2px] group cursor-pointer",
+        "bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg transition-all duration-200 hover:shadow-xl hover:translate-y-[-2px] hover:bg-white/50 group cursor-pointer",
         className
       )} 
       onClick={onClick}
     >
       <div className="flex items-start space-x-4">
-        <div className="p-3 bg-slate-100/80 rounded-xl group-hover:bg-slate-200/80 transition-colors">
+        <div className="p-3 bg-white/50 backdrop-blur-md rounded-xl group-hover:bg-white/60 transition-colors">
           {icon}
         </div>
         <div className="flex-1">
@@ -31,7 +31,7 @@ export function QuickActionCard({ title, description, icon, onClick, className }
         <Button 
           size="icon" 
           variant="ghost" 
-          className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-slate-100/80"
+          className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/50"
         >
           <Plus className="h-4 w-4 text-slate-600" />
         </Button>

@@ -6,12 +6,12 @@ import { Brain, LineChart, Inbox, Target, Rocket, Users, Film, Globe } from "luc
 
 export default function Index() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
       <AppSidebar />
       <main className="pt-20 px-4 md:px-8">
         <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
           {/* Header */}
-          <div className="bg-white/95 backdrop-blur-md border border-slate-200/20 rounded-xl p-6 shadow-lg">
+          <div className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
             <h1 className="text-3xl font-bold text-slate-800">Mission Control</h1>
             <p className="text-slate-500 mt-2">Welcome back! Here's what's happening today.</p>
           </div>
@@ -45,7 +45,7 @@ export default function Index() {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white/95 backdrop-blur-md border border-slate-200/20 rounded-xl p-6 shadow-lg">
+          <div className="bg-white/30 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
             <h2 className="text-xl font-semibold text-slate-800 mb-4">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <QuickActionCard
