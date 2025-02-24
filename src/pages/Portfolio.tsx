@@ -75,76 +75,87 @@ export default function Portfolio() {
   const [selectedSocial, setSelectedSocial] = useState<SocialAccount | null>(null);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80 p-8">
-      {/* Projects Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-slate-800 mb-6">Projects</h2>
-        <div className="relative">
-          <div className="flex overflow-x-auto pb-6 gap-6 snap-x">
-            {projects.map(project => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                onClick={() => setSelectedProject(project)}
-              />
-            ))}
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
+      <div className="container mx-auto p-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Projects Section */}
+          <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
+            <h2 className="text-2xl font-semibold text-slate-800 mb-6">Projects</h2>
+            <div className="space-y-4">
+              {projects.map(project => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  onClick={() => setSelectedProject(project)}
+                  className="min-w-full"
+                />
+              ))}
+            </div>
+          </section>
+
+          {/* Domains Section */}
+          <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-6">
+              <Globe className="h-5 w-5 text-slate-600" />
+              <h2 className="text-xl font-semibold text-slate-800">Domains</h2>
+            </div>
+            <div className="space-y-4">
+              {domains.map(domain => (
+                <DomainCard
+                  key={domain.id}
+                  domain={domain}
+                  onClick={() => setSelectedDomain(domain)}
+                />
+              ))}
+            </div>
+          </section>
+
+          {/* Analytics Section */}
+          <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
+            <h2 className="text-2xl font-semibold text-slate-800 mb-6">Analytics</h2>
+            <div className="space-y-4">
+              {/* Add analytics content here */}
+              <div className="h-40 flex items-center justify-center text-slate-500">
+                Analytics data visualization
+              </div>
+            </div>
+          </section>
+
+          {/* Social Media Section */}
+          <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-6">
+              <Users className="h-5 w-5 text-slate-600" />
+              <h2 className="text-xl font-semibold text-slate-800">Social Media</h2>
+            </div>
+            <div className="space-y-4">
+              {socialAccounts.map(account => (
+                <SocialMediaCard
+                  key={account.id}
+                  account={account}
+                  onClick={() => setSelectedSocial(account)}
+                />
+              ))}
+            </div>
+          </section>
         </div>
-      </section>
 
-      {/* Analytics Section */}
-      <div className="grid grid-cols-2 gap-8">
-        {/* Domains */}
-        <section>
-          <div className="flex items-center gap-2 mb-6">
-            <Globe className="h-5 w-5 text-slate-600" />
-            <h2 className="text-xl font-semibold text-slate-800">Domains</h2>
-          </div>
-          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-4">
-            {domains.map(domain => (
-              <DomainCard
-                key={domain.id}
-                domain={domain}
-                onClick={() => setSelectedDomain(domain)}
-              />
-            ))}
-          </div>
-        </section>
-
-        {/* Social Media */}
-        <section>
-          <div className="flex items-center gap-2 mb-6">
-            <Users className="h-5 w-5 text-slate-600" />
-            <h2 className="text-xl font-semibold text-slate-800">Social Media</h2>
-          </div>
-          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-4">
-            {socialAccounts.map(account => (
-              <SocialMediaCard
-                key={account.id}
-                account={account}
-                onClick={() => setSelectedSocial(account)}
-              />
-            ))}
-          </div>
-        </section>
+        {/* Modals */}
+        <ProjectDetailDialog
+          open={!!selectedProject}
+          onOpenChange={(open) => !open && setSelectedProject(null)}
+          project={selectedProject}
+        />
+        <DomainDetailDialog
+          open={!!selectedDomain}
+          onOpenChange={(open) => !open && setSelectedDomain(null)}
+          domain={selectedDomain}
+        />
+        <SocialDetailDialog
+          open={!!selectedSocial}
+          onOpenChange={(open) => !open && setSelectedSocial(null)}
+          account={selectedSocial}
+        />
       </div>
-
-      {/* Modals */}
-      <ProjectDetailDialog
-        open={!!selectedProject}
-        onOpenChange={(open) => !open && setSelectedProject(null)}
-        project={selectedProject}
-      />
-      <DomainDetailDialog
-        open={!!selectedDomain}
-        onOpenChange={(open) => !open && setSelectedDomain(null)}
-        domain={selectedDomain}
-      />
-      <SocialDetailDialog
-        open={!!selectedSocial}
-        onOpenChange={(open) => !open && setSelectedSocial(null)}
-        account={selectedSocial}
-      />
     </div>
   );
 }
