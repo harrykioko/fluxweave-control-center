@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ProjectCard } from "@/components/portfolio/ProjectCard";
 import { ProjectDetailDialog } from "@/components/portfolio/ProjectDetailDialog";
@@ -8,7 +7,6 @@ import { DomainDetailDialog } from "@/components/portfolio/DomainDetailDialog";
 import { SocialDetailDialog } from "@/components/portfolio/SocialDetailDialog";
 import { Globe, Users } from "lucide-react";
 
-// Define proper types for entities
 interface Project {
   id: string;
   name: string;
@@ -39,16 +37,15 @@ interface SocialAccount {
   engagement: string;
 }
 
-// Mock data with correct types
 const projects: Project[] = [{
   id: "1",
   name: "Project Alpha",
   logo: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
   description: "A revolutionary SaaS platform for enterprise productivity",
-  status: "live", // Now explicitly using the correct type
+  status: "live",
   url: "https://alpha-project.com",
   teamMembers: [
-    { id: "1", name: "John Doe", avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1" },
+    { id: "1", name: "John Doe", avatar: "https://images.unsplash.com/photo-1535268647778-1ec881214838" },
     { id: "2", name: "Jane Smith", avatar: "https://images.unsplash.com/photo-1501286353178-1ec881214838" }
   ]
 }];
@@ -76,24 +73,22 @@ export default function Portfolio() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
-      <div className="container mx-auto p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Projects Section */}
-          <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
-            <h2 className="text-2xl font-semibold text-slate-800 mb-6">Projects</h2>
-            <div className="space-y-4">
-              {projects.map(project => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  onClick={() => setSelectedProject(project)}
-                  className="min-w-full"
-                />
-              ))}
-            </div>
-          </section>
+      <div className="container mx-auto p-8 space-y-8">
+        <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6 w-full">
+          <h2 className="text-2xl font-semibold text-slate-800 mb-6">Projects</h2>
+          <div className="space-y-4">
+            {projects.map(project => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                onClick={() => setSelectedProject(project)}
+                className="min-w-full"
+              />
+            ))}
+          </div>
+        </section>
 
-          {/* Domains Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-6">
               <Globe className="h-5 w-5 text-slate-600" />
@@ -110,18 +105,15 @@ export default function Portfolio() {
             </div>
           </section>
 
-          {/* Analytics Section */}
           <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
             <h2 className="text-2xl font-semibold text-slate-800 mb-6">Analytics</h2>
             <div className="space-y-4">
-              {/* Add analytics content here */}
               <div className="h-40 flex items-center justify-center text-slate-500">
                 Analytics data visualization
               </div>
             </div>
           </section>
 
-          {/* Social Media Section */}
           <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-6">
               <Users className="h-5 w-5 text-slate-600" />
@@ -139,7 +131,6 @@ export default function Portfolio() {
           </section>
         </div>
 
-        {/* Modals */}
         <ProjectDetailDialog
           open={!!selectedProject}
           onOpenChange={(open) => !open && setSelectedProject(null)}
