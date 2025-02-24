@@ -11,11 +11,13 @@ interface Team {
   created_by: string;
 }
 
+type TeamMemberRole = "owner" | "admin" | "member";
+
 interface TeamMember {
   id: string;
   team_id: string;
   user_id: string;
-  role: "owner" | "admin" | "member";
+  role: TeamMemberRole;
   created_at: string;
 }
 
@@ -27,7 +29,7 @@ interface TeamContextType {
   createTeam: (name: string, description?: string) => Promise<Team>;
   teamMembers: TeamMember[];
   loadTeamMembers: (teamId: string) => Promise<void>;
-  addTeamMember: (teamId: string, email: string, role: "admin" | "member") => Promise<void>;
+  addTeamMember: (teamId: string, email: string, role: Exclude<TeamMemberRole, "owner">) => Promise<void>;
 }
 
 const TeamContext = createContext<TeamContextType | undefined>(undefined);
@@ -98,10 +100,13 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error;
       
-      // Ensure the data matches the TeamMember type
-      const typedMembers = data.map(member => ({
-        ...member,
-        role: member.role as "owner" | "admin" | "member"
+      // Convert the raw data to TeamMember type
+      const typedMembers: TeamMember[] = data.map(member => ({
+        id: member.id,
+        team_id: member.team_id,
+        user_id: member.user_id,
+        role: member.role as TeamMemberRole,
+        created_at: member.created_at
       }));
       
       setTeamMembers(typedMembers);
@@ -114,7 +119,7 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addTeamMember = async (teamId: string, email: string, role: "admin" | "member") => {
+  const addTeamMember = async (teamId: string, email: string, role: Exclude<TeamMemberRole, "owner">) => {
     try {
       // First, get the user ID from their email
       const { data: userData, error: userError } = await supabase
