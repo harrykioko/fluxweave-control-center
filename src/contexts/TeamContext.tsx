@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Team, TeamMember, TeamRole, TeamContextValue, TeamWithMemberActions } from "@/types/team";
+import { Team, TeamMember, TeamRole, TeamContextValue } from "@/types/team";
 import { fetchTeams, createNewTeam, fetchTeamMembers, addNewTeamMember } from "@/services/teamService";
 
 const TeamContext = createContext<TeamContextValue | undefined>(undefined);
@@ -29,7 +29,7 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const createTeam = async (name: string, description?: string): Promise<TeamWithMemberActions> => {
+  const createTeam = async (name: string, description?: string): Promise<Team> => {
     try {
       const newTeam = await createNewTeam(name, description);
       await loadTeams();
@@ -106,3 +106,4 @@ export function useTeam() {
   }
   return context;
 }
+

@@ -26,7 +26,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
   const [newMemberEmail, setNewMemberEmail] = useState("");
   const [newMemberRole, setNewMemberRole] = useState<TeamRole>("member");
   const [members, setMembers] = useState<NewMember[]>([]);
-  const { createTeam } = useTeam();
+  const { createTeam, addTeamMember } = useTeam();
   const { toast } = useToast();
 
   const handleAddMember = () => {
@@ -55,7 +55,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
       if (members.length > 0) {
         // Add each member to the team
         for (const member of members) {
-          await newTeam.addTeamMember(member.email, member.role);
+          await addTeamMember(newTeam.id, member.email, member.role);
         }
       }
       setTeamName("");
@@ -178,3 +178,4 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
     </Dialog>
   );
 }
+
