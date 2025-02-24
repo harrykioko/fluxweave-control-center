@@ -59,10 +59,10 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
         .select("id, name, description, created_at, created_by");
 
       if (error) throw error;
-      setTeams(data);
+      setTeams(data || []);
       
       // Set current team to the first team if none is selected
-      if (!currentTeam && data.length > 0) {
+      if (!currentTeam && data && data.length > 0) {
         setCurrentTeam(data[0]);
       }
     } catch (error: any) {
@@ -112,7 +112,7 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error;
       
-      setTeamMembers(data as TeamMemberBase[]);
+      setTeamMembers(data || []);
     } catch (error: any) {
       toast({
         title: "Error loading team members",
@@ -124,24 +124,27 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
 
   const addTeamMember = async (teamId: string, email: string, role: TeamMemberRole): Promise<void> => {
     try {
-      const { data: userData, error: userError } = await supabase
+      // First query to get the user ID based on email
+      const profileQuery = await supabase
         .from("profiles")
         .select("id")
         .eq("email", email)
-        .maybeSingle();
+        .limit(1)
+        .single();
+        
+      if (profileQuery.error) throw profileQuery.error;
+      if (!profileQuery.data) throw new Error("User not found");
 
-      if (userError) throw userError;
-      if (!userData) throw new Error("User not found");
-
-      const { error } = await supabase
+      // Insert the team member with the found user ID
+      const { error: insertError } = await supabase
         .from("team_members")
         .insert({
           team_id: teamId,
-          user_id: userData.id,
+          user_id: profileQuery.data.id,
           role
         });
 
-      if (error) throw error;
+      if (insertError) throw insertError;
       
       await loadTeamMembers(teamId);
       
