@@ -11,24 +11,27 @@ interface DashboardMetricCardProps {
 
 export function DashboardMetricCard({ title, value, change, icon, className }: DashboardMetricCardProps) {
   return (
-    <div className={cn("glass-card rounded-xl p-6 hover-scale", className)}>
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="text-2xl font-bold mt-2">{value}</p>
+    <div className={cn(
+      "bg-white/95 backdrop-blur-md border border-slate-200/20 rounded-xl p-6 shadow-lg transition-all duration-200 hover:shadow-xl hover:translate-y-[-2px]",
+      className
+    )}>
+      <div className="flex items-start justify-between space-x-4">
+        {icon && (
+          <div className="p-3 bg-slate-100/80 rounded-xl">
+            {icon}
+          </div>
+        )}
+        <div className="flex-1">
+          <p className="text-sm font-medium text-slate-500">{title}</p>
+          <p className="text-2xl font-bold text-slate-800 mt-1">{value}</p>
           {change && (
-            <p className={cn("text-sm mt-2", 
-              change.startsWith('+') ? "text-green-500" : "text-red-500"
+            <p className={cn("text-sm font-medium mt-2 flex items-center", 
+              change.startsWith('+') ? "text-emerald-600" : "text-rose-600"
             )}>
               {change}
             </p>
           )}
         </div>
-        {icon && (
-          <div className="p-2 bg-white/5 rounded-lg">
-            {icon}
-          </div>
-        )}
       </div>
     </div>
   );
