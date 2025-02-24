@@ -11,6 +11,7 @@ interface Team {
   created_by: string;
 }
 
+// Define the role type as a literal union type
 type TeamMemberRole = "owner" | "admin" | "member";
 
 interface TeamMember {
