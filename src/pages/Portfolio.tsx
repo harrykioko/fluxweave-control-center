@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ProjectCard } from "@/components/portfolio/ProjectCard";
 import { ProjectDetailDialog } from "@/components/portfolio/ProjectDetailDialog";
@@ -74,27 +75,31 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
       <div className="container mx-auto p-8 space-y-8">
+        {/* Projects Section with Horizontal Scroll */}
         <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6 w-full">
           <h2 className="text-2xl font-semibold text-slate-800 mb-6">Projects</h2>
-          <div className="space-y-4">
-            {projects.map(project => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                onClick={() => setSelectedProject(project)}
-                className="min-w-full"
-              />
-            ))}
+          <div className="overflow-x-auto pb-4 -mx-2 px-2">
+            <div className="flex gap-6">
+              {projects.map(project => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  onClick={() => setSelectedProject(project)}
+                  className="flex-shrink-0 w-[calc(40%-1rem)]"
+                />
+              ))}
+            </div>
           </div>
         </section>
 
+        {/* Domains and Social Media Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-6">
               <Globe className="h-5 w-5 text-slate-600" />
               <h2 className="text-xl font-semibold text-slate-800">Domains</h2>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
               {domains.map(domain => (
                 <DomainCard
                   key={domain.id}
@@ -106,20 +111,11 @@ export default function Portfolio() {
           </section>
 
           <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
-            <h2 className="text-2xl font-semibold text-slate-800 mb-6">Analytics</h2>
-            <div className="space-y-4">
-              <div className="h-40 flex items-center justify-center text-slate-500">
-                Analytics data visualization
-              </div>
-            </div>
-          </section>
-
-          <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
             <div className="flex items-center gap-2 mb-6">
               <Users className="h-5 w-5 text-slate-600" />
               <h2 className="text-xl font-semibold text-slate-800">Social Media</h2>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
               {socialAccounts.map(account => (
                 <SocialMediaCard
                   key={account.id}
