@@ -50,13 +50,20 @@ export const createNewTeam = async (name: string, description?: string): Promise
   }
 };
 
-// Separate conversion function to handle the type transformation
-function convertRawTeamMember(member: RawTeamMember): TeamMember {
+// Separated function with explicit type handling and no inline conditionals
+function convertTeamMember(member: RawTeamMember): TeamMember {
+  let computedRole: TeamRole;
+  if (isValidTeamRole(member.role)) {
+    computedRole = member.role as TeamRole;
+  } else {
+    computedRole = 'member';
+  }
+  
   return {
     id: member.id,
     team_id: member.team_id,
     user_id: member.user_id,
-    role: isValidTeamRole(member.role) ? member.role : 'member',
+    role: computedRole,
     created_at: member.created_at,
   };
 }
@@ -71,11 +78,11 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
 
-    // First cast to RawTeamMember[] to avoid deep type instantiation
-    const rawMembers = data as RawTeamMember[];
+    // Two-step cast via unknown to avoid deep type inference
+    const rawMembers = data as unknown as RawTeamMember[];
     
-    // Use both the separate conversion function and explicit generic type annotation
-    return rawMembers.map<TeamMember>(convertRawTeamMember);
+    // Use the standalone conversion function
+    return rawMembers.map(convertTeamMember);
   } catch (error) {
     console.error("[TeamService] fetchTeamMembers error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error fetching team members", error);
