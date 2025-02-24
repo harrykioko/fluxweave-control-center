@@ -14,11 +14,6 @@ export interface Team extends BaseEntity {
   created_by: string;
 }
 
-// Extended team type that includes the addTeamMember method
-export interface TeamWithMemberActions extends Team {
-  addTeamMember: (email: string, role: TeamRole) => Promise<void>;
-}
-
 // Matches team_members table schema exactly
 export interface TeamMember {
   id: string;
@@ -34,9 +29,8 @@ export interface TeamContextValue {
   setCurrentTeam: (team: Team | null) => void;
   teams: Team[];
   loadTeams: () => Promise<void>;
-  createTeam: (name: string, description?: string) => Promise<TeamWithMemberActions>;
+  createTeam: (name: string, description?: string) => Promise<Team>;
   teamMembers: TeamMember[];
   loadTeamMembers: (teamId: string) => Promise<void>;
   addTeamMember: (teamId: string, email: string, role: TeamRole) => Promise<void>;
 }
-
