@@ -10,6 +10,7 @@ interface IdeaCardProps {
     tags: string[];
     status: "draft" | "active" | "completed";
     created_at: string;
+    createdAt?: string; // Add optional createdAt to support both formats
     first_name?: string;
     last_name?: string;
     avatar_url?: string;

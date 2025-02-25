@@ -35,7 +35,12 @@ export default function Ideation() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return (data || []) as Idea[];
+      
+      // Transform the data to ensure consistent property naming
+      return (data || []).map((idea) => ({
+        ...idea,
+        createdAt: idea.created_at, // Add the camelCase version while keeping snake_case
+      })) as (Idea & { createdAt: string })[];
     },
   });
 
