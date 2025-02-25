@@ -6,6 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTeam } from "@/contexts/TeamContext";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { TeamsList } from "@/components/team/TeamsList";
+import { Activity } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AuditLogsDialog } from "@/components/profile/AuditLogsDialog";
 
 interface Profile {
   id: string;
@@ -19,6 +22,7 @@ export default function Profile() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const { teams } = useTeam();
   const { toast } = useToast();
+  const [auditLogsOpen, setAuditLogsOpen] = useState(false);
 
   const loadProfile = async () => {
     try {
@@ -53,12 +57,25 @@ export default function Profile() {
       <main className="pt-20 px-4 md:px-8">
         <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
           <div className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
-            <h1 className="text-3xl font-bold text-slate-800">Profile</h1>
-            <p className="text-slate-500 mt-2">Manage your personal information and teams.</p>
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-3xl font-bold text-slate-800">Profile</h1>
+                <p className="text-slate-500 mt-2">Manage your personal information and teams.</p>
+              </div>
+              <Button
+                variant="outline"
+                className="flex items-center gap-2"
+                onClick={() => setAuditLogsOpen(true)}
+              >
+                <Activity className="h-4 w-4" />
+                Activity Log
+              </Button>
+            </div>
           </div>
 
           <ProfileForm profile={profile} onProfileUpdate={loadProfile} />
           <TeamsList teams={teams} />
+          <AuditLogsDialog open={auditLogsOpen} onOpenChange={setAuditLogsOpen} />
         </div>
       </main>
     </div>
