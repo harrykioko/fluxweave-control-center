@@ -70,7 +70,7 @@ export const createNewTeam = async (name: string, description?: string): Promise
   }
 };
 
-interface TeamMemberResponse {
+type TeamMemberResponse = {
   id: string;
   team_id: string;
   user_id: string;
@@ -83,7 +83,8 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
     const { data, error } = await supabase
       .from('team_members')
       .select('*')
-      .eq('team_id', teamId) as { data: TeamMemberResponse[] | null, error: any };
+      .eq('team_id', teamId)
+      .returns<TeamMemberResponse[]>();
 
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
