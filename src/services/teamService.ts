@@ -31,12 +31,12 @@ export const fetchTeams = async (): Promise<Team[]> => {
   try {
     const { data, error } = await supabase
       .from('teams')
-      .select<'*', DbTeamRow>();
+      .select('*');
 
     if (error) throw new TeamServiceError("Failed to fetch teams", error);
     if (!data) return [];
 
-    return data.map(mapDbTeamToDomain);
+    return data.map(team => mapDbTeamToDomain(team as DbTeamRow));
   } catch (error) {
     console.error("[TeamService] fetchTeams error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error fetching teams", error);
@@ -55,13 +55,13 @@ export const createNewTeam = async (name: string, description?: string): Promise
         description,
         created_by: user.id
       })
-      .select<'*', DbTeamRow>()
+      .select()
       .single();
 
     if (error) throw new TeamServiceError("Failed to create team", error);
     if (!data) throw new TeamServiceError("No data returned after team creation");
     
-    return mapDbTeamToDomain(data);
+    return mapDbTeamToDomain(data as DbTeamRow);
   } catch (error) {
     console.error("[TeamService] createNewTeam error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error creating team", error);
@@ -72,13 +72,13 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
   try {
     const { data, error } = await supabase
       .from('team_members')
-      .select<'*', DbTeamMemberRow>()
+      .select('*')
       .eq('team_id', teamId);
 
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
     
-    return data.map(mapDbTeamMemberToDomain);
+    return data.map(member => mapDbTeamMemberToDomain(member as DbTeamMemberRow));
   } catch (error) {
     console.error("[TeamService] fetchTeamMembers error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error fetching team members", error);
