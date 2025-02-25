@@ -63,15 +63,22 @@ export function IdeaEvaluationDialog({ open, onOpenChange, initialIdea = "" }: I
         throw new Error("You must be logged in to save an idea");
       }
 
+      const metadata = {
+        analysis: {
+          market: analysis.market,
+          feasibility: analysis.feasibility,
+          considerations: analysis.considerations,
+          "next-steps": analysis["next-steps"]
+        }
+      };
+
       const { data, error } = await supabase.from('ideas').insert({
         title: initialIdea.split('\n')[0] || "New Idea",
         description: initialIdea,
         tags: ["draft"],
         status: "draft",
         created_by: user.id,
-        metadata: {
-          analysis: analysis
-        }
+        metadata
       }).select().single();
 
       if (error) throw error;
