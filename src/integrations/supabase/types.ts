@@ -97,6 +97,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      is_profile_owner: {
+        Args: {
+          profile_id: string
+        }
+        Returns: boolean
+      }
       is_team_admin_or_owner: {
         Args: {
           team_id: string
