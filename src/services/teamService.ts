@@ -2,13 +2,18 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Team, TeamMember, TeamRole } from "@/types/team";
 
-// Define a specific type for team member response
+// Define specific types for responses
 type TeamMemberResponse = {
   id: string;
   team_id: string;
   user_id: string;
   role: TeamRole;
   created_at?: string;
+};
+
+type ProfileResponse = {
+  id: string;
+  email: string;
 };
 
 export async function fetchTeams(): Promise<Team[]> {
@@ -51,6 +56,7 @@ export async function addNewTeamMember(teamId: string, email: string, role: Team
     .from("profiles")
     .select("id")
     .eq("email", email)
+    .returns<ProfileResponse>()
     .single();
 
   if (userError) throw userError;
