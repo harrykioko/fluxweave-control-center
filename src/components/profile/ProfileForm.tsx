@@ -13,6 +13,9 @@ interface Profile {
   last_name: string;
   username: string | null;
   avatar_url: string | null;
+  role: string;
+  settings: any;
+  permissions: any;
 }
 
 interface ProfileFormProps {
@@ -135,6 +138,11 @@ export function ProfileForm({ profile, onProfileUpdate }: ProfileFormProps) {
             {profile?.first_name} {profile?.last_name}
           </h2>
           <p className="text-slate-500">@{profile?.username || "username"}</p>
+          {profile?.role === 'admin' && (
+            <span className="inline-block mt-2 px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded-full">
+              Admin
+            </span>
+          )}
         </div>
       </div>
 

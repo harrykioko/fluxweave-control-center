@@ -42,6 +42,66 @@ export type Database = {
         }
         Relationships: []
       }
+      backup_team_members: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          first_name: string | null
+          id: string | null
+          last_name: string | null
+          role: string | null
+          team_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          first_name?: string | null
+          id?: string | null
+          last_name?: string | null
+          role?: string | null
+          team_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          first_name?: string | null
+          id?: string | null
+          last_name?: string | null
+          role?: string | null
+          team_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      backup_teams: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string | null
+          name: string | null
+          website: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string | null
+          name?: string | null
+          website?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string | null
+          name?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -49,6 +109,9 @@ export type Database = {
           first_name: string
           id: string
           last_name: string
+          permissions: Json | null
+          role: string
+          settings: Json | null
           username: string | null
         }
         Insert: {
@@ -57,83 +120,21 @@ export type Database = {
           first_name: string
           id: string
           last_name: string
-          username?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string | null
-          first_name?: string
-          id?: string
-          last_name?: string
-          username?: string | null
-        }
-        Relationships: []
-      }
-      team_members: {
-        Row: {
-          avatar_url: string | null
-          created_at: string | null
-          first_name: string
-          id: string
-          last_name: string
-          role: string
-          team_id: string
-          user_id: string
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string | null
-          first_name: string
-          id?: string
-          last_name: string
-          role: string
-          team_id: string
-          user_id: string
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string | null
-          first_name?: string
-          id?: string
-          last_name?: string
+          permissions?: Json | null
           role?: string
-          team_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "team_members_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      teams: {
-        Row: {
-          created_at: string | null
-          created_by: string
-          description: string | null
-          id: string
-          name: string
-          website: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          created_by: string
-          description?: string | null
-          id?: string
-          name: string
-          website?: string | null
+          settings?: Json | null
+          username?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string | null
-          created_by?: string
-          description?: string | null
+          first_name?: string
           id?: string
-          name?: string
-          website?: string | null
+          last_name?: string
+          permissions?: Json | null
+          role?: string
+          settings?: Json | null
+          username?: string | null
         }
         Relationships: []
       }
@@ -142,35 +143,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       is_profile_owner: {
         Args: {
           profile_id: string
-        }
-        Returns: boolean
-      }
-      is_team_admin_or_owner: {
-        Args: {
-          team_id: string
-        }
-        Returns: boolean
-      }
-      is_team_admin_or_owner_secure: {
-        Args: {
-          team_id: string
-          user_id: string
-        }
-        Returns: boolean
-      }
-      is_team_member: {
-        Args: {
-          team_id: string
-        }
-        Returns: boolean
-      }
-      is_team_member_secure: {
-        Args: {
-          team_id: string
-          user_id: string
         }
         Returns: boolean
       }

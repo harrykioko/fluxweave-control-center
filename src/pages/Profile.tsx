@@ -3,9 +3,7 @@ import { useEffect, useState } from "react";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useTeam } from "@/contexts/TeamContext";
 import { ProfileForm } from "@/components/profile/ProfileForm";
-import { TeamsList } from "@/components/team/TeamsList";
 import { Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuditLogsDialog } from "@/components/profile/AuditLogsDialog";
@@ -16,11 +14,13 @@ interface Profile {
   last_name: string;
   username: string | null;
   avatar_url: string | null;
+  role: string;
+  settings: any;
+  permissions: any;
 }
 
 export default function Profile() {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const { teams } = useTeam();
   const { toast } = useToast();
   const [auditLogsOpen, setAuditLogsOpen] = useState(false);
 
@@ -60,7 +60,7 @@ export default function Profile() {
             <div className="flex justify-between items-start">
               <div>
                 <h1 className="text-3xl font-bold text-slate-800">Profile</h1>
-                <p className="text-slate-500 mt-2">Manage your personal information and teams.</p>
+                <p className="text-slate-500 mt-2">Manage your personal information and settings.</p>
               </div>
               <Button
                 variant="outline"
@@ -74,7 +74,6 @@ export default function Profile() {
           </div>
 
           <ProfileForm profile={profile} onProfileUpdate={loadProfile} />
-          <TeamsList teams={teams} />
           <AuditLogsDialog open={auditLogsOpen} onOpenChange={setAuditLogsOpen} />
         </div>
       </main>
