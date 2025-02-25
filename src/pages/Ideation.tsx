@@ -6,7 +6,7 @@ import { IdeaDetailDialog } from "@/components/ideation/IdeaDetailDialog";
 import { NewIdeaDialog } from "@/components/ideation/NewIdeaDialog";
 import { IdeaEvaluationDialog } from "@/components/ideation/IdeaEvaluationDialog";
 import { Button } from "@/components/ui/button";
-import { Plus, Brain } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -21,13 +21,14 @@ interface Idea {
   first_name?: string;
   last_name?: string;
   avatar_url?: string;
-  createdAt: string; // Add this to match the expected type
+  createdAt: string;
 }
 
 export default function Ideation() {
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
   const [isNewIdeaOpen, setIsNewIdeaOpen] = useState(false);
   const [isEvaluationOpen, setIsEvaluationOpen] = useState(false);
+  const [currentIdea, setCurrentIdea] = useState("");
 
   const { data: ideas = [], isLoading } = useQuery({
     queryKey: ["ideas"],
@@ -41,10 +42,16 @@ export default function Ideation() {
       
       return (data || []).map((idea) => ({
         ...idea,
-        createdAt: idea.created_at, // Map created_at to createdAt
+        createdAt: idea.created_at,
       })) as Idea[];
     },
   });
+
+  const handleEvaluate = (idea: string) => {
+    setCurrentIdea(idea);
+    setIsNewIdeaOpen(false);
+    setIsEvaluationOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
@@ -52,27 +59,16 @@ export default function Ideation() {
       <main className="pt-20 px-4 md:px-8">
         <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
           {/* Header */}
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-800">Ideas</h1>
-              <p className="text-slate-500 mt-2">What are we building next?</p>
-            </div>
-            <div className="flex gap-3">
-              <Button 
-                className="bg-white/50 hover:bg-white/60 text-purple-600" 
-                onClick={() => setIsEvaluationOpen(true)}
-              >
-                <Brain className="h-4 w-4 mr-2" />
-                AI Evaluate
-              </Button>
-              <Button 
-                className="bg-white/50 hover:bg-white/60" 
-                onClick={() => setIsNewIdeaOpen(true)}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Idea
-              </Button>
-            </div>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-slate-800">Ideas</h1>
+            <p className="text-slate-500 mt-2 mb-6">What are we building next?</p>
+            <Button 
+              className="bg-purple-600 hover:bg-purple-700 text-white" 
+              onClick={() => setIsNewIdeaOpen(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              New Idea
+            </Button>
           </div>
 
           {/* Ideas Grid */}
@@ -92,6 +88,7 @@ export default function Ideation() {
       <NewIdeaDialog
         open={isNewIdeaOpen}
         onOpenChange={setIsNewIdeaOpen}
+        onEvaluate={handleEvaluate}
       />
       <IdeaDetailDialog
         open={!!selectedIdea}
@@ -101,6 +98,7 @@ export default function Ideation() {
       <IdeaEvaluationDialog
         open={isEvaluationOpen}
         onOpenChange={setIsEvaluationOpen}
+        initialIdea={currentIdea}
       />
     </div>
   );
