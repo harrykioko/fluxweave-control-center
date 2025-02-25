@@ -27,10 +27,7 @@ export function TeamDetailsDialog({ team, open, onOpenChange }: TeamDetailsDialo
 
       const { data, error } = await supabase
         .from('team_members')
-        .select(`
-          *,
-          profiles:user_id (*)
-        `)
+        .select('*')
         .eq('team_id', team.id);
 
       if (error) {
@@ -43,9 +40,9 @@ export function TeamDetailsDialog({ team, open, onOpenChange }: TeamDetailsDialo
         ...member,
         role: member.role as TeamRole,
         profiles: {
-          first_name: member.profiles.first_name,
-          last_name: member.profiles.last_name,
-          avatar_url: member.profiles.avatar_url
+          first_name: member.first_name,
+          last_name: member.last_name,
+          avatar_url: member.avatar_url
         }
       })) as TeamMemberWithProfile[];
 
