@@ -45,20 +45,23 @@ export async function addNewTeamMember(teamId: string, email: string, role: Team
   // First, find the user by email
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("id")
+    .select("id, first_name, last_name, avatar_url")
     .eq("username", email)
     .maybeSingle();
 
   if (profileError) throw profileError;
   if (!profile) throw new Error("User not found");
 
-  // Then add the user to the team
+  // Then add the user to the team with their profile information
   const { error: memberError } = await supabase
     .from("team_members")
     .insert([{
       team_id: teamId,
       user_id: profile.id,
-      role
+      role,
+      first_name: profile.first_name,
+      last_name: profile.last_name,
+      avatar_url: profile.avatar_url
     }]);
 
   if (memberError) throw memberError;
