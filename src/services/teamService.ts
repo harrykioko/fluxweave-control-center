@@ -2,11 +2,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Team, TeamMember, TeamRole } from "@/types/team";
 
-interface ProfileResponse {
-  id: string;
-  email: string | null;
-}
-
 export async function fetchTeams(): Promise<Team[]> {
   const { data, error } = await supabase
     .from("teams")
@@ -38,29 +33,33 @@ export async function fetchTeamMembers(teamId: string): Promise<TeamMember[]> {
     .eq("team_id", teamId);
 
   if (error) throw error;
-  return data;
+  
+  // Cast the role to TeamRole since we've enforced this in the database
+  return data.map(member => ({
+    ...member,
+    role: member.role as TeamRole
+  }));
 }
 
 export async function addNewTeamMember(teamId: string, email: string, role: TeamRole): Promise<void> {
   // First, find the user by email
-  const { data: userProfile, error: profileError } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("id, email")
-    .eq("email", email)
+    .select("id")
+    .eq("username", email)
     .maybeSingle();
 
   if (profileError) throw profileError;
-  if (!userProfile) throw new Error("User not found");
+  if (!profile) throw new Error("User not found");
 
   // Then add the user to the team
   const { error: memberError } = await supabase
     .from("team_members")
     .insert([{
       team_id: teamId,
-      user_id: userProfile.id,
+      user_id: profile.id,
       role
     }]);
 
   if (memberError) throw memberError;
 }
-

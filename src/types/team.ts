@@ -19,6 +19,14 @@ export interface TeamMember {
   created_at?: string;
 }
 
+export interface TeamMemberWithProfile extends TeamMember {
+  profiles: {
+    first_name: string;
+    last_name: string;
+    avatar_url: string | null;
+  };
+}
+
 // Context value type
 export interface TeamContextValue {
   currentTeam: Team | null;

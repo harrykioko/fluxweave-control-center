@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Team, TeamMember } from "@/types/team";
+import { Team, TeamMemberWithProfile } from "@/types/team";
 import { Globe, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,14 +16,6 @@ interface TeamDetailsDialogProps {
   team: Team | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-interface TeamMemberWithProfile extends TeamMember {
-  profiles: {
-    first_name: string;
-    last_name: string;
-    avatar_url: string | null;
-  };
 }
 
 export function TeamDetailsDialog({ team, open, onOpenChange }: TeamDetailsDialogProps) {
@@ -37,7 +29,7 @@ export function TeamDetailsDialog({ team, open, onOpenChange }: TeamDetailsDialo
         .from('team_members')
         .select(`
           *,
-          profiles:user_id(
+          profiles!team_members_user_id_fkey (
             first_name,
             last_name,
             avatar_url
@@ -50,7 +42,13 @@ export function TeamDetailsDialog({ team, open, onOpenChange }: TeamDetailsDialo
         return;
       }
 
-      setMembers(data as TeamMemberWithProfile[]);
+      // Cast the response to our expected type
+      const typedData = data.map(member => ({
+        ...member,
+        role: member.role as TeamRole
+      })) as TeamMemberWithProfile[];
+
+      setMembers(typedData);
     }
 
     if (open && team) {
