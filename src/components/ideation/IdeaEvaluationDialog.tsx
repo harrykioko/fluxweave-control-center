@@ -32,8 +32,12 @@ export function IdeaEvaluationDialog({ open, onOpenChange, initialIdea = "" }: I
     
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('evaluate-idea', {
-        body: { idea: message, context: initialIdea },
+      const { data, error } = await supabase.functions.invoke("evaluate-idea", {
+        body: { 
+          idea: message,
+          context: initialIdea,
+          tab: currentTab
+        },
       });
 
       if (error) throw error;
@@ -72,8 +76,8 @@ export function IdeaEvaluationDialog({ open, onOpenChange, initialIdea = "" }: I
         }
       };
 
-      const { data, error } = await supabase.from('ideas').insert({
-        title: initialIdea.split('\n')[0] || "New Idea",
+      const { data, error } = await supabase.from("ideas").insert({
+        title: initialIdea.split("\n")[0] || "New Idea",
         description: initialIdea,
         tags: ["draft"],
         status: "draft",
@@ -86,7 +90,6 @@ export function IdeaEvaluationDialog({ open, onOpenChange, initialIdea = "" }: I
       toast({
         title: "Success",
         description: "Your idea has been saved!",
-        variant: "default",
       });
 
       queryClient.invalidateQueries({ queryKey: ["ideas"] });
@@ -102,8 +105,8 @@ export function IdeaEvaluationDialog({ open, onOpenChange, initialIdea = "" }: I
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl h-[90vh] p-0 bg-white/60 backdrop-blur-xl">
-        <div className="grid grid-cols-2 h-full divide-x divide-white/20">
+      <DialogContent className="max-w-6xl h-[90vh] p-0 bg-white/60 backdrop-blur-xl border-none">
+        <div className="grid grid-cols-2 h-full divide-x divide-slate-200">
           <WorkspaceSection
             initialIdea={initialIdea}
             analysis={analysis}
