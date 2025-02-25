@@ -4,8 +4,9 @@ import { AppSidebar } from "@/components/layout/AppSidebar";
 import { IdeaCard } from "@/components/ideation/IdeaCard";
 import { IdeaDetailDialog } from "@/components/ideation/IdeaDetailDialog";
 import { NewIdeaDialog } from "@/components/ideation/NewIdeaDialog";
+import { IdeaEvaluationDialog } from "@/components/ideation/IdeaEvaluationDialog";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Brain } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -25,6 +26,7 @@ interface Idea {
 export default function Ideation() {
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
   const [isNewIdeaOpen, setIsNewIdeaOpen] = useState(false);
+  const [isEvaluationOpen, setIsEvaluationOpen] = useState(false);
 
   const { data: ideas = [], isLoading } = useQuery({
     queryKey: ["ideas"],
@@ -36,10 +38,9 @@ export default function Ideation() {
 
       if (error) throw error;
       
-      // Transform the data to ensure consistent property naming
       return (data || []).map((idea) => ({
         ...idea,
-        createdAt: idea.created_at, // Add the camelCase version while keeping snake_case
+        createdAt: idea.created_at,
       })) as (Idea & { createdAt: string })[];
     },
   });
@@ -55,10 +56,22 @@ export default function Ideation() {
               <h1 className="text-3xl font-bold text-slate-800">Ideas</h1>
               <p className="text-slate-500 mt-2">What are we building next?</p>
             </div>
-            <Button className="bg-white/50 hover:bg-white/60" onClick={() => setIsNewIdeaOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Idea
-            </Button>
+            <div className="flex gap-3">
+              <Button 
+                className="bg-white/50 hover:bg-white/60 text-purple-600" 
+                onClick={() => setIsEvaluationOpen(true)}
+              >
+                <Brain className="h-4 w-4 mr-2" />
+                AI Evaluate
+              </Button>
+              <Button 
+                className="bg-white/50 hover:bg-white/60" 
+                onClick={() => setIsNewIdeaOpen(true)}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Idea
+              </Button>
+            </div>
           </div>
 
           {/* Ideas Grid */}
@@ -83,6 +96,10 @@ export default function Ideation() {
         open={!!selectedIdea}
         onOpenChange={(open) => !open && setSelectedIdea(null)}
         idea={selectedIdea}
+      />
+      <IdeaEvaluationDialog
+        open={isEvaluationOpen}
+        onOpenChange={setIsEvaluationOpen}
       />
     </div>
   );
