@@ -21,6 +21,7 @@ interface Idea {
   first_name?: string;
   last_name?: string;
   avatar_url?: string;
+  createdAt: string; // Add this to match the expected type
 }
 
 export default function Ideation() {
@@ -40,8 +41,8 @@ export default function Ideation() {
       
       return (data || []).map((idea) => ({
         ...idea,
-        createdAt: idea.created_at,
-      })) as (Idea & { createdAt: string })[];
+        createdAt: idea.created_at, // Map created_at to createdAt
+      })) as Idea[];
     },
   });
 
