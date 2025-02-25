@@ -1,22 +1,22 @@
 
 import type { Database } from "@/integrations/supabase/types";
 
-// Raw database types without any transformations
-export type RawTeam = {
+// Simple raw types that match exactly what Supabase returns
+export interface RawTeam {
   id: string;
   name: string;
   description: string | null;
   created_by: string;
   created_at: string | null;
-};
+}
 
-export type RawTeamMember = {
+export interface RawTeamMember {
   id: string;
   team_id: string;
   user_id: string;
   role: string;
   created_at: string | null;
-};
+}
 
 // Database types as they appear in Supabase
 export type DbTeamRow = Database['public']['Tables']['teams']['Row']
