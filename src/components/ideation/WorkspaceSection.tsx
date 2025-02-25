@@ -3,6 +3,7 @@ import { Brain, MessageSquare, Save, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Analysis } from "./types";
+import { useEffect, useRef, useState } from "react";
 
 interface WorkspaceSectionProps {
   initialIdea: string;
@@ -23,6 +24,48 @@ export function WorkspaceSection({
   onSubmitMessage,
   onSaveIdea,
 }: WorkspaceSectionProps) {
+  const [displayedAnalysis, setDisplayedAnalysis] = useState<Analysis>({
+    market: null,
+    feasibility: null,
+    considerations: null,
+    "next-steps": null
+  });
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const typingSpeedRef = useRef<number>(30); // ms per character
+
+  // Effect to smoothly reveal new analysis content
+  useEffect(() => {
+    Object.entries(analysis).forEach(([key, value]) => {
+      if (value !== displayedAnalysis[key as keyof Analysis] && value !== null) {
+        let currentText = "";
+        const fullText = value;
+        let currentIndex = 0;
+
+        const typeNextCharacter = () => {
+          if (currentIndex < fullText.length) {
+            currentText += fullText[currentIndex];
+            setDisplayedAnalysis(prev => ({
+              ...prev,
+              [key]: currentText
+            }));
+            currentIndex++;
+            setTimeout(typeNextCharacter, typingSpeedRef.current);
+          }
+        };
+
+        typeNextCharacter();
+      }
+    });
+  }, [analysis]);
+
+  // Auto-scroll effect
+  useEffect(() => {
+    if (scrollRef.current) {
+      const scrollElement = scrollRef.current;
+      scrollElement.scrollTop = scrollElement.scrollHeight;
+    }
+  }, [displayedAnalysis]);
+
   return (
     <div className="p-6 space-y-4 flex flex-col h-full bg-white/80 backdrop-blur-sm">
       <div className="flex items-center space-x-3">
@@ -33,16 +76,16 @@ export function WorkspaceSection({
       </div>
 
       <ScrollArea className="flex-1 -mr-6 pr-6">
-        <div className="space-y-4">
+        <div className="space-y-4" ref={scrollRef}>
           <div className="p-4 rounded-lg bg-white shadow-sm border border-slate-100">
             <h3 className="font-medium text-slate-700 mb-2">Initial Idea</h3>
             <p className="text-slate-600 whitespace-pre-wrap">{initialIdea}</p>
           </div>
 
           <div className="space-y-4">
-            {Object.entries(analysis).map(([key, value]) => 
+            {Object.entries(displayedAnalysis).map(([key, value]) => 
               value && (
-                <div key={key} className="p-4 rounded-lg bg-white shadow-sm border border-slate-100">
+                <div key={key} className="p-4 rounded-lg bg-white shadow-sm border border-slate-100 overflow-hidden">
                   <h3 className="font-medium text-slate-700 mb-2 capitalize">{key.replace("-", " ")}</h3>
                   <div 
                     className="prose prose-slate max-w-none prose-headings:text-slate-700 prose-p:text-slate-600 prose-li:text-slate-600 prose-strong:text-slate-700" 
