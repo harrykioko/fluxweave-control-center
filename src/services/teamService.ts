@@ -70,24 +70,20 @@ export const createNewTeam = async (name: string, description?: string): Promise
   }
 };
 
+interface TeamMemberResponse {
+  id: string;
+  team_id: string;
+  user_id: string;
+  role: string;
+  created_at: string | null;
+}
+
 export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> => {
   try {
-    type RawTeamMemberResponse = {
-      data: Array<{
-        id: string;
-        team_id: string;
-        user_id: string;
-        role: string;
-        created_at: string | null;
-      }> | null;
-      error: any;
-    };
-
-    // Using type assertion to handle the Supabase response
     const { data, error } = await supabase
       .from('team_members')
       .select('*')
-      .eq('team_id', teamId) as RawTeamMemberResponse;
+      .eq('team_id', teamId) as { data: TeamMemberResponse[] | null, error: any };
 
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
