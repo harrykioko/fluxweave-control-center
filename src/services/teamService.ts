@@ -1,7 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Team, TeamMember, TeamRole } from "@/types/team";
-import { RawTeam, RawTeamMember } from "@/types/supabaseTypes";
+import { DbTeam, DbTeamMember } from "@/types/supabaseTypes";
 import { isValidTeamRole } from "@/utils/teamUtils";
 
 export class TeamServiceError extends Error {
@@ -11,7 +11,7 @@ export class TeamServiceError extends Error {
   }
 }
 
-const mapDbTeamToDomain = (dbTeam: RawTeam): Team => ({
+const mapDbTeamToDomain = (dbTeam: DbTeam): Team => ({
   id: dbTeam.id,
   name: dbTeam.name,
   description: dbTeam.description,
@@ -19,7 +19,7 @@ const mapDbTeamToDomain = (dbTeam: RawTeam): Team => ({
   created_at: dbTeam.created_at || undefined,
 });
 
-const mapDbTeamMemberToDomain = (dbMember: RawTeamMember): TeamMember => ({
+const mapDbTeamMemberToDomain = (dbMember: DbTeamMember): TeamMember => ({
   id: dbMember.id,
   team_id: dbMember.team_id,
   user_id: dbMember.user_id,
@@ -36,7 +36,7 @@ export const fetchTeams = async (): Promise<Team[]> => {
     if (error) throw new TeamServiceError("Failed to fetch teams", error);
     if (!data) return [];
 
-    return (data as RawTeam[]).map(mapDbTeamToDomain);
+    return (data as DbTeam[]).map(mapDbTeamToDomain);
   } catch (error) {
     console.error("[TeamService] fetchTeams error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error fetching teams", error);
@@ -61,7 +61,7 @@ export const createNewTeam = async (name: string, description?: string): Promise
     if (error) throw new TeamServiceError("Failed to create team", error);
     if (!data) throw new TeamServiceError("No data returned after team creation");
     
-    return mapDbTeamToDomain(data as RawTeam);
+    return mapDbTeamToDomain(data as DbTeam);
   } catch (error) {
     console.error("[TeamService] createNewTeam error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error creating team", error);
@@ -78,7 +78,7 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
     
-    return (data as RawTeamMember[]).map(mapDbTeamMemberToDomain);
+    return (data as DbTeamMember[]).map(mapDbTeamMemberToDomain);
   } catch (error) {
     console.error("[TeamService] fetchTeamMembers error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error fetching team members", error);
