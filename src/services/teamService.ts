@@ -13,7 +13,7 @@ interface TeamMemberResponse {
 
 interface ProfileResponse {
   id: string;
-  email: string;
+  email: string | null;
 }
 
 export async function fetchTeams(): Promise<Team[]> {
@@ -47,26 +47,26 @@ export async function fetchTeamMembers(teamId: string): Promise<TeamMember[]> {
     .eq("team_id", teamId);
 
   if (error) throw error;
-  return data as TeamMemberResponse[];
+  return data as TeamMember[];
 }
 
 export async function addNewTeamMember(teamId: string, email: string, role: TeamRole): Promise<void> {
   // First, find the user by email
-  const { data: profile, error: profileError } = await supabase
+  const { data: userProfile, error: profileError } = await supabase
     .from("profiles")
     .select("id")
     .eq("email", email)
-    .maybeSingle();
+    .single() as { data: ProfileResponse | null; error: any };
 
   if (profileError) throw profileError;
-  if (!profile) throw new Error("User not found");
+  if (!userProfile) throw new Error("User not found");
 
   // Then add the user to the team
   const { error: memberError } = await supabase
     .from("team_members")
     .insert([{
       team_id: teamId,
-      user_id: profile.id,
+      user_id: userProfile.id,
       role
     }]);
 
