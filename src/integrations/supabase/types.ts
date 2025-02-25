@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      activities: {
+        Row: {
+          activity_type: Database["public"]["Enums"]["activity_type"]
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          metadata: Json
+          user_id: string
+        }
+        Insert: {
+          activity_type: Database["public"]["Enums"]["activity_type"]
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          metadata?: Json
+          user_id: string
+        }
+        Update: {
+          activity_type?: Database["public"]["Enums"]["activity_type"]
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          metadata?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           changed_at: string
@@ -140,7 +170,20 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      recent_user_activities: {
+        Row: {
+          activity_type: Database["public"]["Enums"]["activity_type"] | null
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string | null
+          first_name: string | null
+          id: string | null
+          last_name: string | null
+          metadata: Json | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       is_admin: {
@@ -153,9 +196,30 @@ export type Database = {
         }
         Returns: boolean
       }
+      track_activity: {
+        Args: {
+          activity_type: Database["public"]["Enums"]["activity_type"]
+          entity_type: string
+          entity_id: string
+          metadata?: Json
+        }
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      activity_type:
+        | "task_created"
+        | "task_updated"
+        | "task_completed"
+        | "idea_created"
+        | "idea_updated"
+        | "idea_status_changed"
+        | "portfolio_project_created"
+        | "portfolio_project_updated"
+        | "portfolio_metrics_updated"
+        | "resource_created"
+        | "resource_updated"
+        | "resource_archived"
     }
     CompositeTypes: {
       [_ in never]: never

@@ -7,6 +7,7 @@ import { ProfileForm } from "@/components/profile/ProfileForm";
 import { Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuditLogsDialog } from "@/components/profile/AuditLogsDialog";
+import { ActivityFeed } from "@/components/profile/ActivityFeed";
 
 interface Profile {
   id: string;
@@ -55,7 +56,7 @@ export default function Profile() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
       <AppSidebar />
       <main className="pt-20 px-4 md:px-8">
-        <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
+        <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
           <div className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-start">
               <div>
@@ -73,7 +74,15 @@ export default function Profile() {
             </div>
           </div>
 
-          <ProfileForm profile={profile} onProfileUpdate={loadProfile} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <ProfileForm profile={profile} onProfileUpdate={loadProfile} />
+            </div>
+            <div>
+              <ActivityFeed />
+            </div>
+          </div>
+          
           <AuditLogsDialog open={auditLogsOpen} onOpenChange={setAuditLogsOpen} />
         </div>
       </main>
