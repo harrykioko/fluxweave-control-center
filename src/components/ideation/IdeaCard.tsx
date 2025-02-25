@@ -10,6 +10,9 @@ interface IdeaCardProps {
     tags: string[];
     status: "draft" | "active" | "completed";
     createdAt: string;
+    first_name?: string;
+    last_name?: string;
+    avatar_url?: string;
   };
   onClick?: () => void;
   className?: string;
@@ -48,6 +51,11 @@ export function IdeaCard({ idea, onClick, className }: IdeaCardProps) {
             <div className="flex-1">
               <h3 className="font-semibold text-slate-800">{idea.title}</h3>
               <p className="text-sm text-slate-500 mt-1 line-clamp-2">{idea.description}</p>
+              {idea.first_name && (
+                <p className="text-xs text-slate-400 mt-2">
+                  By {idea.first_name} {idea.last_name}
+                </p>
+              )}
             </div>
           </div>
           <div className="mt-4 flex items-center justify-between text-xs text-slate-500">

@@ -2,6 +2,10 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Brain, MessageSquare, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 
 interface IdeaDetailDialogProps {
   open: boolean;
@@ -13,17 +17,46 @@ interface IdeaDetailDialogProps {
     tags: string[];
     status: "draft" | "active" | "completed";
     createdAt: string;
+    first_name?: string;
+    last_name?: string;
   } | null;
 }
 
 export function IdeaDetailDialog({ open, onOpenChange, idea }: IdeaDetailDialogProps) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
   if (!idea) return null;
+
+  const updateStatus = async (newStatus: "draft" | "active" | "completed") => {
+    try {
+      const { error } = await supabase
+        .from("ideas")
+        .update({ status: newStatus })
+        .eq("id", idea.id);
+
+      if (error) throw error;
+
+      await queryClient.invalidateQueries({ queryKey: ["ideas"] });
+      
+      toast({
+        title: "Status updated",
+        description: `Idea status changed to ${newStatus}`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl h-[90vh] p-0 bg-white/60 backdrop-blur-xl">
         <div className="grid grid-cols-2 h-full">
-          {/* Left Panel - Chat Interface */}
+          {/* Left Panel - Details */}
           <div className="p-6 border-r border-white/20">
             <div className="flex items-center space-x-3 mb-6">
               <div className="p-2 bg-white/50 backdrop-blur-md rounded-lg">
@@ -43,12 +76,36 @@ export function IdeaDetailDialog({ open, onOpenChange, idea }: IdeaDetailDialogP
                 ))}
               </div>
               <p className="text-slate-600">{idea.description}</p>
-              <div className="h-[calc(100vh-300px)] bg-white/50 backdrop-blur-md rounded-xl p-4">
-                <div className="flex items-center space-x-2 mb-4">
-                  <MessageSquare className="h-4 w-4 text-slate-600" />
-                  <span className="text-sm font-medium text-slate-700">Discussion</span>
+              
+              <div className="pt-4 border-t border-white/20">
+                <h3 className="text-sm font-medium text-slate-700 mb-3">Status</h3>
+                <div className="flex gap-2">
+                  {(["draft", "active", "completed"] as const).map((status) => (
+                    <Button
+                      key={status}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => updateStatus(status)}
+                      className={cn(
+                        "capitalize",
+                        idea.status === status && "bg-white/50"
+                      )}
+                    >
+                      {status}
+                    </Button>
+                  ))}
                 </div>
-                {/* Chat messages will go here */}
+              </div>
+
+              <div className="mt-4">
+                {idea.first_name && (
+                  <p className="text-sm text-slate-500">
+                    Created by {idea.first_name} {idea.last_name}
+                  </p>
+                )}
+                <p className="text-sm text-slate-500">
+                  on {new Date(idea.createdAt).toLocaleDateString()}
+                </p>
               </div>
             </div>
           </div>
@@ -62,7 +119,6 @@ export function IdeaDetailDialog({ open, onOpenChange, idea }: IdeaDetailDialogP
               <h2 className="text-xl font-semibold text-slate-800">Analysis</h2>
             </div>
             <div className="space-y-4">
-              {/* Analysis sections will go here */}
               {["Market Research", "Competition", "Implementation", "Resources"].map((section) => (
                 <div
                   key={section}

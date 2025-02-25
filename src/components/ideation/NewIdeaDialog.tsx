@@ -3,27 +3,49 @@ import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Brain, MessageSquare } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/components/ui/use-toast";
 
 interface NewIdeaDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onIdeaCreate: (idea: any) => void;
 }
 
-export function NewIdeaDialog({ open, onOpenChange, onIdeaCreate }: NewIdeaDialogProps) {
+export function NewIdeaDialog({ open, onOpenChange }: NewIdeaDialogProps) {
   const [message, setMessage] = useState("");
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
-  const handleSubmit = () => {
-    const newIdea = {
-      id: Date.now().toString(),
-      title: "New Idea",
-      description: message,
-      tags: ["innovation"],
-      status: "draft",
-      createdAt: new Date().toISOString(),
-    };
-    onIdeaCreate(newIdea);
-    setMessage("");
+  const handleSubmit = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("ideas")
+        .insert([{
+          title: "New Idea",
+          description: message,
+          tags: ["innovation"],
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      await queryClient.invalidateQueries({ queryKey: ["ideas"] });
+      setMessage("");
+      onOpenChange(false);
+      
+      toast({
+        title: "Success",
+        description: "Your idea has been created!",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
