@@ -29,11 +29,7 @@ export function TeamDetailsDialog({ team, open, onOpenChange }: TeamDetailsDialo
         .from('team_members')
         .select(`
           *,
-          profiles!inner(
-            first_name,
-            last_name,
-            avatar_url
-          )
+          profiles:user_id (*)
         `)
         .eq('team_id', team.id);
 
