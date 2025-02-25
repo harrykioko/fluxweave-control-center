@@ -2,19 +2,19 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Team, TeamMember, TeamRole } from "@/types/team";
 
-// Define specific types for responses
-type TeamMemberResponse = {
+// Define specific types for database responses
+interface TeamMemberResponse {
   id: string;
   team_id: string;
   user_id: string;
   role: TeamRole;
   created_at?: string;
-};
+}
 
-type ProfileResponse = {
+interface ProfileResponse {
   id: string;
   email: string;
-};
+}
 
 export async function fetchTeams(): Promise<Team[]> {
   const { data, error } = await supabase
@@ -44,31 +44,31 @@ export async function fetchTeamMembers(teamId: string): Promise<TeamMember[]> {
   const { data, error } = await supabase
     .from("team_members")
     .select("*")
-    .eq("team_id", teamId)
-    .returns<TeamMemberResponse[]>();
+    .eq("team_id", teamId);
 
   if (error) throw error;
-  return data;
+  return data as TeamMemberResponse[];
 }
 
 export async function addNewTeamMember(teamId: string, email: string, role: TeamRole): Promise<void> {
-  const { data: userData, error: userError } = await supabase
+  // First, find the user by email
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("id")
     .eq("email", email)
-    .returns<ProfileResponse>()
-    .single();
+    .maybeSingle();
 
-  if (userError) throw userError;
-  if (!userData) throw new Error("User not found");
+  if (profileError) throw profileError;
+  if (!profile) throw new Error("User not found");
 
-  const { error } = await supabase
+  // Then add the user to the team
+  const { error: memberError } = await supabase
     .from("team_members")
     .insert([{
       team_id: teamId,
-      user_id: userData.id,
+      user_id: profile.id,
       role
     }]);
 
-  if (error) throw error;
+  if (memberError) throw memberError;
 }
