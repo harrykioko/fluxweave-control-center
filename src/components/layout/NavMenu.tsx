@@ -2,7 +2,8 @@
 import { Home, BrainCircuit, CheckSquare, BarChart3, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const menuItems = [{
+// Export the menuItems array so it can be imported by other components
+export const menuItems = [{
   icon: Home,
   label: "Dashboard",
   href: "/"
@@ -44,4 +45,3 @@ export function NavMenu({ collapsed }: { collapsed: boolean }) {
     </nav>
   );
 }
-
