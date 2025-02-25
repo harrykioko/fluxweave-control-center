@@ -15,7 +15,7 @@ interface Idea {
   description: string;
   tags: string[];
   status: "draft" | "active" | "completed";
-  createdAt: string;
+  created_at: string;
   created_by: string;
   first_name?: string;
   last_name?: string;

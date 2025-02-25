@@ -19,13 +19,17 @@ export function NewIdeaDialog({ open, onOpenChange }: NewIdeaDialogProps) {
 
   const handleSubmit = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
+
       const { data, error } = await supabase
         .from("ideas")
-        .insert([{
+        .insert({
           title: "New Idea",
           description: message,
           tags: ["innovation"],
-        }])
+          created_by: user.id,
+        })
         .select()
         .single();
 

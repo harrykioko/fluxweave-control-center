@@ -9,7 +9,7 @@ interface IdeaCardProps {
     description: string;
     tags: string[];
     status: "draft" | "active" | "completed";
-    createdAt: string;
+    created_at: string;
     first_name?: string;
     last_name?: string;
     avatar_url?: string;
@@ -59,7 +59,7 @@ export function IdeaCard({ idea, onClick, className }: IdeaCardProps) {
             </div>
           </div>
           <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
-            <span>{new Date(idea.createdAt).toLocaleDateString()}</span>
+            <span>{new Date(idea.created_at).toLocaleDateString()}</span>
             <span className={cn(
               "px-2 py-1 rounded-full",
               idea.status === "draft" && "bg-amber-100/50 text-amber-700",
