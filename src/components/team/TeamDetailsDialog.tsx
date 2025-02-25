@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Team, TeamMemberWithProfile } from "@/types/team";
+import { Team, TeamMemberWithProfile, TeamRole } from "@/types/team";
 import { Globe, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,7 +29,7 @@ export function TeamDetailsDialog({ team, open, onOpenChange }: TeamDetailsDialo
         .from('team_members')
         .select(`
           *,
-          profiles!team_members_user_id_fkey (
+          profiles:user_id (
             first_name,
             last_name,
             avatar_url
