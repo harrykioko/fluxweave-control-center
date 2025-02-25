@@ -29,7 +29,7 @@ export function TeamDetailsDialog({ team, open, onOpenChange }: TeamDetailsDialo
         .from('team_members')
         .select(`
           *,
-          profiles:user_id (
+          profiles!inner(
             first_name,
             last_name,
             avatar_url
@@ -42,10 +42,15 @@ export function TeamDetailsDialog({ team, open, onOpenChange }: TeamDetailsDialo
         return;
       }
 
-      // Cast the response to our expected type
+      // Transform the data to match our expected type
       const typedData = data.map(member => ({
         ...member,
-        role: member.role as TeamRole
+        role: member.role as TeamRole,
+        profiles: {
+          first_name: member.profiles.first_name,
+          last_name: member.profiles.last_name,
+          avatar_url: member.profiles.avatar_url
+        }
       })) as TeamMemberWithProfile[];
 
       setMembers(typedData);
