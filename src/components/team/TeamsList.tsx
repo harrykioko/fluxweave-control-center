@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Users } from "lucide-react";
 import { Team } from "@/types/team";
 import { CreateTeamDialog } from "@/components/team/CreateTeamDialog";
+import { TeamDetailsDialog } from "@/components/team/TeamDetailsDialog";
 import { useState } from "react";
 
 interface TeamsListProps {
@@ -11,6 +12,8 @@ interface TeamsListProps {
 
 export function TeamsList({ teams }: TeamsListProps) {
   const [createTeamOpen, setCreateTeamOpen] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   return (
     <div className="bg-white/30 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
@@ -35,7 +38,11 @@ export function TeamsList({ teams }: TeamsListProps) {
             {teams.map((team) => (
               <div
                 key={team.id}
-                className="flex items-center justify-between p-4 bg-white/50 backdrop-blur-md rounded-lg"
+                className="flex items-center justify-between p-4 bg-white/50 backdrop-blur-md rounded-lg cursor-pointer hover:bg-white/70 transition-colors"
+                onClick={() => {
+                  setSelectedTeam(team);
+                  setDetailsOpen(true);
+                }}
               >
                 <div>
                   <h3 className="font-medium text-slate-800">{team.name}</h3>
@@ -52,6 +59,12 @@ export function TeamsList({ teams }: TeamsListProps) {
       <CreateTeamDialog
         open={createTeamOpen}
         onOpenChange={setCreateTeamOpen}
+      />
+
+      <TeamDetailsDialog 
+        team={selectedTeam}
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
       />
     </div>
   );

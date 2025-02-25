@@ -6,6 +6,7 @@ export interface Team {
   id: string;
   name: string;
   description: string | null;
+  website: string | null;
   created_by: string;
   created_at?: string;
 }
