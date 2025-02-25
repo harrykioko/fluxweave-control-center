@@ -70,25 +70,28 @@ export const createNewTeam = async (name: string, description?: string): Promise
   }
 };
 
+interface RawTeamMember {
+  id: string;
+  team_id: string;
+  user_id: string;
+  role: string;
+  created_at: string | null;
+}
+
 export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> => {
   try {
-    type RawTeamMember = {
-      id: string;
-      team_id: string;
-      user_id: string;
-      role: string;
-      created_at: string | null;
-    };
-
     const { data, error } = await supabase
       .from('team_members')
       .select('*')
-      .eq('team_id', teamId) as { data: RawTeamMember[] | null, error: any };
+      .eq('team_id', teamId);
 
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
     
-    return data
+    // Explicitly cast the data to RawTeamMember[]
+    const rawMembers = data as RawTeamMember[];
+    
+    return rawMembers
       .filter(isDbTeamMember)
       .map(mapDbTeamMemberToDomain);
   } catch (error) {
@@ -122,3 +125,4 @@ export const addNewTeamMember = async (teamId: string, email: string, role: Team
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error adding team member", error);
   }
 };
+
