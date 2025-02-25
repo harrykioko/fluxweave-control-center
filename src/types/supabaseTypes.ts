@@ -1,6 +1,6 @@
 
-// Define minimal database types that match exactly what we need from Supabase
-export interface DbTeam {
+// Define exact database table types that match Supabase schema
+export type DbTeam = {
   id: string;
   name: string;
   description: string | null;
@@ -8,7 +8,7 @@ export interface DbTeam {
   created_at: string | null;
 }
 
-export interface DbTeamMember {
+export type DbTeamMember = {
   id: string;
   team_id: string;
   user_id: string;

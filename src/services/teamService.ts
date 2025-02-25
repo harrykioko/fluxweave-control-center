@@ -36,7 +36,7 @@ export const fetchTeams = async (): Promise<Team[]> => {
     if (error) throw new TeamServiceError("Failed to fetch teams", error);
     if (!data) return [];
 
-    return (data as DbTeam[]).map(mapDbTeamToDomain);
+    return data.map((item): Team => mapDbTeamToDomain(item as DbTeam));
   } catch (error) {
     console.error("[TeamService] fetchTeams error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error fetching teams", error);
@@ -78,7 +78,7 @@ export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> =>
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
     
-    return (data as DbTeamMember[]).map(mapDbTeamMemberToDomain);
+    return data.map((item): TeamMember => mapDbTeamMemberToDomain(item as DbTeamMember));
   } catch (error) {
     console.error("[TeamService] fetchTeamMembers error:", error);
     throw error instanceof TeamServiceError ? error : new TeamServiceError("Unexpected error fetching team members", error);
