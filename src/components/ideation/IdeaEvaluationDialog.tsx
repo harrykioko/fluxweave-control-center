@@ -39,7 +39,6 @@ export function IdeaEvaluationDialog({ open, onOpenChange, initialIdea = "" }: I
 
       if (error) throw error;
       
-      // Update the analysis state with the new data
       setAnalysis(prev => ({
         ...prev,
         [currentTab]: data.analysis
@@ -59,10 +58,19 @@ export function IdeaEvaluationDialog({ open, onOpenChange, initialIdea = "" }: I
 
   const handleSaveIdea = async () => {
     try {
+      // First, get the current user's ID
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        throw new Error("You must be logged in to save an idea");
+      }
+
       const { data, error } = await supabase.from('ideas').insert({
         title: initialIdea.split('\n')[0] || "New Idea",
         description: initialIdea,
         tags: ["draft"],
+        status: "draft",
+        created_by: user.id,
         metadata: {
           analysis: analysis
         }
@@ -205,3 +213,4 @@ export function IdeaEvaluationDialog({ open, onOpenChange, initialIdea = "" }: I
     </Dialog>
   );
 }
+
