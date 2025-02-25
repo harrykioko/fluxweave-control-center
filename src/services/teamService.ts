@@ -72,10 +72,18 @@ export const createNewTeam = async (name: string, description?: string): Promise
 
 export const fetchTeamMembers = async (teamId: string): Promise<TeamMember[]> => {
   try {
+    type RawTeamMember = {
+      id: string;
+      team_id: string;
+      user_id: string;
+      role: string;
+      created_at: string | null;
+    };
+
     const { data, error } = await supabase
       .from('team_members')
       .select('*')
-      .eq('team_id', teamId);
+      .eq('team_id', teamId) as { data: RawTeamMember[] | null, error: any };
 
     if (error) throw new TeamServiceError("Failed to fetch team members", error);
     if (!data) return [];
