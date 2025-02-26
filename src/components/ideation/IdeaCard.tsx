@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { Brain, Calendar } from "lucide-react";
+import { Brain, Calendar, Lightbulb, Target, FileText, BarChart3 } from "lucide-react";
 import { format } from "date-fns";
 
 interface IdeaCardProps {
@@ -11,7 +11,7 @@ interface IdeaCardProps {
     tags: string[];
     status: "draft" | "active" | "completed";
     created_at: string;
-    createdAt?: string; // Add optional createdAt to support both formats
+    createdAt?: string;
     first_name?: string;
     last_name?: string;
     avatar_url?: string;
@@ -23,6 +23,37 @@ interface IdeaCardProps {
   className?: string;
 }
 
+const getIconForIdea = (title: string) => {
+  const titleLower = title.toLowerCase();
+  
+  // Check for data/analytics related terms
+  if (titleLower.includes('analytics') || 
+      titleLower.includes('data') || 
+      titleLower.includes('dashboard') ||
+      titleLower.includes('metrics')) {
+    return BarChart3;
+  }
+  
+  // Check for goal/target related terms
+  if (titleLower.includes('goal') || 
+      titleLower.includes('target') || 
+      titleLower.includes('objective') ||
+      titleLower.includes('milestone')) {
+    return Target;
+  }
+  
+  // Check for document/content related terms
+  if (titleLower.includes('document') || 
+      titleLower.includes('content') || 
+      titleLower.includes('report') ||
+      titleLower.includes('file')) {
+    return FileText;
+  }
+
+  // Default to Lightbulb for innovation/ideas
+  return Lightbulb;
+};
+
 export function IdeaCard({ idea, onClick, className }: IdeaCardProps) {
   // Get the first 2-3 sentences for the preview
   const previewText = idea.description
@@ -30,6 +61,8 @@ export function IdeaCard({ idea, onClick, className }: IdeaCardProps) {
     .slice(0, 2)
     .join(". ")
     .trim() + "...";
+
+  const Icon = getIconForIdea(idea.title);
 
   return (
     <div
@@ -44,7 +77,7 @@ export function IdeaCard({ idea, onClick, className }: IdeaCardProps) {
       <div className="space-y-4">
         <div className="flex items-start space-x-4">
           <div className="p-3 bg-white/50 backdrop-blur-md rounded-xl group-hover:bg-white/60 transition-colors">
-            <Brain className="h-5 w-5 text-purple-600" />
+            <Icon className="h-5 w-5 text-purple-600" />
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-slate-800">{idea.title}</h3>
@@ -89,3 +122,4 @@ export function IdeaCard({ idea, onClick, className }: IdeaCardProps) {
     </div>
   );
 }
+
