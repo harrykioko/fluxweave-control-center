@@ -261,8 +261,6 @@ export type Database = {
         Row: {
           account_name: string
           created_at: string | null
-          engagement: string | null
-          followers: number | null
           handle: string
           id: string
           platform: string
@@ -272,8 +270,6 @@ export type Database = {
         Insert: {
           account_name: string
           created_at?: string | null
-          engagement?: string | null
-          followers?: number | null
           handle: string
           id?: string
           platform: string
@@ -283,8 +279,6 @@ export type Database = {
         Update: {
           account_name?: string
           created_at?: string | null
-          engagement?: string | null
-          followers?: number | null
           handle?: string
           id?: string
           platform?: string

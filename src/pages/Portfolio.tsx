@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectCard } from "@/components/portfolio/ProjectCard";
@@ -34,8 +33,6 @@ interface SocialAccount {
   id: string;
   platform: string;
   handle: string;
-  followers: number;
-  engagement: string;
 }
 
 const projects: Project[] = [{
@@ -54,9 +51,7 @@ const projects: Project[] = [{
 const socialAccounts: SocialAccount[] = [{
   id: "1",
   platform: "Twitter",
-  handle: "@alphaproject",
-  followers: 5200,
-  engagement: "4.8%"
+  handle: "@alphaproject"
 }];
 
 export default function Portfolio() {
