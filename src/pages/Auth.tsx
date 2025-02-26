@@ -71,16 +71,16 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500/90 via-purple-500/90 to-pink-500/90 flex items-center justify-center p-4 overflow-hidden relative">
-      {/* Decorative shapes */}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center p-4 overflow-hidden relative">
+      {/* Enhanced decorative shapes with more vivid colors and larger blur */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-500/20 blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-purple-500/20 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-pink-500/20 blur-3xl" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-500/30 blur-[100px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-purple-500/30 blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-pink-500/30 blur-[100px]" />
       </div>
 
       <div className="w-full max-w-md">
-        <div className="backdrop-blur-lg bg-white/10 rounded-2xl shadow-2xl border border-white/20 p-8 relative overflow-hidden transition-all duration-200">
+        <div className="backdrop-blur-xl bg-white/5 rounded-2xl shadow-2xl border border-white/10 p-8 relative overflow-hidden transition-all duration-200">
           <div className="relative z-10">
             <h1 className="text-3xl font-bold text-white mb-8 tracking-tight">
               {isSignUp ? "Create Account" : "Welcome Back"}
@@ -92,7 +92,7 @@ export default function Auth() {
                   <div>
                     <Input
                       placeholder="First Name"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      className="bg-white/5 border-white/10 text-white placeholder:text-white/60"
                       required
                       value={formData.firstName}
                       onChange={(e) =>
@@ -103,7 +103,7 @@ export default function Auth() {
                   <div>
                     <Input
                       placeholder="Last Name"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                      className="bg-white/5 border-white/10 text-white placeholder:text-white/60"
                       required
                       value={formData.lastName}
                       onChange={(e) =>
@@ -118,7 +118,7 @@ export default function Auth() {
                 <Input
                   type="email"
                   placeholder="Email"
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/60"
                   required
                   value={formData.email}
                   onChange={(e) =>
@@ -131,7 +131,7 @@ export default function Auth() {
                 <Input
                   type="password"
                   placeholder="Password"
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/60"
                   required
                   value={formData.password}
                   onChange={(e) =>
@@ -141,7 +141,7 @@ export default function Auth() {
               </div>
               
               <Button
-                className="w-full bg-white text-purple-600 hover:bg-white/90"
+                className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-sm"
                 type="submit"
                 disabled={isLoading}
               >
