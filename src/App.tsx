@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import Index from "./pages/Index";
 import Ideation from "./pages/Ideation";
 import Portfolio from "./pages/Portfolio";
@@ -41,7 +42,14 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/auth" replace />;
   }
 
-  return children;
+  return (
+    <>
+      <AppSidebar />
+      <div className="pl-24 lg:pl-72">
+        {children}
+      </div>
+    </>
+  );
 };
 
 const App = () => (
