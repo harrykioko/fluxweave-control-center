@@ -1,18 +1,15 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-
 interface AuthFormData {
   email: string;
   password: string;
   firstName?: string;
   lastName?: string;
 }
-
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -23,14 +20,17 @@ export default function Auth() {
     lastName: ""
   });
   const navigate = useNavigate();
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const {
+          error
+        } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
           options: {
@@ -46,7 +46,9 @@ export default function Auth() {
           description: "Please check your email to verify your account."
         });
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const {
+          error
+        } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password
         });
@@ -63,7 +65,6 @@ export default function Auth() {
       setIsLoading(false);
     }
   };
-
   return <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex flex-col items-center justify-center p-4 overflow-hidden relative">
       {/* Enhanced decorative shapes with more vivid colors and larger blur */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -77,9 +78,7 @@ export default function Auth() {
         <h1 className="text-6xl font-black text-white tracking-tight mb-2 animate-fade-in">
           FOLIO
         </h1>
-        <p className="text-xl text-white/80 font-light tracking-wide animate-fade-in">
-          Manage your digital assets portfolio
-        </p>
+        <p className="text-xl text-white/80 font-light tracking-wide animate-fade-in">Let's get back to building King</p>
       </div>
 
       <div className="w-full max-w-md">
