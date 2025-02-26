@@ -1,15 +1,18 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+
 interface AuthFormData {
   email: string;
   password: string;
   firstName?: string;
   lastName?: string;
 }
+
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -20,17 +23,14 @@ export default function Auth() {
     lastName: ""
   });
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       if (isSignUp) {
-        const {
-          error
-        } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
           options: {
@@ -46,9 +46,7 @@ export default function Auth() {
           description: "Please check your email to verify your account."
         });
       } else {
-        const {
-          error
-        } = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password
         });
@@ -65,6 +63,7 @@ export default function Auth() {
       setIsLoading(false);
     }
   };
+
   return <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex flex-col items-center justify-center p-4 overflow-hidden relative">
       {/* Enhanced decorative shapes with more vivid colors and larger blur */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -84,10 +83,8 @@ export default function Auth() {
       </div>
 
       <div className="w-full max-w-md">
-        <div className="backdrop-blur-xl bg-white/5 rounded-2xl shadow-2xl border border-white/10 p-8 relative overflow-hidden transition-all duration-200">
+        <div className="backdrop-blur-xl bg-white/5 rounded-2xl shadow-2xl border border-white/10 p-8 relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:bg-white/10">
           <div className="relative z-10">
-            
-            
             <form onSubmit={handleSubmit} className="space-y-4">
               {isSignUp && <div className="grid grid-cols-2 gap-4">
                   <div>
