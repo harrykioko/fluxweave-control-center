@@ -53,6 +53,12 @@ export default function Ideation() {
     setIsEvaluationOpen(true);
   };
 
+  // Distribute ideas across three columns
+  const columnCount = 3;
+  const columns = Array.from({ length: columnCount }, (_, i) =>
+    ideas.filter((_, index) => index % columnCount === i)
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
       <AppSidebar />
@@ -75,9 +81,17 @@ export default function Ideation() {
           {isLoading ? (
             <div className="text-center text-slate-500">Loading ideas...</div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {ideas.map((idea) => (
-                <IdeaCard key={idea.id} idea={idea} onClick={() => setSelectedIdea(idea)} />
+            <div className="flex gap-6 relative">
+              {columns.map((columnIdeas, columnIndex) => (
+                <div key={columnIndex} className="flex-1 space-y-6 relative">
+                  {columnIdeas.map((idea) => (
+                    <IdeaCard key={idea.id} idea={idea} onClick={() => setSelectedIdea(idea)} />
+                  ))}
+                  {/* Divider line for columns 1 and 2 */}
+                  {columnIndex < 2 && (
+                    <div className="absolute top-0 right-[-12px] bottom-0 w-px bg-slate-200/50" />
+                  )}
+                </div>
               ))}
             </div>
           )}
