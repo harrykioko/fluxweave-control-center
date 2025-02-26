@@ -1,3 +1,4 @@
+
 import { Menu, Users } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -52,7 +53,7 @@ export function AppSidebar() {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between px-4 h-16">
           <div className="flex items-center space-x-6">
-            <span className="text-xl font-bold text-slate-800">FluxWeave</span>
+            <span className="text-xl font-bold text-slate-800">Folio</span>
             <NavMenu collapsed={collapsed} />
           </div>
           
