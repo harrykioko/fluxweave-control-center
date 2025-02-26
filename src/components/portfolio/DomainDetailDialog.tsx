@@ -169,14 +169,6 @@ export function DomainDetailDialog({ open, onOpenChange, domain }: DomainDetailD
                 </p>
               )}
             </div>
-
-            <div className="bg-white/50 backdrop-blur-md rounded-xl p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Globe className="h-4 w-4 text-slate-600" />
-                <span className="text-sm font-medium text-slate-700">Status</span>
-              </div>
-              <p className="text-lg font-medium text-slate-800">{domain.status || 'active'}</p>
-            </div>
           </div>
         </div>
       </DialogContent>
