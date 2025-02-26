@@ -263,6 +263,8 @@ export type Database = {
           created_at: string | null
           handle: string
           id: string
+          login_password: string | null
+          login_username: string | null
           platform: string
           updated_at: string | null
           user_id: string
@@ -272,6 +274,8 @@ export type Database = {
           created_at?: string | null
           handle: string
           id?: string
+          login_password?: string | null
+          login_username?: string | null
           platform: string
           updated_at?: string | null
           user_id: string
@@ -281,6 +285,8 @@ export type Database = {
           created_at?: string | null
           handle?: string
           id?: string
+          login_password?: string | null
+          login_username?: string | null
           platform?: string
           updated_at?: string | null
           user_id?: string
