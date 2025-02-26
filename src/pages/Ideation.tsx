@@ -102,12 +102,13 @@ export default function Ideation() {
         title: "Error",
         description: "Failed to move idea. Please try again.",
         variant: "destructive",
+        className: "bg-red-500/90 backdrop-blur-md border border-red-200/50 shadow-lg",
       });
     } else {
       toast({
         title: "Idea moved",
         description: `"${ideaTitle}" moved to ${targetStage.replace(/_/g, ' ').toLowerCase()}`,
-        className: "bg-white/80 backdrop-blur-sm border-gray-200",
+        className: "bg-white/60 backdrop-blur-md border border-white/40 shadow-lg dark:bg-slate-800/60 dark:border-slate-700/40 animate-in slide-in-from-top-2 duration-200",
       });
     }
   };
