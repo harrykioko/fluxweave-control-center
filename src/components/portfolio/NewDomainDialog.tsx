@@ -32,19 +32,30 @@ export function NewDomainDialog({ open, onOpenChange, onDomainAdded }: NewDomain
       return;
     }
 
+    // Get the current authenticated user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast({
+        title: "Authentication Error",
+        description: "You must be logged in to add a domain",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Ensure URL has https:// prefix
     const formattedUrl = url.startsWith('http') ? url : `https://${url}`;
 
     setIsLoading(true);
     const { error } = await supabase
       .from('domains')
-      .insert([
-        {
-          name: name.trim(),
-          url: formattedUrl,
-          status: 'active',
-        }
-      ]);
+      .insert({
+        name: name.trim(),
+        url: formattedUrl,
+        status: 'active',
+        user_id: user.id
+      });
 
     setIsLoading(false);
 
