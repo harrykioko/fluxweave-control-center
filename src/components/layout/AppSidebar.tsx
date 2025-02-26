@@ -48,24 +48,41 @@ export function AppSidebar() {
   };
 
   return (
-    <aside className={`fixed top-0 left-0 z-40 h-screen bg-white/80 backdrop-blur-xl border-r border-slate-200/20 transition-all duration-300 ${collapsed ? "w-20" : "w-64"}`}>
+    <aside 
+      className={cn(
+        "fixed top-4 left-4 z-40 h-[calc(100vh-2rem)] rounded-2xl transition-all duration-300",
+        "bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/10",
+        "shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]",
+        collapsed ? "w-20" : "w-64"
+      )}
+    >
       <div className="flex flex-col h-full">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-200/20">
-          <span className={`text-xl font-bold text-slate-800 ${collapsed ? "hidden" : "block"}`}>Folio</span>
-          <Button variant="ghost" size="icon" onClick={() => setCollapsed(!collapsed)}>
+        <div className="flex items-center justify-between p-4">
+          <span className={cn(
+            "text-xl font-bold text-gradient",
+            collapsed ? "hidden" : "block"
+          )}>
+            Folio
+          </span>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setCollapsed(!collapsed)}
+            className="text-white/70 hover:text-white hover:bg-white/10"
+          >
             <Menu className="h-5 w-5" />
           </Button>
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 py-4">
+        <div className="flex-1 py-4 overflow-y-auto scrollbar-none">
           <NavMenu collapsed={collapsed} />
         </div>
 
         {/* User Profile */}
         {isAuthenticated && (
-          <div className="p-4 border-t border-slate-200/20">
+          <div className="p-4 mx-3 mb-3 border-t border-white/10">
             <UserMenu userProfile={userProfile} isAuthenticated={isAuthenticated} />
           </div>
         )}

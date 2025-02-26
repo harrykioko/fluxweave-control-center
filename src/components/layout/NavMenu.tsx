@@ -29,7 +29,7 @@ export function NavMenu({ collapsed }: { collapsed: boolean }) {
   const location = useLocation();
 
   return (
-    <nav className="space-y-1 px-2">
+    <nav className="space-y-2 px-3">
       {menuItems.map(item => {
         const isActive = location.pathname === item.href;
         return (
@@ -37,14 +37,18 @@ export function NavMenu({ collapsed }: { collapsed: boolean }) {
             key={item.label}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative group",
+              "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all relative group",
               isActive 
-                ? "text-slate-900 bg-slate-100/80" 
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/50",
-              collapsed && "justify-center"
+                ? "bg-white/20 text-white shadow-sm" 
+                : "text-white/70 hover:bg-white/10 hover:text-white",
+              collapsed ? "justify-center" : "backdrop-blur-sm"
             )}
           >
-            <item.icon className={cn("h-5 w-5", collapsed && "h-6 w-6")} />
+            <item.icon className={cn(
+              "h-5 w-5 transition-transform",
+              collapsed ? "h-6 w-6" : "",
+              isActive ? "text-white" : "text-white/70"
+            )} />
             {!collapsed && <span>{item.label}</span>}
           </a>
         );

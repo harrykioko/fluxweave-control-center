@@ -53,6 +53,19 @@
   .hover-scale {
     @apply transition-transform duration-200 hover:scale-[1.02];
   }
+  
+  .text-gradient {
+    @apply bg-gradient-to-br from-white via-white/90 to-white/70 bg-clip-text text-transparent;
+  }
+
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .fade-enter {
