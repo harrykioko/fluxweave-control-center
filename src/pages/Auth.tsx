@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { AppSidebar } from "@/components/layout/AppSidebar";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -72,23 +71,28 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
-      <AppSidebar />
-      <main className="pt-32 px-4">
-        <div className="max-w-md mx-auto">
-          <div className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-8 shadow-lg">
-            <h1 className="text-2xl font-bold text-slate-800 mb-6">
-              {isSignUp ? "Create an Account" : "Welcome Back"}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500/90 via-purple-500/90 to-pink-500/90 flex items-center justify-center p-4 overflow-hidden relative">
+      {/* Decorative shapes */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-500/20 blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-purple-500/20 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-pink-500/20 blur-3xl" />
+      </div>
+
+      <div className="w-full max-w-md">
+        <div className="backdrop-blur-lg bg-white/10 rounded-2xl shadow-2xl border border-white/20 p-8 relative overflow-hidden transition-all duration-200">
+          <div className="relative z-10">
+            <h1 className="text-3xl font-bold text-white mb-8 tracking-tight">
+              {isSignUp ? "Create Account" : "Welcome Back"}
             </h1>
             
             <form onSubmit={handleSubmit} className="space-y-4">
               {isSignUp && (
-                <>
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                      First Name
-                    </label>
                     <Input
+                      placeholder="First Name"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
                       required
                       value={formData.firstName}
                       onChange={(e) =>
@@ -97,10 +101,9 @@ export default function Auth() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                      Last Name
-                    </label>
                     <Input
+                      placeholder="Last Name"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
                       required
                       value={formData.lastName}
                       onChange={(e) =>
@@ -108,15 +111,14 @@ export default function Auth() {
                       }
                     />
                   </div>
-                </>
+                </div>
               )}
               
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Email
-                </label>
                 <Input
                   type="email"
+                  placeholder="Email"
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
                   required
                   value={formData.email}
                   onChange={(e) =>
@@ -126,11 +128,10 @@ export default function Auth() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Password
-                </label>
                 <Input
                   type="password"
+                  placeholder="Password"
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
                   required
                   value={formData.password}
                   onChange={(e) =>
@@ -140,22 +141,22 @@ export default function Auth() {
               </div>
               
               <Button
-                className="w-full"
+                className="w-full bg-white text-purple-600 hover:bg-white/90"
                 type="submit"
                 disabled={isLoading}
               >
                 {isLoading
                   ? "Loading..."
                   : isSignUp
-                  ? "Sign Up"
+                  ? "Create Account"
                   : "Sign In"}
               </Button>
               
-              <p className="text-center text-sm text-slate-600">
+              <p className="text-center text-sm text-white/80 mt-4">
                 {isSignUp ? "Already have an account?" : "Need an account?"}{" "}
                 <button
                   type="button"
-                  className="text-blue-600 hover:underline"
+                  className="text-white hover:underline font-medium"
                   onClick={() => setIsSignUp(!isSignUp)}
                 >
                   {isSignUp ? "Sign In" : "Sign Up"}
@@ -164,7 +165,7 @@ export default function Auth() {
             </form>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
