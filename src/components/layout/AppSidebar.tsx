@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { NavMenu } from "./NavMenu";
 import { UserMenu } from "./UserMenu";
 import { menuItems } from "./NavMenu";
+import { cn } from "@/lib/utils";
 
 export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
