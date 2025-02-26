@@ -85,17 +85,6 @@ export function IdeaCard({ idea, onClick, className }: IdeaCardProps) {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {idea.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2.5 py-1 bg-white/60 rounded-lg text-xs font-medium text-slate-600 hover:bg-white/80 transition-colors"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-
         <div className="flex items-center justify-between text-xs text-slate-500">
           <div className="flex items-center gap-1">
             <Calendar className="h-3.5 w-3.5" />
@@ -122,4 +111,3 @@ export function IdeaCard({ idea, onClick, className }: IdeaCardProps) {
     </div>
   );
 }
-
