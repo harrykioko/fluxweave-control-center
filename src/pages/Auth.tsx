@@ -71,12 +71,22 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center p-4 overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex flex-col items-center justify-center p-4 overflow-hidden relative">
       {/* Enhanced decorative shapes with more vivid colors and larger blur */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-500/30 blur-[100px]" />
         <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-purple-500/30 blur-[100px]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-pink-500/30 blur-[100px]" />
+      </div>
+
+      {/* Added stylized text box */}
+      <div className="text-center mb-8 relative z-10">
+        <h1 className="text-6xl font-black text-white tracking-tight mb-2 animate-fade-in">
+          FOLIO
+        </h1>
+        <p className="text-xl text-white/80 font-light tracking-wide animate-fade-in">
+          Manage your digital assets portfolio
+        </p>
       </div>
 
       <div className="w-full max-w-md">
@@ -169,3 +179,4 @@ export default function Auth() {
     </div>
   );
 }
+
