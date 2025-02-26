@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectCard } from "@/components/portfolio/ProjectCard";
@@ -14,6 +15,7 @@ import { NewSocialDialog } from "@/components/portfolio/NewSocialDialog";
 import { Button } from "@/components/ui/button";
 
 type Domain = Database["public"]["Tables"]["domains"]["Row"];
+type SocialAccount = Database["public"]["Tables"]["social_accounts"]["Row"];
 
 interface Project {
   id: string;
@@ -29,12 +31,6 @@ interface Project {
   }[];
 }
 
-interface SocialAccount {
-  id: string;
-  platform: string;
-  handle: string;
-}
-
 const projects: Project[] = [{
   id: "1",
   name: "Project Alpha",
@@ -43,15 +39,9 @@ const projects: Project[] = [{
   status: "live",
   url: "https://alpha-project.com",
   teamMembers: [
-    { id: "1", name: "John Doe", avatar: "https://images.unsplash.com/photo-1535268647778-1ec881214838" },
+    { id: "1", name: "John Doe", avatar: "https://images.unsplash.com/photo-1535268647778-1ec871214838" },
     { id: "2", name: "Jane Smith", avatar: "https://images.unsplash.com/photo-1501286353178-1ec871214838" }
   ]
-}];
-
-const socialAccounts: SocialAccount[] = [{
-  id: "1",
-  platform: "Twitter",
-  handle: "@alphaproject"
 }];
 
 export default function Portfolio() {
@@ -66,6 +56,19 @@ export default function Portfolio() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('domains')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: socialAccounts, isLoading: isLoadingSocial, refetch: refetchSocial } = useQuery({
+    queryKey: ['social_accounts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('social_accounts')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -144,13 +147,19 @@ export default function Portfolio() {
               </Button>
             </div>
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-              {socialAccounts.map(account => (
-                <SocialMediaCard
-                  key={account.id}
-                  account={account}
-                  onClick={() => setSelectedSocial(account)}
-                />
-              ))}
+              {isLoadingSocial ? (
+                <div className="text-center text-slate-500">Loading social accounts...</div>
+              ) : socialAccounts && socialAccounts.length > 0 ? (
+                socialAccounts.map(account => (
+                  <SocialMediaCard
+                    key={account.id}
+                    account={account}
+                    onClick={() => setSelectedSocial(account)}
+                  />
+                ))
+              ) : (
+                <div className="text-center text-slate-500">No social accounts found</div>
+              )}
             </div>
           </section>
         </div>
@@ -179,6 +188,7 @@ export default function Portfolio() {
         <NewSocialDialog
           open={newSocialDialogOpen}
           onOpenChange={setNewSocialDialogOpen}
+          onSocialAdded={() => refetchSocial()}
         />
       </div>
     </div>
