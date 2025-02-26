@@ -18,6 +18,10 @@ export function NewDomainDialog({ open, onOpenChange, onDomainAdded }: NewDomain
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
+  const [hostedOn, setHostedOn] = useState("");
+  const [owner, setOwner] = useState("");
+  const [loginUsername, setLoginUsername] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,7 +30,7 @@ export function NewDomainDialog({ open, onOpenChange, onDomainAdded }: NewDomain
     if (!name.trim() || !url.trim()) {
       toast({
         title: "Validation Error",
-        description: "Please fill in all fields",
+        description: "Please fill in all required fields",
         variant: "destructive",
       });
       return;
@@ -54,7 +58,11 @@ export function NewDomainDialog({ open, onOpenChange, onDomainAdded }: NewDomain
         name: name.trim(),
         url: formattedUrl,
         status: 'active',
-        user_id: user.id
+        user_id: user.id,
+        hosted_on: hostedOn.trim() || null,
+        owner: owner.trim() || null,
+        login_username: loginUsername.trim() || null,
+        login_password: loginPassword.trim() || null
       });
 
     setIsLoading(false);
@@ -76,6 +84,10 @@ export function NewDomainDialog({ open, onOpenChange, onDomainAdded }: NewDomain
     // Reset form and close dialog
     setName("");
     setUrl("");
+    setHostedOn("");
+    setOwner("");
+    setLoginUsername("");
+    setLoginPassword("");
     onOpenChange(false);
     onDomainAdded?.();
   };
@@ -93,22 +105,65 @@ export function NewDomainDialog({ open, onOpenChange, onDomainAdded }: NewDomain
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Domain Name</Label>
+              <Label htmlFor="name">Domain Name*</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="My Business Domain"
+                required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="url">URL</Label>
+              <Label htmlFor="url">URL*</Label>
               <Input
                 id="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="example.com"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="hostedOn">Hosted On</Label>
+              <Input
+                id="hostedOn"
+                value={hostedOn}
+                onChange={(e) => setHostedOn(e.target.value)}
+                placeholder="e.g., DigitalOcean, AWS"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="owner">Owner</Label>
+              <Input
+                id="owner"
+                value={owner}
+                onChange={(e) => setOwner(e.target.value)}
+                placeholder="Domain owner name"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="loginUsername">Login Username</Label>
+              <Input
+                id="loginUsername"
+                value={loginUsername}
+                onChange={(e) => setLoginUsername(e.target.value)}
+                placeholder="Admin username"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="loginPassword">Login Password</Label>
+              <Input
+                id="loginPassword"
+                type="password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="Admin password"
               />
             </div>
 

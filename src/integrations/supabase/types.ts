@@ -135,8 +135,12 @@ export type Database = {
       domains: {
         Row: {
           created_at: string | null
+          hosted_on: string | null
           id: string
+          login_password: string | null
+          login_username: string | null
           name: string
+          owner: string | null
           status: string | null
           updated_at: string | null
           url: string
@@ -144,8 +148,12 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          hosted_on?: string | null
           id?: string
+          login_password?: string | null
+          login_username?: string | null
           name: string
+          owner?: string | null
           status?: string | null
           updated_at?: string | null
           url: string
@@ -153,8 +161,12 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          hosted_on?: string | null
           id?: string
+          login_password?: string | null
+          login_username?: string | null
           name?: string
+          owner?: string | null
           status?: string | null
           updated_at?: string | null
           url?: string
