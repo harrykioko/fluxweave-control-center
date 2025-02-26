@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ProjectCard } from "@/components/portfolio/ProjectCard";
 import { ProjectDetailDialog } from "@/components/portfolio/ProjectDetailDialog";
 import { DomainCard } from "@/components/portfolio/DomainCard";
@@ -7,6 +8,10 @@ import { SocialMediaCard } from "@/components/portfolio/SocialMediaCard";
 import { DomainDetailDialog } from "@/components/portfolio/DomainDetailDialog";
 import { SocialDetailDialog } from "@/components/portfolio/SocialDetailDialog";
 import { Globe, Users } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type Domain = Database["public"]["Tables"]["domains"]["Row"];
 
 interface Project {
   id: string;
@@ -20,14 +25,6 @@ interface Project {
     name: string;
     avatar: string;
   }[];
-}
-
-interface Domain {
-  id: string;
-  name: string;
-  url: string;
-  pageViews: number;
-  avgTime: string;
 }
 
 interface SocialAccount {
@@ -51,14 +48,6 @@ const projects: Project[] = [{
   ]
 }];
 
-const domains: Domain[] = [{
-  id: "1",
-  name: "alpha-project.com",
-  url: "https://alpha-project.com",
-  pageViews: 12500,
-  avgTime: "2:30"
-}];
-
 const socialAccounts: SocialAccount[] = [{
   id: "1",
   platform: "Twitter",
@@ -71,6 +60,19 @@ export default function Portfolio() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
   const [selectedSocial, setSelectedSocial] = useState<SocialAccount | null>(null);
+
+  const { data: domains, isLoading: isLoadingDomains } = useQuery({
+    queryKey: ['domains'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('domains')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
@@ -100,13 +102,19 @@ export default function Portfolio() {
               <h2 className="text-xl font-semibold text-slate-800">Domains</h2>
             </div>
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-              {domains.map(domain => (
-                <DomainCard
-                  key={domain.id}
-                  domain={domain}
-                  onClick={() => setSelectedDomain(domain)}
-                />
-              ))}
+              {isLoadingDomains ? (
+                <div className="text-center text-slate-500">Loading domains...</div>
+              ) : domains && domains.length > 0 ? (
+                domains.map(domain => (
+                  <DomainCard
+                    key={domain.id}
+                    domain={domain}
+                    onClick={() => setSelectedDomain(domain)}
+                  />
+                ))
+              ) : (
+                <div className="text-center text-slate-500">No domains found</div>
+              )}
             </div>
           </section>
 

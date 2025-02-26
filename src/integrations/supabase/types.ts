@@ -132,6 +132,42 @@ export type Database = {
         }
         Relationships: []
       }
+      domains: {
+        Row: {
+          avg_time: string | null
+          created_at: string | null
+          id: string
+          name: string
+          page_views: number | null
+          status: string | null
+          updated_at: string | null
+          url: string
+          user_id: string
+        }
+        Insert: {
+          avg_time?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+          page_views?: number | null
+          status?: string | null
+          updated_at?: string | null
+          url: string
+          user_id: string
+        }
+        Update: {
+          avg_time?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          page_views?: number | null
+          status?: string | null
+          updated_at?: string | null
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ideas: {
         Row: {
           created_at: string

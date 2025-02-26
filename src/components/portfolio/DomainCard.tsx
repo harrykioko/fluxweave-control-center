@@ -1,14 +1,9 @@
 
 import { cn } from "@/lib/utils";
 import { Clock, Globe } from "lucide-react";
+import { Database } from "@/integrations/supabase/types";
 
-interface Domain {
-  id: string;
-  name: string;
-  url: string;
-  pageViews: number;
-  avgTime: string;
-}
+type Domain = Database["public"]["Tables"]["domains"]["Row"];
 
 interface DomainCardProps {
   domain: Domain;
@@ -41,10 +36,10 @@ export function DomainCard({ domain, onClick, className }: DomainCardProps) {
           </a>
         </div>
         <div className="text-right">
-          <div className="text-sm font-medium text-slate-700">{domain.pageViews.toLocaleString()} views</div>
+          <div className="text-sm font-medium text-slate-700">{domain.page_views.toLocaleString()} views</div>
           <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
             <Clock className="h-3 w-3" />
-            Avg. {domain.avgTime}
+            Avg. {domain.avg_time}
           </div>
         </div>
       </div>
