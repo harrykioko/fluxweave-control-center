@@ -21,25 +21,18 @@ export function DomainCard({ domain, onClick, className }: DomainCardProps) {
         className
       )}
     >
-      <div className="flex items-start justify-between">
-        <div>
-          <h3 className="font-medium text-slate-800">{domain.name}</h3>
-          <a
-            href={domain.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-slate-500 hover:text-slate-700 transition-colors flex items-center gap-1 mt-1"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Globe className="h-3 w-3" />
-            {domain.url.replace('https://', '')}
-          </a>
-        </div>
-        <div className="text-right">
-          <span className="text-xs text-slate-500 px-2 py-1 bg-slate-100 rounded-full">
-            {domain.status || 'active'}
-          </span>
-        </div>
+      <div>
+        <h3 className="font-medium text-slate-800">{domain.name}</h3>
+        <a
+          href={domain.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-slate-500 hover:text-slate-700 transition-colors flex items-center gap-1 mt-1"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Globe className="h-3 w-3" />
+          {domain.url.replace('https://', '')}
+        </a>
       </div>
     </div>
   );
