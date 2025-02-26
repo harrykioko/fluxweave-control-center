@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Instagram, MessageCircle, Twitter } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface NewSocialDialogProps {
   open: boolean;
@@ -31,24 +33,46 @@ export function NewSocialDialog({ open, onOpenChange, onSocialAdded }: NewSocial
   const [selectedPlatform, setSelectedPlatform] = useState<SocialPlatform | null>(null);
   const [accountName, setAccountName] = useState("");
   const [handle, setHandle] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedPlatform) return;
 
-    // TODO: Implement the actual social media account creation logic
-    console.log("Creating social media account:", {
-      platform: selectedPlatform,
-      accountName,
-      handle,
-    });
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from('social_accounts')
+        .insert({
+          platform: selectedPlatform,
+          account_name: accountName,
+          handle: handle.startsWith('@') ? handle : `@${handle}`,
+        });
 
-    // Reset form
-    setSelectedPlatform(null);
-    setAccountName("");
-    setHandle("");
-    onSocialAdded?.();
-    onOpenChange(false);
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Social media account added successfully",
+      });
+
+      // Reset form
+      setSelectedPlatform(null);
+      setAccountName("");
+      setHandle("");
+      onSocialAdded?.();
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error adding social account:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add social media account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -111,10 +135,10 @@ export function NewSocialDialog({ open, onOpenChange, onSocialAdded }: NewSocial
           <div className="flex justify-end">
             <Button
               type="submit"
-              disabled={!selectedPlatform || !accountName || !handle}
+              disabled={!selectedPlatform || !accountName || !handle || isSubmitting}
               className="bg-slate-800 hover:bg-slate-700"
             >
-              Add Account
+              {isSubmitting ? "Adding..." : "Add Account"}
             </Button>
           </div>
         </form>

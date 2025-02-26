@@ -257,6 +257,50 @@ export type Database = {
         }
         Relationships: []
       }
+      social_accounts: {
+        Row: {
+          account_name: string
+          created_at: string | null
+          engagement: string | null
+          followers: number | null
+          handle: string
+          id: string
+          platform: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          account_name: string
+          created_at?: string | null
+          engagement?: string | null
+          followers?: number | null
+          handle: string
+          id?: string
+          platform: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          account_name?: string
+          created_at?: string | null
+          engagement?: string | null
+          followers?: number | null
+          handle?: string
+          id?: string
+          platform?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_accounts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       recent_ideas: {
