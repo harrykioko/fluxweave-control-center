@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectCard } from "@/components/portfolio/ProjectCard";
@@ -10,6 +9,9 @@ import { SocialDetailDialog } from "@/components/portfolio/SocialDetailDialog";
 import { Globe, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { NewDomainDialog } from "@/components/portfolio/NewDomainDialog";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 type Domain = Database["public"]["Tables"]["domains"]["Row"];
 
@@ -60,8 +62,9 @@ export default function Portfolio() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
   const [selectedSocial, setSelectedSocial] = useState<SocialAccount | null>(null);
+  const [newDomainDialogOpen, setNewDomainDialogOpen] = useState(false);
 
-  const { data: domains, isLoading: isLoadingDomains } = useQuery({
+  const { data: domains, isLoading: isLoadingDomains, refetch: refetchDomains } = useQuery({
     queryKey: ['domains'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -77,8 +80,8 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
       <div className="container mx-auto p-8 space-y-8">
-        {/* Projects Section with Horizontal Scroll */}
-        <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6 w-full">
+        {/* Projects Section */}
+        <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
           <h2 className="text-2xl font-semibold text-slate-800 mb-6">Projects</h2>
           <div className="overflow-x-auto pb-4 -mx-2 px-2">
             <div className="flex gap-6">
@@ -97,9 +100,19 @@ export default function Portfolio() {
         {/* Domains and Social Media Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
-            <div className="flex items-center gap-2 mb-6">
-              <Globe className="h-5 w-5 text-slate-600" />
-              <h2 className="text-xl font-semibold text-slate-800">Domains</h2>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <Globe className="h-5 w-5 text-slate-600" />
+                <h2 className="text-xl font-semibold text-slate-800">Domains</h2>
+              </div>
+              <Button
+                onClick={() => setNewDomainDialogOpen(true)}
+                size="sm"
+                className="bg-slate-800 hover:bg-slate-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Domain
+              </Button>
             </div>
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
               {isLoadingDomains ? (
@@ -135,6 +148,7 @@ export default function Portfolio() {
           </section>
         </div>
 
+        {/* Dialogs */}
         <ProjectDetailDialog
           open={!!selectedProject}
           onOpenChange={(open) => !open && setSelectedProject(null)}
@@ -149,6 +163,11 @@ export default function Portfolio() {
           open={!!selectedSocial}
           onOpenChange={(open) => !open && setSelectedSocial(null)}
           account={selectedSocial}
+        />
+        <NewDomainDialog
+          open={newDomainDialogOpen}
+          onOpenChange={setNewDomainDialogOpen}
+          onDomainAdded={() => refetchDomains()}
         />
       </div>
     </div>
