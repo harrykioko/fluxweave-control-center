@@ -7,9 +7,10 @@ import { NewIdeaDialog } from "@/components/ideation/NewIdeaDialog";
 import { IdeaEvaluationDialog } from "@/components/ideation/IdeaEvaluationDialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
 
 interface Idea {
   id: string;
@@ -39,6 +40,8 @@ export default function Ideation() {
   const [isNewIdeaOpen, setIsNewIdeaOpen] = useState(false);
   const [isEvaluationOpen, setIsEvaluationOpen] = useState(false);
   const [currentIdea, setCurrentIdea] = useState("");
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: ideas = [], isLoading } = useQuery({
     queryKey: ["ideas"],
@@ -65,6 +68,7 @@ export default function Ideation() {
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, idea: Idea) => {
     e.dataTransfer.setData("idea_id", idea.id);
+    e.dataTransfer.setData("idea_title", idea.title);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -74,6 +78,17 @@ export default function Ideation() {
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>, targetStage: Stage) => {
     e.preventDefault();
     const ideaId = e.dataTransfer.getData("idea_id");
+    const ideaTitle = e.dataTransfer.getData("idea_title");
+
+    // Optimistically update the UI
+    const previousIdeas = queryClient.getQueryData(["ideas"]) as Idea[];
+    queryClient.setQueryData(["ideas"], (old: Idea[] | undefined) => {
+      if (!old) return [];
+      return old.map(idea => 
+        idea.id === ideaId ? { ...idea, stage: targetStage } : idea
+      );
+    });
+
     const { error } = await supabase
       .from("ideas")
       .update({ stage: targetStage })
@@ -81,6 +96,19 @@ export default function Ideation() {
 
     if (error) {
       console.error("Failed to update idea stage:", error);
+      // Revert to previous state if update failed
+      queryClient.setQueryData(["ideas"], previousIdeas);
+      toast({
+        title: "Error",
+        description: "Failed to move idea. Please try again.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Idea moved",
+        description: `"${ideaTitle}" moved to ${targetStage.replace(/_/g, ' ').toLowerCase()}`,
+        className: "bg-white/80 backdrop-blur-sm border-gray-200",
+      });
     }
   };
 
