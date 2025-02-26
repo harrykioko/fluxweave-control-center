@@ -1,11 +1,10 @@
 
-import { Menu, Users } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { NavMenu } from "./NavMenu";
 import { UserMenu } from "./UserMenu";
-import { useToast } from "@/components/ui/use-toast";
 import { menuItems } from "./NavMenu";
 
 export function AppSidebar() {
@@ -49,55 +48,28 @@ export function AppSidebar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b border-slate-200/20 bg-white/[0.01] my-[10px] px-[20px] mx-[20px]">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between px-4 h-16">
-          <div className="flex items-center space-x-6">
-            <span className="text-xl font-bold text-slate-800">Folio</span>
-            <NavMenu collapsed={collapsed} />
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            {isAuthenticated && (
-              <>
-                <UserMenu userProfile={userProfile} isAuthenticated={isAuthenticated} />
-                <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setCollapsed(!collapsed)}>
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </>
-            )}
-          </div>
+    <aside className={`fixed top-0 left-0 z-40 h-screen bg-white/80 backdrop-blur-xl border-r border-slate-200/20 transition-all duration-300 ${collapsed ? "w-20" : "w-64"}`}>
+      <div className="flex flex-col h-full">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b border-slate-200/20">
+          <span className={`text-xl font-bold text-slate-800 ${collapsed ? "hidden" : "block"}`}>Folio</span>
+          <Button variant="ghost" size="icon" onClick={() => setCollapsed(!collapsed)}>
+            <Menu className="h-5 w-5" />
+          </Button>
         </div>
-        
-        {collapsed && (
-          <nav className="md:hidden border-t border-slate-200/20 py-2 px-4">
-            {menuItems.map(item => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 active:bg-slate-200/50 transition-colors"
-              >
-                <item.icon className="h-4 w-4" />
-                <span>{item.label}</span>
-              </a>
-            ))}
-            {isAuthenticated && (
-              <>
-                <button
-                  onClick={() => {
-                    const button = document.querySelector('[aria-label="Sign Out"]') as HTMLButtonElement;
-                    if (button) button.click();
-                  }}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 active:bg-slate-200/50 transition-colors w-full"
-                >
-                  <Menu className="h-4 w-4" />
-                  <span>Sign Out</span>
-                </button>
-              </>
-            )}
-          </nav>
+
+        {/* Navigation */}
+        <div className="flex-1 py-4">
+          <NavMenu collapsed={collapsed} />
+        </div>
+
+        {/* User Profile */}
+        {isAuthenticated && (
+          <div className="p-4 border-t border-slate-200/20">
+            <UserMenu userProfile={userProfile} isAuthenticated={isAuthenticated} />
+          </div>
         )}
       </div>
-    </header>
+    </aside>
   );
 }

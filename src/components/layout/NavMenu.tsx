@@ -1,8 +1,8 @@
 
 import { Home, BrainCircuit, CheckSquare, BarChart3, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLocation } from "react-router-dom";
 
-// Export the menuItems array so it can be imported by other components
 export const menuItems = [{
   icon: Home,
   label: "Dashboard",
@@ -26,22 +26,29 @@ export const menuItems = [{
 }];
 
 export function NavMenu({ collapsed }: { collapsed: boolean }) {
+  const location = useLocation();
+
   return (
-    <nav className={cn(
-      collapsed ? "md:hidden" : "hidden md:flex",
-      "items-center space-x-2"
-    )}>
-      {menuItems.map(item => (
-        <a
-          key={item.label}
-          href={item.href}
-          className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 active:bg-slate-200/50 transition-colors relative group"
-        >
-          <item.icon className="h-4 w-4" />
-          <span>{item.label}</span>
-          <div className="absolute inset-0 border-b-2 border-transparent group-hover:border-slate-400 group-active:border-slate-600 transition-colors" />
-        </a>
-      ))}
+    <nav className="space-y-1 px-2">
+      {menuItems.map(item => {
+        const isActive = location.pathname === item.href;
+        return (
+          <a
+            key={item.label}
+            href={item.href}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative group",
+              isActive 
+                ? "text-slate-900 bg-slate-100/80" 
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/50",
+              collapsed && "justify-center"
+            )}
+          >
+            <item.icon className={cn("h-5 w-5", collapsed && "h-6 w-6")} />
+            {!collapsed && <span>{item.label}</span>}
+          </a>
+        );
+      })}
     </nav>
   );
 }
