@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectCard } from "@/components/portfolio/ProjectCard";
@@ -6,12 +7,12 @@ import { DomainCard } from "@/components/portfolio/DomainCard";
 import { SocialMediaCard } from "@/components/portfolio/SocialMediaCard";
 import { DomainDetailDialog } from "@/components/portfolio/DomainDetailDialog";
 import { SocialDetailDialog } from "@/components/portfolio/SocialDetailDialog";
-import { Globe, Users } from "lucide-react";
+import { Globe, Plus, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { NewDomainDialog } from "@/components/portfolio/NewDomainDialog";
+import { NewSocialDialog } from "@/components/portfolio/NewSocialDialog";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 
 type Domain = Database["public"]["Tables"]["domains"]["Row"];
 
@@ -46,7 +47,7 @@ const projects: Project[] = [{
   url: "https://alpha-project.com",
   teamMembers: [
     { id: "1", name: "John Doe", avatar: "https://images.unsplash.com/photo-1535268647778-1ec881214838" },
-    { id: "2", name: "Jane Smith", avatar: "https://images.unsplash.com/photo-1501286353178-1ec881214838" }
+    { id: "2", name: "Jane Smith", avatar: "https://images.unsplash.com/photo-1501286353178-1ec871214838" }
   ]
 }];
 
@@ -63,6 +64,7 @@ export default function Portfolio() {
   const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
   const [selectedSocial, setSelectedSocial] = useState<SocialAccount | null>(null);
   const [newDomainDialogOpen, setNewDomainDialogOpen] = useState(false);
+  const [newSocialDialogOpen, setNewSocialDialogOpen] = useState(false);
 
   const { data: domains, isLoading: isLoadingDomains, refetch: refetchDomains } = useQuery({
     queryKey: ['domains'],
@@ -132,9 +134,19 @@ export default function Portfolio() {
           </section>
 
           <section className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6">
-            <div className="flex items-center gap-2 mb-6">
-              <Users className="h-5 w-5 text-slate-600" />
-              <h2 className="text-xl font-semibold text-slate-800">Social Media</h2>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-slate-600" />
+                <h2 className="text-xl font-semibold text-slate-800">Social Media</h2>
+              </div>
+              <Button
+                onClick={() => setNewSocialDialogOpen(true)}
+                size="sm"
+                className="bg-slate-800 hover:bg-slate-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Social
+              </Button>
             </div>
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
               {socialAccounts.map(account => (
@@ -168,6 +180,10 @@ export default function Portfolio() {
           open={newDomainDialogOpen}
           onOpenChange={setNewDomainDialogOpen}
           onDomainAdded={() => refetchDomains()}
+        />
+        <NewSocialDialog
+          open={newSocialDialogOpen}
+          onOpenChange={setNewSocialDialogOpen}
         />
       </div>
     </div>
