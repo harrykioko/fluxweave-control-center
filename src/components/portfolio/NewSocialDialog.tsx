@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Instagram, Tiktok, Twitter } from "lucide-react";
+import { Instagram, MessageCircle, Twitter } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +23,7 @@ interface PlatformOption {
 
 const platforms: PlatformOption[] = [
   { id: "instagram", name: "Instagram", icon: <Instagram className="h-5 w-5" /> },
-  { id: "tiktok", name: "TikTok", icon: <Tiktok className="h-5 w-5" /> },
+  { id: "tiktok", name: "TikTok", icon: <MessageCircle className="h-5 w-5" /> },
   { id: "twitter", name: "X (Twitter)", icon: <Twitter className="h-5 w-5" /> },
 ];
 
