@@ -42,12 +42,19 @@ export function NewSocialDialog({ open, onOpenChange, onSocialAdded }: NewSocial
 
     setIsSubmitting(true);
     try {
+      // First get the current user's ID
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("You must be logged in to add a social media account");
+      }
+
       const { error } = await supabase
         .from('social_accounts')
         .insert({
           platform: selectedPlatform,
           account_name: accountName,
           handle: handle.startsWith('@') ? handle : `@${handle}`,
+          user_id: user.id, // Add the user_id to the insert
         });
 
       if (error) throw error;
@@ -67,7 +74,7 @@ export function NewSocialDialog({ open, onOpenChange, onSocialAdded }: NewSocial
       console.error('Error adding social account:', error);
       toast({
         title: "Error",
-        description: "Failed to add social media account. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to add social media account. Please try again.",
         variant: "destructive",
       });
     } finally {
