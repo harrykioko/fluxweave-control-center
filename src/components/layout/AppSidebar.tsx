@@ -1,17 +1,39 @@
 
-import { Menu } from "lucide-react";
+import { Menu, Home, BrainCircuit, CheckSquare, BarChart3, BookOpen } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { NavMenu } from "./NavMenu";
 import { UserMenu } from "./UserMenu";
-import { menuItems } from "./NavMenu";
 import { cn } from "@/lib/utils";
+import { useLocation, Link } from "react-router-dom";
+
+const menuItems = [{
+  icon: Home,
+  label: "Dashboard",
+  href: "/"
+}, {
+  icon: BrainCircuit,
+  label: "Ideation",
+  href: "/ideation"
+}, {
+  icon: CheckSquare,
+  label: "Tasks",
+  href: "/tasks"
+}, {
+  icon: BarChart3,
+  label: "Portfolio",
+  href: "/portfolio"
+}, {
+  icon: BookOpen,
+  label: "Resources",
+  href: "/resources"
+}];
 
 export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userProfile, setUserProfile] = useState<{ first_name?: string; last_name?: string; avatar_url?: string } | null>(null);
+  const location = useLocation();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -77,9 +99,32 @@ export function AppSidebar() {
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 py-4 overflow-y-auto scrollbar-none">
-          <NavMenu collapsed={collapsed} />
-        </div>
+        <nav className="flex-1 py-4 px-3 space-y-2 overflow-y-auto scrollbar-none">
+          {menuItems.map(item => {
+            const isActive = location.pathname === item.href;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.label}
+                to={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all relative group",
+                  isActive 
+                    ? "bg-white/20 text-white shadow-sm" 
+                    : "text-white/70 hover:bg-white/10 hover:text-white",
+                  collapsed ? "justify-center" : "backdrop-blur-sm"
+                )}
+              >
+                <Icon className={cn(
+                  "h-5 w-5 transition-transform",
+                  collapsed ? "h-6 w-6" : "",
+                  isActive ? "text-white" : "text-white/70"
+                )} />
+                {!collapsed && <span>{item.label}</span>}
+              </Link>
+            );
+          })}
+        </nav>
 
         {/* User Profile */}
         {isAuthenticated && (
