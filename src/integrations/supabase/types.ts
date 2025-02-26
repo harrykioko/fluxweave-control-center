@@ -139,6 +139,7 @@ export type Database = {
           description: string
           id: string
           metadata: Json
+          stage: string
           status: string
           tags: string[]
           title: string
@@ -150,6 +151,7 @@ export type Database = {
           description: string
           id?: string
           metadata?: Json
+          stage?: string
           status?: string
           tags?: string[]
           title: string
@@ -161,6 +163,7 @@ export type Database = {
           description?: string
           id?: string
           metadata?: Json
+          stage?: string
           status?: string
           tags?: string[]
           title?: string
@@ -224,6 +227,7 @@ export type Database = {
           id: string | null
           last_name: string | null
           metadata: Json | null
+          stage: string | null
           status: string | null
           tags: string[] | null
           title: string | null

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Separator } from "@/components/ui/separator";
 
 interface Idea {
   id: string;
@@ -16,6 +17,7 @@ interface Idea {
   description: string;
   tags: string[];
   status: "draft" | "active" | "completed";
+  stage: "low_priority" | "exploration" | "on_deck";
   created_at: string;
   created_by: string;
   first_name?: string;
@@ -23,6 +25,14 @@ interface Idea {
   avatar_url?: string;
   createdAt: string;
 }
+
+type Stage = "low_priority" | "exploration" | "on_deck";
+
+const STAGES: { id: Stage; label: string }[] = [
+  { id: "low_priority", label: "Low Priority" },
+  { id: "exploration", label: "Exploration" },
+  { id: "on_deck", label: "On Deck" },
+];
 
 export default function Ideation() {
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
@@ -53,6 +63,27 @@ export default function Ideation() {
     setIsEvaluationOpen(true);
   };
 
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, idea: Idea) => {
+    e.dataTransfer.setData("idea_id", idea.id);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>, targetStage: Stage) => {
+    e.preventDefault();
+    const ideaId = e.dataTransfer.getData("idea_id");
+    const { error } = await supabase
+      .from("ideas")
+      .update({ stage: targetStage })
+      .eq("id", ideaId);
+
+    if (error) {
+      console.error("Failed to update idea stage:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
       <AppSidebar />
@@ -72,13 +103,43 @@ export default function Ideation() {
           {isLoading ? (
             <div className="text-center text-slate-500">Loading ideas...</div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {ideas.map((idea) => (
-                <IdeaCard
-                  key={idea.id}
-                  idea={idea}
-                  onClick={() => setSelectedIdea(idea)}
-                />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {STAGES.map((stage, index) => (
+                <div 
+                  key={stage.id}
+                  className="space-y-4"
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, stage.id)}
+                >
+                  <div className="flex items-center justify-between">
+                    <h2 className="font-semibold text-slate-700">{stage.label}</h2>
+                    <span className="text-sm text-slate-500">
+                      {ideas.filter(idea => idea.stage === stage.id).length} ideas
+                    </span>
+                  </div>
+                  <div className="space-y-4">
+                    {ideas
+                      .filter(idea => idea.stage === stage.id)
+                      .map(idea => (
+                        <div
+                          key={idea.id}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, idea)}
+                        >
+                          <IdeaCard
+                            idea={idea}
+                            onClick={() => setSelectedIdea(idea)}
+                          />
+                        </div>
+                      ))
+                    }
+                  </div>
+                  {index < STAGES.length - 1 && (
+                    <div className="hidden lg:block">
+                      <Separator orientation="vertical" className="h-full absolute right-0 top-0" />
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           )}
