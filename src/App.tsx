@@ -100,6 +100,14 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/resources"
+            element={
+              <ProtectedRoute>
+                <NotFound />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
