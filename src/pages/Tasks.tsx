@@ -72,7 +72,6 @@ export default function Tasks() {
         <div className="flex justify-between items-center bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
           <div>
             <h1 className="text-3xl font-bold text-white text-gradient">Customer Journeys</h1>
-            <p className="text-slate-300 mt-2">Manage and track customer support workflows</p>
           </div>
           <div className="flex gap-3">
             <Button variant="outline" className="bg-white/5 backdrop-blur-md border-white/10 text-white hover:bg-white/10">
@@ -90,26 +89,6 @@ export default function Tasks() {
               <Plus className="h-4 w-4 mr-2" />
               New Task
             </Button>
-          </div>
-        </div>
-
-        {/* Team Members */}
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
-          <h3 className="text-lg font-semibold text-white mb-4">Team Members</h3>
-          <div className="flex -space-x-2 overflow-hidden">
-            {profiles.map((profile) => (
-              <Avatar key={profile.id} className="inline-block ring-2 ring-purple-500/30 border border-white/20">
-                <AvatarImage 
-                  src={profile.avatar_url || `https://avatar.vercel.sh/${profile.id}`} 
-                  alt={`${profile.first_name} ${profile.last_name}`} 
-                />
-              </Avatar>
-            ))}
-            {profiles.length > 0 && (
-              <button className="inline-flex items-center justify-center w-8 h-8 text-xs font-medium text-white bg-purple-600/80 rounded-full ring-2 ring-purple-500/30 border border-white/20 hover:bg-purple-700/80">
-                +{Math.max(0, profiles.length - 3)}
-              </button>
-            )}
           </div>
         </div>
 
