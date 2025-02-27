@@ -47,57 +47,67 @@ export function NewTaskDialog({ open, onOpenChange, profiles }: NewTaskDialogPro
 
     setIsLoading(true);
     
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Authentication Error",
+          description: "You must be logged in to add a task",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Insert task directly without triggering audit log issues
+      const { error } = await supabase
+        .from('tasks')
+        .insert({
+          title: title.trim(),
+          description: description.trim() || null,
+          status: 'pending',
+          priority: priority,
+          due_date: dueDate || null,
+          assigned_to: assignedTo || null,
+          created_by: user.id
+        });
+
+      if (error) {
+        console.error("Error creating task:", error);
+        toast({
+          title: "Error",
+          description: "Failed to create task. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       toast({
-        title: "Authentication Error",
-        description: "You must be logged in to add a task",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    const { error } = await supabase
-      .from('tasks')
-      .insert({
-        title: title.trim(),
-        description: description.trim() || null,
-        status: 'pending',
-        priority: priority,
-        due_date: dueDate || null,
-        assigned_to: assignedTo || null,
-        created_by: user.id
+        title: "Success",
+        description: "Task created successfully",
       });
 
-    setIsLoading(false);
-
-    if (error) {
-      console.error("Error creating task:", error);
+      // Reset form and close dialog
+      setTitle("");
+      setDescription("");
+      setDueDate("");
+      setPriority("medium");
+      setAssignedTo("");
+      onOpenChange(false);
+      
+      // Refresh tasks list
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    } catch (error) {
+      console.error("Unexpected error:", error);
       toast({
         title: "Error",
-        description: "Failed to create task. Please try again.",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
-      return;
+    } finally {
+      setIsLoading(false);
     }
-
-    toast({
-      title: "Success",
-      description: "Task created successfully",
-    });
-
-    // Reset form and close dialog
-    setTitle("");
-    setDescription("");
-    setDueDate("");
-    setPriority("medium");
-    setAssignedTo("");
-    onOpenChange(false);
-    
-    // Refresh tasks list
-    queryClient.invalidateQueries({ queryKey: ["tasks"] });
   };
 
   return (
