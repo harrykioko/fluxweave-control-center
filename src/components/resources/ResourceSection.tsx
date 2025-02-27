@@ -29,10 +29,7 @@ export function ResourceSection({
   
   return (
     <div className={`rounded-xl overflow-hidden ${isSubscriptionSection ? 'bg-transparent' : 'glass-panel p-6'}`}>
-      <div className={`flex items-center space-x-3 ${isSubscriptionSection ? 'mb-6' : 'mb-4'} ${isSubscriptionSection ? 'px-2' : ''}`}>
-        <div className={`p-2 ${isSubscriptionSection ? 'bg-transparent' : 'bg-white/10 backdrop-blur-md'} rounded-lg`}>
-          {icon}
-        </div>
+      <div className={`flex items-center ${isSubscriptionSection ? 'mb-6' : 'mb-4'} ${isSubscriptionSection ? 'px-2' : ''}`}>
         <h2 className="text-xl text-white font-thin">
           {title} <span className="text-white/60 text-base">({resources.length})</span>
         </h2>
