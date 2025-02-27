@@ -50,24 +50,24 @@ const tasks: Task[] = [
 
 export default function Tasks() {
   return (
-    <main className="pt-20 px-4 md:px-8">
+    <main className="min-h-screen pt-20 px-4 md:px-8 bg-gradient-to-br from-slate-800/90 via-slate-700/80 to-slate-800/90">
       <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
         {/* Header */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">Customer Journeys</h1>
-            <p className="text-slate-500 mt-2">Manage and track customer support workflows</p>
+            <h1 className="text-3xl font-bold text-white text-gradient">Customer Journeys</h1>
+            <p className="text-slate-300 mt-2">Manage and track customer support workflows</p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="bg-white/50">
+            <Button variant="outline" className="bg-white/5 backdrop-blur-md border-white/10 text-white hover:bg-white/10">
               <Share2 className="h-4 w-4 mr-2" />
               Share
             </Button>
-            <Button variant="outline" className="bg-white/50">
+            <Button variant="outline" className="bg-white/5 backdrop-blur-md border-white/10 text-white hover:bg-white/10">
               <Calendar className="h-4 w-4 mr-2" />
               Schedule
             </Button>
-            <Button>
+            <Button className="bg-purple-600/90 hover:bg-purple-700/90 text-white border border-purple-500/30">
               <Plus className="h-4 w-4 mr-2" />
               New Task
             </Button>
@@ -75,22 +75,25 @@ export default function Tasks() {
         </div>
 
         {/* Team Members */}
-        <div className="flex -space-x-2 overflow-hidden">
-          {teamMembers.map((member) => (
-            <Avatar key={member.id} className="inline-block ring-2 ring-white">
-              <AvatarImage src={member.avatar} alt={member.name} />
-            </Avatar>
-          ))}
-          <button className="inline-flex items-center justify-center w-8 h-8 text-xs font-medium text-white bg-gray-700 rounded-full ring-2 ring-white hover:bg-gray-600">
-            +3
-          </button>
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
+          <h3 className="text-lg font-semibold text-white mb-4">Team Members</h3>
+          <div className="flex -space-x-2 overflow-hidden">
+            {teamMembers.map((member) => (
+              <Avatar key={member.id} className="inline-block ring-2 ring-purple-500/30 border border-white/20">
+                <AvatarImage src={member.avatar} alt={member.name} />
+              </Avatar>
+            ))}
+            <button className="inline-flex items-center justify-center w-8 h-8 text-xs font-medium text-white bg-purple-600/80 rounded-full ring-2 ring-purple-500/30 border border-white/20 hover:bg-purple-700/80">
+              +3
+            </button>
+          </div>
         </div>
 
         {/* Tasks Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Case Allocation Column */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-700">Case Allocation</h3>
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
+            <h3 className="text-lg font-semibold text-white mb-4">Case Allocation</h3>
             <div className="space-y-4">
               {tasks.filter(task => task.status === "pending").map(task => (
                 <TaskCard key={task.id} task={task} />
@@ -99,8 +102,8 @@ export default function Tasks() {
           </div>
 
           {/* Issue Identification Column */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-700">Issue Identification</h3>
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
+            <h3 className="text-lg font-semibold text-white mb-4">Issue Identification</h3>
             <div className="space-y-4">
               {tasks.filter(task => task.status === "in_progress").map(task => (
                 <TaskCard key={task.id} task={task} />
@@ -109,8 +112,8 @@ export default function Tasks() {
           </div>
 
           {/* Technical Resolution Column */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-700">Technical Resolution</h3>
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
+            <h3 className="text-lg font-semibold text-white mb-4">Technical Resolution</h3>
             <div className="space-y-4">
               {tasks.filter(task => task.status === "completed").map(task => (
                 <TaskCard key={task.id} task={task} />
@@ -119,9 +122,9 @@ export default function Tasks() {
           </div>
 
           {/* New Tasks Column */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-700">New Tasks</h3>
-            <button className="w-full h-32 rounded-lg border-2 border-dashed border-slate-300 hover:border-slate-400 flex items-center justify-center text-slate-500 hover:text-slate-600 transition-colors">
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
+            <h3 className="text-lg font-semibold text-white mb-4">New Tasks</h3>
+            <button className="w-full h-32 rounded-lg border-2 border-dashed border-white/20 hover:border-white/30 bg-white/5 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/10 transition-colors">
               <Plus className="h-6 w-6 mr-2" />
               Add Task
             </button>

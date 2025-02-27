@@ -107,17 +107,21 @@ export default function Ideation() {
       toast({
         title: "Idea moved",
         description: `"${ideaTitle}" moved to ${targetStage.replace(/_/g, ' ').toLowerCase()}`,
-        className: "bg-white/60 backdrop-blur-md border border-white/40 shadow-lg dark:bg-slate-800/60 dark:border-slate-700/40 animate-in slide-in-from-top-2 duration-200",
+        className: "glass-panel bg-white/20 text-white",
       });
     }
   };
 
   return (
-    <main className="pt-20 px-4 md:px-8">
+    <main className="min-h-screen pt-20 px-4 md:px-8 bg-gradient-to-br from-slate-800/90 via-slate-700/80 to-slate-800/90">
       <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
-        <div className="flex justify-end mb-6">
+        <div className="flex justify-between items-center glass-panel p-6 mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-white text-gradient">Innovation Hub</h1>
+            <p className="text-slate-300 mt-2">Manage and track your ideas from concept to execution</p>
+          </div>
           <Button 
-            className="bg-purple-600 hover:bg-purple-700 text-white" 
+            className="bg-purple-600/90 hover:bg-purple-700/90 text-white border border-purple-500/30"
             onClick={() => setIsNewIdeaOpen(true)}
           >
             <Plus className="h-4 w-4 mr-2" />
@@ -127,19 +131,19 @@ export default function Ideation() {
 
         {/* Ideas Grid */}
         {isLoading ? (
-          <div className="text-center text-slate-500">Loading ideas...</div>
+          <div className="text-center text-white">Loading ideas...</div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {STAGES.map((stage, index) => (
               <div 
                 key={stage.id}
-                className="space-y-4"
+                className="glass-panel p-6 space-y-4"
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, stage.id)}
               >
                 <div className="flex items-center justify-between">
-                  <h2 className="font-semibold text-slate-700">{stage.label}</h2>
-                  <span className="text-sm text-slate-500">
+                  <h2 className="font-semibold text-white">{stage.label}</h2>
+                  <span className="text-sm text-slate-300 bg-white/10 px-2 py-1 rounded-full">
                     {ideas.filter(idea => idea.stage === stage.id).length} ideas
                   </span>
                 </div>
@@ -162,7 +166,7 @@ export default function Ideation() {
                 </div>
                 {index < STAGES.length - 1 && (
                   <div className="hidden lg:block">
-                    <Separator orientation="vertical" className="h-full absolute right-0 top-0" />
+                    <Separator orientation="vertical" className="h-full absolute right-0 top-0 opacity-20" />
                   </div>
                 )}
               </div>
@@ -190,4 +194,3 @@ export default function Ideation() {
     </main>
   );
 }
-

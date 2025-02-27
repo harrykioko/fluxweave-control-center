@@ -46,7 +46,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <AppSidebar />
-      <div className="min-h-screen pl-20 bg-gradient-to-br from-slate-50/90 to-slate-100/80">
+      <div className="min-h-screen pl-20">
         {children}
       </div>
     </>
