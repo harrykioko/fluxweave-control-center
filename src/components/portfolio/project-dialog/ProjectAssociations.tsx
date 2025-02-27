@@ -23,37 +23,37 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
   const [selectedSocial, setSelectedSocial] = useState<SocialAccount | null>(null);
   const { toast } = useToast();
 
-  // Fetch domains with full data
+  // Fetch domains with join query
   const { data: domains, isLoading: isLoadingDomains } = useQuery({
     queryKey: ['project-domains', project.id],
     queryFn: async () => {
       try {
-        // First get the domain IDs
-        const { data: projectDomains, error: projectDomainsError } = await supabase
+        const { data, error } = await supabase
           .from('project_domains')
-          .select('domain_id')
+          .select(`
+            domain:domains (
+              id,
+              name,
+              url,
+              status,
+              owner,
+              hosted_on
+            )
+          `)
           .eq('project_id', project.id);
-        
-        if (projectDomainsError) {
-          console.error('Error fetching project domains:', projectDomainsError);
-          throw projectDomainsError;
-        }
-        
-        if (!projectDomains?.length) return [];
-        
-        // Then fetch the full domain data
-        const { data: domains, error: domainsError } = await supabase
-          .from('domains')
-          .select('*')
-          .in('id', projectDomains.map(pd => pd.domain_id));
-        
-        if (domainsError) {
-          console.error('Error fetching domains:', domainsError);
-          throw domainsError;
+
+        if (error) {
+          throw error;
         }
 
-        return domains || [];
+        // Extract domain objects from the joined query result
+        const domainData = data
+          ?.map(item => item.domain)
+          .filter(domain => domain !== null) as Domain[];
+
+        return domainData || [];
       } catch (error) {
+        console.error('Error fetching domains:', error);
         toast({
           title: "Error loading domains",
           description: "Could not load associated domains. Please try again later.",
@@ -64,35 +64,35 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
     },
   });
 
-  // Fetch social accounts with full data
+  // Fetch social accounts with join query
   const { data: socials, isLoading: isLoadingSocials } = useQuery({
     queryKey: ['project-socials', project.id],
     queryFn: async () => {
       try {
-        const { data: projectSocials, error: projectSocialsError } = await supabase
+        const { data, error } = await supabase
           .from('project_socials')
-          .select('social_id')
+          .select(`
+            social:social_accounts (
+              id,
+              platform,
+              handle,
+              account_name
+            )
+          `)
           .eq('project_id', project.id);
-        
-        if (projectSocialsError) {
-          console.error('Error fetching project socials:', projectSocialsError);
-          throw projectSocialsError;
-        }
-        
-        if (!projectSocials?.length) return [];
-        
-        const { data: socials, error: socialsError } = await supabase
-          .from('social_accounts')
-          .select('*')
-          .in('id', projectSocials.map(ps => ps.social_id));
-        
-        if (socialsError) {
-          console.error('Error fetching social accounts:', socialsError);
-          throw socialsError;
+
+        if (error) {
+          throw error;
         }
 
-        return socials || [];
+        // Extract social account objects from the joined query result
+        const socialData = data
+          ?.map(item => item.social)
+          .filter(social => social !== null) as SocialAccount[];
+
+        return socialData || [];
       } catch (error) {
+        console.error('Error fetching social accounts:', error);
         toast({
           title: "Error loading social accounts",
           description: "Could not load associated social accounts. Please try again later.",
