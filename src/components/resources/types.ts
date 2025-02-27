@@ -15,7 +15,7 @@ export interface Resource {
   // Fields specific to each resource type
   author?: string | null;
   pricing?: string | null;
-  platform?: string | null; 
+  price?: string | null;
   category?: string | null;
   frequency?: string | null;
   username?: string | null;
@@ -47,7 +47,7 @@ export interface ReadResource extends ResourceInsertBase {
 
 export interface SubscriptionResource extends ResourceInsertBase {
   type: "subscription";
-  platform?: string | null;
+  price?: string | null;
   frequency?: string | null;
   username?: string | null;
   password?: string | null;

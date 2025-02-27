@@ -32,7 +32,7 @@ export function AddResourceDialog({
   // Additional fields for specific resource types
   const [author, setAuthor] = useState("");
   const [pricing, setPricing] = useState("");
-  const [platform, setPlatform] = useState("");
+  const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [frequency, setFrequency] = useState("");
   const [username, setUsername] = useState("");
@@ -46,7 +46,7 @@ export function AddResourceDialog({
     setType("tool");
     setAuthor("");
     setPricing("");
-    setPlatform("");
+    setPrice("");
     setCategory("");
     setFrequency("");
     setUsername("");
@@ -112,7 +112,7 @@ export function AddResourceDialog({
         resourceData = {
           ...baseResource,
           type: "subscription", // Explicitly set the type for TypeScript
-          platform: platform || null,
+          price: price || null,
           frequency: frequency || null,
           username: username || null,
           password: password || null
@@ -265,12 +265,12 @@ export function AddResourceDialog({
             {type === "subscription" && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="platform">Platform</Label>
+                  <Label htmlFor="price">Price</Label>
                   <Input
-                    id="platform"
-                    value={platform}
-                    onChange={(e) => setPlatform(e.target.value)}
-                    placeholder="YouTube, Substack, Podcast, Twitter"
+                    id="price"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="Free, $9.99/month, $99/year"
                   />
                 </div>
                 <div className="space-y-2">
