@@ -77,7 +77,7 @@ export function SidebarFooter({ collapsed, userProfile, isAuthenticated }: Sideb
 
             <button
               onClick={handleSignOut}
-              className="flex justify-center w-10 h-10 mx-auto rounded-full text-white/80 hover:bg-white/10 hover:text-white my-1"
+              className="flex items-center justify-center w-10 h-10 mx-auto rounded-full text-white/80 hover:bg-white/10 hover:text-white my-1"
               title="Sign Out"
             >
               <LogOut className="h-5 w-5" />
