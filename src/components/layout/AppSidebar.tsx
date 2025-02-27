@@ -35,7 +35,7 @@ const menuItems = [{
 }];
 
 export function AppSidebar() {
-  const [collapsed, setCollapsed] = useState(true); // Default to collapsed now
+  const [collapsed, setCollapsed] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userProfile, setUserProfile] = useState<{ first_name?: string; last_name?: string; avatar_url?: string } | null>(null);
   const location = useLocation();
@@ -82,13 +82,14 @@ export function AppSidebar() {
         collapsed 
           ? "w-16 rounded-full p-0 top-1/2 -translate-y-1/2 left-2" 
           : "w-64 left-4 rounded-2xl h-[calc(100vh-2rem)] top-4",
-        "bg-gradient-to-b from-rose-500/90 via-purple-600/90 to-indigo-600/90 backdrop-blur-lg border border-white/20",
-        "shadow-[0_8px_32px_0_rgba(0,0,0,0.25)]"
+        "bg-black/20 backdrop-blur-xl border border-white/10",
+        "shadow-[0_8px_32px_0_rgba(0,0,0,0.15)]",
+        "before:absolute before:inset-0 before:rounded-inherit before:bg-gradient-to-b before:from-rose-500/20 before:via-purple-600/20 before:to-indigo-600/20 before:-z-10"
       )}
     >
       <div className={cn(
-        "flex flex-col",
-        collapsed ? "items-center py-2" : "h-full"
+        "flex flex-col h-full",
+        collapsed ? "items-center py-2" : ""
       )}>
         {/* Header */}
         <div className={cn(
@@ -96,7 +97,7 @@ export function AppSidebar() {
           collapsed ? "p-2" : "p-4"
         )}>
           <span className={cn(
-            "text-xl font-bold text-pink-100",
+            "text-xl font-bold text-white/90",
             collapsed ? "hidden" : "block"
           )}>
             {collapsed ? "IC" : "Folio"}
@@ -105,7 +106,7 @@ export function AppSidebar() {
             variant="ghost" 
             size="icon" 
             onClick={() => setCollapsed(!collapsed)}
-            className="text-pink-100 hover:text-white hover:bg-white/10"
+            className="text-white/90 hover:text-white hover:bg-white/10"
           >
             <Menu className="h-5 w-5" />
           </Button>
@@ -126,8 +127,8 @@ export function AppSidebar() {
                 className={cn(
                   "flex items-center gap-3 transition-all relative group",
                   isActive 
-                    ? "bg-white/20 text-white" 
-                    : "text-pink-100 hover:bg-white/10 hover:text-white",
+                    ? "bg-white/15 text-white" 
+                    : "text-white/80 hover:bg-white/10 hover:text-white",
                   collapsed 
                     ? "justify-center w-10 h-10 mx-auto rounded-full" 
                     : "justify-between px-4 py-3 rounded-xl text-sm font-medium"
@@ -137,14 +138,13 @@ export function AppSidebar() {
                 <div className="flex items-center gap-3">
                   <Icon className={cn(
                     "h-5 w-5 transition-transform",
-                    isActive ? "text-white" : "text-pink-100"
+                    isActive ? "text-white" : "text-white/80"
                   )} />
                   {!collapsed && <span>{item.label}</span>}
                 </div>
                 
-                {/* Add plus icon for items with children */}
                 {!collapsed && item.hasChildren && (
-                  <ChevronRight className="h-4 w-4 text-pink-100" />
+                  <ChevronRight className="h-4 w-4 text-white/60" />
                 )}
               </Link>
             );
@@ -159,14 +159,14 @@ export function AppSidebar() {
           <div className="border-t border-white/10 mx-3 pt-4 pb-2">
             <Link
               to="/settings"
-              className="flex items-center gap-3 text-pink-100 hover:bg-white/10 hover:text-white px-4 py-3 rounded-xl text-sm font-medium"
+              className="flex items-center gap-3 text-white/80 hover:bg-white/10 hover:text-white px-4 py-3 rounded-xl text-sm font-medium"
             >
               <Menu className="h-5 w-5" />
               <span>Settings</span>
             </Link>
             <Link
               to="/auth"
-              className="flex items-center gap-3 text-pink-100 hover:bg-white/10 hover:text-white px-4 py-3 rounded-xl text-sm font-medium"
+              className="flex items-center gap-3 text-white/80 hover:bg-white/10 hover:text-white px-4 py-3 rounded-xl text-sm font-medium"
             >
               <Menu className="h-5 w-5" />
               <span>Logout</span>
@@ -184,3 +184,4 @@ export function AppSidebar() {
     </aside>
   );
 }
+
