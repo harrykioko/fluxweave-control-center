@@ -23,7 +23,7 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
   const [selectedSocial, setSelectedSocial] = useState<SocialAccount | null>(null);
   const { toast } = useToast();
 
-  // Fetch domains with join query
+  // Fetch domains associated with the project
   const { data: domains, isLoading: isLoadingDomains } = useQuery({
     queryKey: ['project-domains', project.id],
     queryFn: async () => {
@@ -31,13 +31,18 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
         const { data, error } = await supabase
           .from('project_domains')
           .select(`
-            domain:domains (
+            domains (
               id,
               name,
               url,
               status,
               owner,
-              hosted_on
+              hosted_on,
+              created_at,
+              updated_at,
+              user_id,
+              login_username,
+              login_password
             )
           `)
           .eq('project_id', project.id);
@@ -46,12 +51,10 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
           throw error;
         }
 
-        // Extract domain objects from the joined query result
-        const domainData = data
-          ?.map(item => item.domain)
-          .filter(domain => domain !== null) as Domain[];
-
-        return domainData || [];
+        // Extract and filter valid domain objects
+        return (data || [])
+          .map(item => item.domains)
+          .filter((domain): domain is Domain => domain !== null);
       } catch (error) {
         console.error('Error fetching domains:', error);
         toast({
@@ -64,7 +67,7 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
     },
   });
 
-  // Fetch social accounts with join query
+  // Fetch social accounts associated with the project
   const { data: socials, isLoading: isLoadingSocials } = useQuery({
     queryKey: ['project-socials', project.id],
     queryFn: async () => {
@@ -72,11 +75,16 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
         const { data, error } = await supabase
           .from('project_socials')
           .select(`
-            social:social_accounts (
+            social_accounts (
               id,
               platform,
               handle,
-              account_name
+              account_name,
+              created_at,
+              updated_at,
+              user_id,
+              login_username,
+              login_password
             )
           `)
           .eq('project_id', project.id);
@@ -85,12 +93,10 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
           throw error;
         }
 
-        // Extract social account objects from the joined query result
-        const socialData = data
-          ?.map(item => item.social)
-          .filter(social => social !== null) as SocialAccount[];
-
-        return socialData || [];
+        // Extract and filter valid social account objects
+        return (data || [])
+          .map(item => item.social_accounts)
+          .filter((social): social is SocialAccount => social !== null);
       } catch (error) {
         console.error('Error fetching social accounts:', error);
         toast({
