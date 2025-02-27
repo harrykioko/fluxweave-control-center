@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Project } from "@/types/portfolio";
 import { cn } from "@/lib/utils";
 import { Link as LinkIcon, Pencil } from "lucide-react";
@@ -53,7 +53,7 @@ export function ProjectDialogHeader({ project }: ProjectDialogHeaderProps) {
   });
 
   // Set initial selections when data is loaded
-  useState(() => {
+  useEffect(() => {
     if (existingDomains) setSelectedDomainIds(existingDomains);
     if (existingSocials) setSelectedSocialIds(existingSocials);
   }, [existingDomains, existingSocials]);
@@ -310,3 +310,4 @@ export function ProjectDialogHeader({ project }: ProjectDialogHeaderProps) {
     </div>
   );
 }
+
