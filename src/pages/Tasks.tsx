@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { NewTaskDialog } from "@/components/tasks/NewTaskDialog";
+import { TaskDetailDialog } from "@/components/tasks/TaskDetailDialog";
 
 interface User {
   id: string;
@@ -39,6 +40,8 @@ const TASK_STATUSES = [
 
 export default function Tasks() {
   const [isNewTaskOpen, setIsNewTaskOpen] = useState(false);
+  const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ["tasks"],
@@ -64,6 +67,11 @@ export default function Tasks() {
       return data;
     },
   });
+
+  const handleTaskClick = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setIsTaskDetailOpen(true);
+  };
 
   return (
     <main className="min-h-screen pt-20 px-4 md:px-8 bg-gradient-to-br from-slate-800/90 via-slate-700/80 to-slate-800/90">
@@ -115,7 +123,8 @@ export default function Tasks() {
                             name: `${task.assignee_first_name} ${task.assignee_last_name}`,
                             avatar: task.assignee_avatar_url || `https://avatar.vercel.sh/${task.assigned_to}`
                           } : undefined
-                        }} 
+                        }}
+                        onClick={() => handleTaskClick(task.id)} 
                       />
                     ))
                   }
@@ -131,6 +140,14 @@ export default function Tasks() {
         open={isNewTaskOpen} 
         onOpenChange={setIsNewTaskOpen} 
         profiles={profiles} 
+      />
+
+      {/* Task Detail Dialog */}
+      <TaskDetailDialog
+        open={isTaskDetailOpen}
+        onOpenChange={setIsTaskDetailOpen}
+        taskId={selectedTaskId}
+        profiles={profiles}
       />
     </main>
   );

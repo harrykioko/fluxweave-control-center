@@ -18,6 +18,7 @@ interface TaskCardProps {
     due_date?: string;
     assignee?: User;
   };
+  onClick?: () => void;
 }
 
 // Map database status values to display labels
@@ -35,7 +36,7 @@ const priorityColorMap: Record<string, string> = {
   "none": "bg-slate-500/80 hover:bg-slate-500/90"
 };
 
-export function TaskCard({ task }: TaskCardProps) {
+export function TaskCard({ task, onClick }: TaskCardProps) {
   // Format the due date with time information
   const formatDueDate = (dateString?: string) => {
     if (!dateString) return "";
@@ -70,7 +71,10 @@ export function TaskCard({ task }: TaskCardProps) {
   const priorityColor = task.priority ? priorityColorMap[task.priority.toLowerCase()] || priorityColorMap.none : priorityColorMap.none;
 
   return (
-    <div className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-lg p-4 hover:bg-white/50 transition-all hover-scale">
+    <div 
+      className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-lg p-4 hover:bg-white/50 transition-all hover-scale cursor-pointer"
+      onClick={onClick}
+    >
       <div className="flex items-start justify-between">
         <div className="space-y-3 flex-1">
           <h4 className="font-medium text-slate-800">{task.title}</h4>
