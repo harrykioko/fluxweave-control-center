@@ -1,5 +1,6 @@
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import type { Project } from "@/types/portfolio";
 import { ProjectDialogHeader } from "./project-dialog/ProjectDialogHeader";
 import { ProjectAIWorkspace } from "./project-dialog/ProjectAIWorkspace";
@@ -17,10 +18,14 @@ export function ProjectDetailDialog({ open, onOpenChange, project }: ProjectDeta
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-7xl h-[90vh] p-0 bg-white/60 backdrop-blur-xl">
-        <div className="p-6 space-y-6">
-          <ProjectDialogHeader project={project} />
-          <ProjectAIWorkspace />
-          <ProjectOperations />
+        <div className="grid grid-cols-2 h-full">
+          <div className="p-6 space-y-6 border-r border-slate-200">
+            <ProjectDialogHeader project={project} />
+          </div>
+          <div className="p-6 space-y-6">
+            <ProjectAIWorkspace />
+            <ProjectOperations />
+          </div>
         </div>
       </DialogContent>
     </Dialog>

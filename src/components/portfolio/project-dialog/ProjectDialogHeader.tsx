@@ -8,6 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { DomainPicklist } from "./DomainPicklist";
+import { SocialPicklist } from "./SocialPicklist";
 
 interface ProjectDialogHeaderProps {
   project: Project;
@@ -19,6 +22,8 @@ export function ProjectDialogHeader({ project }: ProjectDialogHeaderProps) {
   const [name, setName] = useState(project.name);
   const [description, setDescription] = useState(project.description || "");
   const [url, setUrl] = useState(project.url || "");
+  const [selectedDomainId, setSelectedDomainId] = useState<string>();
+  const [selectedSocialId, setSelectedSocialId] = useState<string>();
   const { toast } = useToast();
 
   const handleLogoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,99 +106,111 @@ export function ProjectDialogHeader({ project }: ProjectDialogHeaderProps) {
   };
 
   return (
-    <div className="flex items-start gap-4">
-      <div className="relative group">
-        <img
-          src={project.logo}
-          alt={`${project.name} logo`}
-          className={cn(
-            "w-20 h-20 rounded-xl object-cover",
-            isUploading && "opacity-50"
-          )}
-        />
-        <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl text-white text-sm opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
-          Change
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleLogoChange}
-            disabled={isUploading}
+    <div className="space-y-6">
+      <div className="flex items-start gap-4">
+        <div className="relative group">
+          <img
+            src={project.logo}
+            alt={`${project.name} logo`}
+            className={cn(
+              "w-20 h-20 rounded-xl object-cover",
+              isUploading && "opacity-50"
+            )}
           />
-        </label>
-      </div>
-      <div className="flex-1">
-        {isEditing ? (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="name">Project Name</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="mt-1"
+          <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl text-white text-sm opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+            Change
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleLogoChange}
+              disabled={isUploading}
+            />
+          </label>
+        </div>
+        <div className="flex-1">
+          {isEditing ? (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="name">Project Name</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Input
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="url">Project URL</Label>
+                <Input
+                  id="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleSave}>Save</Button>
+                <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+              </div>
+              <Separator className="my-4" />
+              <DomainPicklist
+                selectedDomainId={selectedDomainId}
+                onSelect={setSelectedDomainId}
+                className="mb-4"
+              />
+              <SocialPicklist
+                selectedAccountId={selectedSocialId}
+                onSelect={setSelectedSocialId}
               />
             </div>
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Input
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="url">Project URL</Label>
-              <Input
-                id="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                className="mt-1"
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button onClick={handleSave}>Save</Button>
-              <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-semibold text-slate-800">{project.name}</h2>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsEditing(true)}
-                className="h-8 w-8"
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-            </div>
-            <p className="text-slate-500 mt-1">{project.description}</p>
-            <div className="flex items-center gap-2 mt-2">
-              <span className={cn(
-                "px-3 py-1 rounded-full text-xs font-medium",
-                project.status === "live" && "bg-emerald-100/50 text-emerald-700",
-                project.status === "build" && "bg-amber-100/50 text-amber-700",
-                project.status === "paused" && "bg-slate-100/50 text-slate-700",
-              )}>
-                {project.status}
-              </span>
-              {project.url && (
-                <a
-                  href={project.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700"
+          ) : (
+            <>
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl font-semibold text-slate-800">{project.name}</h2>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsEditing(true)}
+                  className="h-8 w-8"
                 >
-                  <LinkIcon className="h-3 w-3" />
-                  {project.url.replace('https://', '')}
-                </a>
-              )}
-            </div>
-          </>
-        )}
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-slate-500 mt-1">{project.description}</p>
+              <div className="flex items-center gap-2 mt-2">
+                <span className={cn(
+                  "px-3 py-1 rounded-full text-xs font-medium",
+                  project.status === "live" && "bg-emerald-100/50 text-emerald-700",
+                  project.status === "build" && "bg-amber-100/50 text-amber-700",
+                  project.status === "paused" && "bg-slate-100/50 text-slate-700",
+                )}>
+                  {project.status}
+                </span>
+                {project.url && (
+                  <a
+                    href={project.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700"
+                  >
+                    <LinkIcon className="h-3 w-3" />
+                    {project.url.replace('https://', '')}
+                  </a>
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
