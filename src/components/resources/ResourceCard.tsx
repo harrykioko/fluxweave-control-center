@@ -4,6 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { ResourceType } from "./types";
 import { formatDistanceToNow } from "date-fns";
 import * as Icons from "lucide-react";
+import { LucideIcon } from "lucide-react";
 
 interface ResourceCardProps {
   id: string;
@@ -44,7 +45,7 @@ const domainIconMap: Record<string, keyof typeof Icons> = {
 };
 
 // Function to get icon based on domain
-const getIconForDomain = (domain: string): React.ElementType => {
+const getIconForDomain = (domain: string): LucideIcon => {
   // Default icon if no match is found
   let iconName: keyof typeof Icons = "Globe";
   
@@ -56,8 +57,8 @@ const getIconForDomain = (domain: string): React.ElementType => {
     }
   }
   
-  // Return the actual component from the Icons object
-  return Icons[iconName];
+  // Return the icon component from the Icons object
+  return Icons[iconName] as LucideIcon;
 };
 
 export function ResourceCard({ 
