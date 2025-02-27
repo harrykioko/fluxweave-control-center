@@ -18,7 +18,6 @@ export function NewProjectDialog({ open, onOpenChange, onProjectAdded }: NewProj
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [logoUrl, setLogoUrl] = useState("");
   const [url, setUrl] = useState("");
   const { toast } = useToast();
 
@@ -52,7 +51,6 @@ export function NewProjectDialog({ open, onOpenChange, onProjectAdded }: NewProj
       .insert({
         name: name.trim(),
         description: description.trim() || null,
-        logo_url: logoUrl.trim() || null,
         url: url.trim() || null,
         status: 'draft',
         user_id: user.id
@@ -77,7 +75,6 @@ export function NewProjectDialog({ open, onOpenChange, onProjectAdded }: NewProj
     // Reset form and close dialog
     setName("");
     setDescription("");
-    setLogoUrl("");
     setUrl("");
     onOpenChange(false);
     onProjectAdded?.();
@@ -113,16 +110,6 @@ export function NewProjectDialog({ open, onOpenChange, onProjectAdded }: NewProj
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="A brief description of your project"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="logoUrl">Logo URL</Label>
-              <Input
-                id="logoUrl"
-                value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="https://example.com/logo.png"
               />
             </div>
 
