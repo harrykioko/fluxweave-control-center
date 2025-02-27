@@ -18,6 +18,13 @@ interface TaskCardProps {
   };
 }
 
+// Map database status values to display labels
+const statusDisplayMap = {
+  "pending": "To-Do",
+  "in_progress": "In Progress",
+  "completed": "Done"
+};
+
 export function TaskCard({ task }: TaskCardProps) {
   return (
     <div className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-lg p-4 hover:bg-white/50 transition-all hover-scale">
@@ -42,7 +49,7 @@ export function TaskCard({ task }: TaskCardProps) {
           task.status === "completed" ? "text-green-600" : "text-slate-500"
         }`}>
           <CheckCircle2 className="h-4 w-4" />
-          <span className="capitalize">{task.status.replace("_", " ")}</span>
+          <span>{statusDisplayMap[task.status] || task.status}</span>
         </div>
       </div>
     </div>

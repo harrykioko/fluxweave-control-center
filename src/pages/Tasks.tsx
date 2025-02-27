@@ -30,10 +30,11 @@ interface Task {
   assignee_avatar_url?: string;
 }
 
+// Updated status mapping with new display labels but same database values
 const TASK_STATUSES = [
-  { id: "pending", label: "Case Allocation" },
-  { id: "in_progress", label: "Issue Identification" },
-  { id: "completed", label: "Technical Resolution" }
+  { id: "pending", label: "To-Do" },
+  { id: "in_progress", label: "In Progress" },
+  { id: "completed", label: "Done" }
 ];
 
 export default function Tasks() {
