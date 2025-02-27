@@ -74,11 +74,10 @@ export function AppSidebar() {
     <aside 
       className={cn(
         "fixed left-2 z-40 transition-all duration-300",
-        "bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/10",
-        "shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]",
         collapsed 
-          ? "w-16 rounded-full p-0 top-1/2 -translate-y-1/2" 
-          : "w-64 left-4 rounded-2xl h-[calc(100vh-2rem)] top-4"
+          ? "w-16 rounded-full p-0 top-1/2 -translate-y-1/2 bg-white/5 backdrop-blur-xl border border-white/10" 
+          : "w-64 left-4 rounded-2xl h-[calc(100vh-2rem)] top-4 bg-white/10 backdrop-blur-xl border border-white/20",
+        "shadow-[0_8px_32px_0_rgba(0,0,0,0.25)]"
       )}
     >
       <div className={cn(
@@ -119,13 +118,13 @@ export function AppSidebar() {
                 key={item.label}
                 to={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all relative group",
+                  "flex items-center gap-3 transition-all relative group",
                   isActive 
                     ? "bg-white/20 text-white shadow-sm" 
                     : "text-white/70 hover:bg-white/10 hover:text-white",
                   collapsed 
                     ? "justify-center w-10 h-10 mx-auto rounded-full" 
-                    : "backdrop-blur-sm px-4 py-3"
+                    : "backdrop-blur-sm px-4 py-3 rounded-xl text-sm font-medium"
                 )}
                 title={collapsed ? item.label : ""}
               >
