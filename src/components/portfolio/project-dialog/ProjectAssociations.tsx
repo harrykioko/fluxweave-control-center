@@ -30,21 +30,7 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
       try {
         const { data, error } = await supabase
           .from('project_domains')
-          .select(`
-            domains (
-              id,
-              name,
-              url,
-              status,
-              owner,
-              hosted_on,
-              created_at,
-              updated_at,
-              user_id,
-              login_username,
-              login_password
-            )
-          `)
+          .select('domain:domains!project_domains_domain_id_fkey(*)')
           .eq('project_id', project.id);
 
         if (error) {
@@ -53,7 +39,7 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
 
         // Extract and filter valid domain objects
         return (data || [])
-          .map(item => item.domains)
+          .map(item => item.domain)
           .filter((domain): domain is Domain => domain !== null);
       } catch (error) {
         console.error('Error fetching domains:', error);
@@ -74,19 +60,7 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
       try {
         const { data, error } = await supabase
           .from('project_socials')
-          .select(`
-            social_accounts (
-              id,
-              platform,
-              handle,
-              account_name,
-              created_at,
-              updated_at,
-              user_id,
-              login_username,
-              login_password
-            )
-          `)
+          .select('social:social_accounts!project_socials_social_id_fkey(*)')
           .eq('project_id', project.id);
 
         if (error) {
@@ -95,7 +69,7 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
 
         // Extract and filter valid social account objects
         return (data || [])
-          .map(item => item.social_accounts)
+          .map(item => item.social)
           .filter((social): social is SocialAccount => social !== null);
       } catch (error) {
         console.error('Error fetching social accounts:', error);
