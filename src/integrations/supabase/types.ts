@@ -689,6 +689,7 @@ export type Database = {
         | "resource_created"
         | "resource_updated"
         | "resource_archived"
+        | "task_status_changed"
     }
     CompositeTypes: {
       [_ in never]: never
