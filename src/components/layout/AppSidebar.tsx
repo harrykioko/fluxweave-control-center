@@ -73,7 +73,7 @@ export function AppSidebar() {
         <SidebarNavigation collapsed={collapsed} />
 
         {/* Bottom Actions */}
-        <SidebarFooter collapsed={collapsed} />
+        <SidebarFooter collapsed={collapsed} userProfile={userProfile} isAuthenticated={isAuthenticated} />
 
         {/* User Profile */}
         <SidebarProfile 
