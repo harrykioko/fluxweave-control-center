@@ -60,19 +60,24 @@ export default function Tasks() {
 
       // Get comment counts for each task
       const taskIds = tasksData.map(task => task.id);
+      
+      // If there are no tasks, return empty array
+      if (taskIds.length === 0) {
+        return [];
+      }
+      
+      // Get comment counts by using a proper query
       const { data: commentCounts, error: commentsError } = await supabase
         .from("task_comments")
-        .select("task_id, count")
+        .select("task_id, count(*)")
         .in("task_id", taskIds)
-        .select("task_id")
-        .select("count(*)", { count: 'exact', head: false })
         .group("task_id");
 
       if (commentsError) console.error("Error fetching comment counts:", commentsError);
 
       // Create a map of task_id to comment count
       const commentCountMap = (commentCounts || []).reduce((acc, item) => {
-        acc[item.task_id] = item.count;
+        acc[item.task_id] = parseInt(item.count);
         return acc;
       }, {});
 
