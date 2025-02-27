@@ -5,8 +5,8 @@ import { SocialSection } from "@/components/portfolio/SocialSection";
 
 export default function Portfolio() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
-      <div className="container mx-auto p-8 space-y-8">
+    <div className="min-h-screen pt-20 px-4 md:px-8">
+      <div className="container mx-auto space-y-8">
         <ProjectsSection />
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -17,4 +17,3 @@ export default function Portfolio() {
     </div>
   );
 }
-
