@@ -21,56 +21,82 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
   const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
   const [selectedSocial, setSelectedSocial] = useState<SocialAccount | null>(null);
 
-  // Fetch associated domains
+  // Fetch associated domains with error boundaries
   const { data: domains, isLoading: isLoadingDomains, error: domainsError } = useQuery({
     queryKey: ['project-domains', project.id],
     queryFn: async () => {
-      const { data: projectDomains, error: projectDomainsError } = await supabase
-        .from('project_domains')
-        .select('domain_id')
-        .eq('project_id', project.id);
-      
-      if (projectDomainsError) throw projectDomainsError;
-      
-      if (!projectDomains?.length) return [];
-      
-      const { data: domains, error: domainsError } = await supabase
-        .from('domains')
-        .select('*')
-        .in('id', projectDomains.map(pd => pd.domain_id));
-      
-      if (domainsError) throw domainsError;
-      return domains || [];
+      try {
+        const { data: projectDomains, error: projectDomainsError } = await supabase
+          .from('project_domains')
+          .select('domain_id')
+          .eq('project_id', project.id);
+        
+        if (projectDomainsError) {
+          console.error('Error fetching project domains:', projectDomainsError);
+          throw projectDomainsError;
+        }
+        
+        if (!projectDomains?.length) return [];
+        
+        const { data: domains, error: domainsError } = await supabase
+          .from('domains')
+          .select('*')
+          .in('id', projectDomains.map(pd => pd.domain_id));
+        
+        if (domainsError) {
+          console.error('Error fetching domains:', domainsError);
+          throw domainsError;
+        }
+
+        return domains || [];
+      } catch (error) {
+        console.error('Error in domains query:', error);
+        throw error;
+      }
     },
+    retry: 1,
   });
 
-  // Fetch associated social accounts
+  // Fetch associated social accounts with error boundaries
   const { data: socials, isLoading: isLoadingSocials, error: socialsError } = useQuery({
     queryKey: ['project-socials', project.id],
     queryFn: async () => {
-      const { data: projectSocials, error: projectSocialsError } = await supabase
-        .from('project_socials')
-        .select('social_id')
-        .eq('project_id', project.id);
-      
-      if (projectSocialsError) throw projectSocialsError;
-      
-      if (!projectSocials?.length) return [];
-      
-      const { data: socials, error: socialsError } = await supabase
-        .from('social_accounts')
-        .select('*')
-        .in('id', projectSocials.map(ps => ps.social_id));
-      
-      if (socialsError) throw socialsError;
-      return socials || [];
+      try {
+        const { data: projectSocials, error: projectSocialsError } = await supabase
+          .from('project_socials')
+          .select('social_id')
+          .eq('project_id', project.id);
+        
+        if (projectSocialsError) {
+          console.error('Error fetching project socials:', projectSocialsError);
+          throw projectSocialsError;
+        }
+        
+        if (!projectSocials?.length) return [];
+        
+        const { data: socials, error: socialsError } = await supabase
+          .from('social_accounts')
+          .select('*')
+          .in('id', projectSocials.map(ps => ps.social_id));
+        
+        if (socialsError) {
+          console.error('Error fetching social accounts:', socialsError);
+          throw socialsError;
+        }
+
+        return socials || [];
+      } catch (error) {
+        console.error('Error in socials query:', error);
+        throw error;
+      }
     },
+    retry: 1,
   });
 
   if (domainsError || socialsError) {
     console.error('Error fetching associations:', { domainsError, socialsError });
     return (
-      <div className="p-4 text-sm text-red-600">
+      <div className="p-4 text-sm text-red-600 bg-red-50 rounded-lg">
         Error loading project associations. Please try again later.
       </div>
     );
@@ -86,7 +112,7 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
         </h3>
         <div className="grid grid-cols-1 gap-4">
           {isLoadingDomains ? (
-            <p className="text-sm text-slate-500">Loading domains...</p>
+            <div className="text-sm text-slate-500 animate-pulse">Loading domains...</div>
           ) : domains && domains.length > 0 ? (
             domains.map((domain) => (
               <DomainCard
@@ -109,7 +135,7 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
         </h3>
         <div className="grid grid-cols-1 gap-4">
           {isLoadingSocials ? (
-            <p className="text-sm text-slate-500">Loading social accounts...</p>
+            <div className="text-sm text-slate-500 animate-pulse">Loading social accounts...</div>
           ) : socials && socials.length > 0 ? (
             socials.map((social) => (
               <SocialMediaCard

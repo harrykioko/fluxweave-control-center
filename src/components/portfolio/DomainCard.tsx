@@ -1,7 +1,7 @@
 
 import { cn } from "@/lib/utils";
 import { Globe } from "lucide-react";
-import { Database } from "@/integrations/supabase/types";
+import type { Database } from "@/integrations/supabase/types";
 
 type Domain = Database["public"]["Tables"]["domains"]["Row"];
 
@@ -12,6 +12,11 @@ interface DomainCardProps {
 }
 
 export function DomainCard({ domain, onClick, className }: DomainCardProps) {
+  if (!domain || !domain.name) {
+    console.error('Invalid domain data:', domain);
+    return null;
+  }
+
   return (
     <div
       onClick={onClick}
@@ -23,16 +28,18 @@ export function DomainCard({ domain, onClick, className }: DomainCardProps) {
     >
       <div>
         <h3 className="font-medium text-slate-800">{domain.name}</h3>
-        <a
-          href={domain.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-slate-500 hover:text-slate-700 transition-colors flex items-center gap-1 mt-1"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Globe className="h-3 w-3" />
-          {domain.url.replace('https://', '')}
-        </a>
+        {domain.url && (
+          <a
+            href={domain.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-slate-500 hover:text-slate-700 transition-colors flex items-center gap-1 mt-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Globe className="h-3 w-3" />
+            {domain.url.replace(/^https?:\/\//, '')}
+          </a>
+        )}
       </div>
     </div>
   );
