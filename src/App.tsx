@@ -46,7 +46,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <AppSidebar />
-      <div className="pl-6 md:pl-8">
+      <div className="min-h-screen">
         {children}
       </div>
     </>
