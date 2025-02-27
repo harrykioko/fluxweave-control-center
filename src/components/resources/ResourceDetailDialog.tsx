@@ -236,18 +236,13 @@ export function ResourceDetailDialog({
 
               {type === "subscription" && (
                 <>
-                  {resource.price && (
-                    <div>
-                      <h4 className="font-medium text-slate-700">Price</h4>
-                      <p className="text-slate-600">{resource.price}</p>
-                    </div>
-                  )}
-                  {resource.frequency && (
-                    <div>
-                      <h4 className="font-medium text-slate-700">Frequency</h4>
-                      <p className="text-slate-600">{resource.frequency}</p>
-                    </div>
-                  )}
+                  <div>
+                    <h4 className="font-medium text-slate-700">Cost</h4>
+                    <p className="text-slate-600">
+                      {resource.price} 
+                      {resource.frequency && <span> ({resource.frequency})</span>}
+                    </p>
+                  </div>
                   {resource.username && (
                     <div>
                       <h4 className="font-medium text-slate-700">Username</h4>
