@@ -4,34 +4,44 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Calendar as CalendarIcon, User, Briefcase } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar as CalendarIcon, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
-
-interface Profile {
-  id: string;
-  first_name: string;
-  last_name: string;
-  avatar_url?: string;
-}
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 
 interface NewTaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  profiles: Profile[];
+  profiles: any[];
 }
 
 export function NewTaskDialog({ open, onOpenChange, profiles }: NewTaskDialogProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [status, setStatus] = useState("pending");
   const [priority, setPriority] = useState("medium");
+  const [dueDate, setDueDate] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
+  const [projectId, setProjectId] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch projects for selection
+  const { data: projects = [] } = useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("id, name, logo_url");
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: open, // Only fetch when dialog is open
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,33 +55,35 @@ export function NewTaskDialog({ open, onOpenChange, profiles }: NewTaskDialogPro
       return;
     }
 
-    setIsLoading(true);
+    setIsSubmitting(true);
     
     try {
+      // Get the authenticated user's ID for the created_by field
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
         toast({
           title: "Authentication Error",
-          description: "You must be logged in to add a task",
+          description: "You need to be logged in to create tasks",
           variant: "destructive",
         });
-        setIsLoading(false);
+        setIsSubmitting(false);
         return;
       }
 
-      // Insert task directly without triggering audit log issues
-      const { error } = await supabase
-        .from('tasks')
+      const { data, error } = await supabase
+        .from("tasks")
         .insert({
           title: title.trim(),
           description: description.trim() || null,
-          status: 'pending',
-          priority: priority,
+          status,
+          priority,
           due_date: dueDate || null,
           assigned_to: assignedTo || null,
-          created_by: user.id
-        });
+          project_id: projectId || null,
+          created_by: user.id,
+        })
+        .select();
 
       if (error) {
         console.error("Error creating task:", error);
@@ -83,21 +95,25 @@ export function NewTaskDialog({ open, onOpenChange, profiles }: NewTaskDialogPro
         return;
       }
 
+      // Reset form fields
+      setTitle("");
+      setDescription("");
+      setStatus("pending");
+      setPriority("medium");
+      setDueDate("");
+      setAssignedTo("");
+      setProjectId("");
+      
+      // Invalidate and refetch tasks query
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      
+      // Close dialog
+      onOpenChange(false);
+      
       toast({
         title: "Success",
         description: "Task created successfully",
       });
-
-      // Reset form and close dialog
-      setTitle("");
-      setDescription("");
-      setDueDate("");
-      setPriority("medium");
-      setAssignedTo("");
-      onOpenChange(false);
-      
-      // Refresh tasks list
-      queryClient.invalidateQueries({ queryKey: ["tasks"] });
     } catch (error) {
       console.error("Unexpected error:", error);
       toast({
@@ -106,17 +122,17 @@ export function NewTaskDialog({ open, onOpenChange, profiles }: NewTaskDialogPro
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-white/90 backdrop-blur-xl">
+      <DialogContent className="max-w-md bg-white/90 backdrop-blur-xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-slate-800">Create New Task</DialogTitle>
+          <DialogTitle>Create New Task</DialogTitle>
         </DialogHeader>
-
+        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="title" className="text-slate-700">Task Title*</Label>
@@ -171,23 +187,60 @@ export function NewTaskDialog({ open, onOpenChange, profiles }: NewTaskDialogPro
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="assignedTo" className="text-slate-700">Assign To</Label>
-            <div className="relative">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="status" className="text-slate-700">Status</Label>
               <select
-                id="assignedTo"
-                value={assignedTo}
-                onChange={(e) => setAssignedTo(e.target.value)}
+                id="status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
                 className="flex h-11 w-full rounded-lg border border-slate-300 bg-white/10 px-4 py-2 text-base ring-offset-background file:border-0 file:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
               >
-                <option value="">Unassigned</option>
-                {profiles.map((profile) => (
-                  <option key={profile.id} value={profile.id}>
-                    {profile.first_name} {profile.last_name}
+                <option value="pending">To-Do</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Done</option>
+              </select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="assignedTo" className="text-slate-700">Assign To</Label>
+              <div className="relative">
+                <select
+                  id="assignedTo"
+                  value={assignedTo}
+                  onChange={(e) => setAssignedTo(e.target.value)}
+                  className="flex h-11 w-full rounded-lg border border-slate-300 bg-white/10 px-4 py-2 text-base ring-offset-background file:border-0 file:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                >
+                  <option value="">Unassigned</option>
+                  {profiles.map((profile) => (
+                    <option key={profile.id} value={profile.id}>
+                      {profile.first_name} {profile.last_name}
+                    </option>
+                  ))}
+                </select>
+                <User className="absolute right-2 top-2.5 h-4 w-4 text-slate-500 pointer-events-none" />
+              </div>
+            </div>
+          </div>
+
+          {/* Project select field */}
+          <div className="space-y-2">
+            <Label htmlFor="projectId" className="text-slate-700">Project</Label>
+            <div className="relative">
+              <select
+                id="projectId"
+                value={projectId}
+                onChange={(e) => setProjectId(e.target.value)}
+                className="flex h-11 w-full rounded-lg border border-slate-300 bg-white/10 px-4 py-2 text-base ring-offset-background file:border-0 file:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              >
+                <option value="">No Project</option>
+                {projects.map((project) => (
+                  <option key={project.id} value={project.id}>
+                    {project.name}
                   </option>
                 ))}
               </select>
-              <User className="absolute right-2 top-2.5 h-4 w-4 text-slate-500 pointer-events-none" />
+              <Briefcase className="absolute right-2 top-2.5 h-4 w-4 text-slate-500 pointer-events-none" />
             </div>
           </div>
 
@@ -203,9 +256,9 @@ export function NewTaskDialog({ open, onOpenChange, profiles }: NewTaskDialogPro
             <Button
               type="submit"
               className="bg-purple-600 hover:bg-purple-700 text-white"
-              disabled={isLoading}
+              disabled={isSubmitting}
             >
-              {isLoading ? "Creating..." : "Create Task"}
+              {isSubmitting ? "Creating..." : "Create Task"}
             </Button>
           </div>
         </form>

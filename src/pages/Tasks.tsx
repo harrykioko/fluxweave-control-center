@@ -207,6 +207,7 @@ export default function Tasks() {
                             task={{
                               ...task,
                               priority: task.priority,
+                              project_name: task.project_name,
                               assignee: task.assignee_first_name ? {
                                 id: task.assigned_to || "",
                                 name: `${task.assignee_first_name} ${task.assignee_last_name}`,

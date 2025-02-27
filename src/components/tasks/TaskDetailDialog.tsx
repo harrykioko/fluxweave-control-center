@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar as CalendarIcon, User, Check, Clock, Edit } from "lucide-react";
+import { Calendar as CalendarIcon, User, Check, Clock, Edit, Briefcase } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
@@ -17,6 +17,12 @@ interface Profile {
   first_name: string;
   last_name: string;
   avatar_url?: string;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  logo_url?: string;
 }
 
 interface TaskDetailDialogProps {
@@ -51,8 +57,23 @@ export function TaskDetailDialog({ open, onOpenChange, taskId, profiles }: TaskD
   const [priority, setPriority] = useState("medium");
   const [status, setStatus] = useState("pending");
   const [assignedTo, setAssignedTo] = useState("");
+  const [projectId, setProjectId] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch projects for selection
+  const { data: projects = [] } = useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("id, name, logo_url");
+
+      if (error) throw error;
+      return data as Project[];
+    },
+    enabled: open, // Only fetch when dialog is open
+  });
 
   useEffect(() => {
     if (taskId && open) {
@@ -85,6 +106,7 @@ export function TaskDetailDialog({ open, onOpenChange, taskId, profiles }: TaskD
         setPriority(data.priority || "medium");
         setStatus(data.status || "pending");
         setAssignedTo(data.assigned_to || "");
+        setProjectId(data.project_id || "");
       }
     } catch (error: any) {
       console.error("Error fetching task:", error);
@@ -152,6 +174,7 @@ export function TaskDetailDialog({ open, onOpenChange, taskId, profiles }: TaskD
           priority: priority,
           due_date: dueDate || null,
           assigned_to: assignedTo || null,
+          project_id: projectId || null,
         })
         .eq('id', taskId);
 
@@ -196,6 +219,11 @@ export function TaskDetailDialog({ open, onOpenChange, taskId, profiles }: TaskD
   const getAssigneeAvatar = () => {
     if (!task || !task.assignee_avatar_url) return `https://avatar.vercel.sh/${task.assigned_to || "unassigned"}`;
     return task.assignee_avatar_url;
+  };
+
+  const getProjectName = () => {
+    if (!task || !task.project_name) return "No project";
+    return task.project_name;
   };
 
   if (isLoading && !task) {
@@ -271,6 +299,18 @@ export function TaskDetailDialog({ open, onOpenChange, taskId, profiles }: TaskD
                   </div>
                 </div>
               )}
+              
+              {/* Project */}
+              <div className="flex items-center space-x-2 mt-4">
+                <Label className="text-sm text-slate-500">Project:</Label>
+                <div className="flex items-center space-x-2">
+                  {task.project_id ? (
+                    <span className="text-sm font-medium text-slate-700">{getProjectName()}</span>
+                  ) : (
+                    <span className="text-sm text-slate-500 italic">No project assigned</span>
+                  )}
+                </div>
+              </div>
               
               {/* Assignee */}
               <div className="flex items-center space-x-2 mt-4">
@@ -386,6 +426,27 @@ export function TaskDetailDialog({ open, onOpenChange, taskId, profiles }: TaskD
                     </select>
                     <User className="absolute right-2 top-2.5 h-4 w-4 text-slate-500 pointer-events-none" />
                   </div>
+                </div>
+              </div>
+              
+              {/* Project select field */}
+              <div className="space-y-2">
+                <Label htmlFor="projectId" className="text-slate-700">Project</Label>
+                <div className="relative">
+                  <select
+                    id="projectId"
+                    value={projectId}
+                    onChange={(e) => setProjectId(e.target.value)}
+                    className="flex h-11 w-full rounded-lg border border-slate-300 bg-white/10 px-4 py-2 text-base ring-offset-background file:border-0 file:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                  >
+                    <option value="">No Project</option>
+                    {projects.map((project) => (
+                      <option key={project.id} value={project.id}>
+                        {project.name}
+                      </option>
+                    ))}
+                  </select>
+                  <Briefcase className="absolute right-2 top-2.5 h-4 w-4 text-slate-500 pointer-events-none" />
                 </div>
               </div>
 

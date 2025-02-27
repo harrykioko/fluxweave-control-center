@@ -1,121 +1,115 @@
 
+import React from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { CalendarIcon, Briefcase } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, CheckCircle2, Clock, GripVertical } from "lucide-react";
-
-interface User {
-  id: string;
-  name: string;
-  avatar: string;
-}
 
 interface TaskCardProps {
   task: {
     id: string;
     title: string;
-    status: "pending" | "in_progress" | "completed";
-    priority?: string;
+    description?: string;
+    status: string;
+    priority: string;
     due_date?: string;
-    assignee?: User;
+    assignee?: {
+      id: string;
+      name: string;
+      avatar: string;
+    };
+    project_name?: string;
   };
-  onClick?: () => void;
+  onClick: () => void;
 }
-
-// Map database status values to display labels
-const statusDisplayMap = {
-  "pending": "To-Do",
-  "in_progress": "In Progress",
-  "completed": "Done"
-};
 
 // Priority badge colors
 const priorityColorMap: Record<string, string> = {
   "high": "bg-red-500/80 hover:bg-red-500/90",
   "medium": "bg-amber-500/80 hover:bg-amber-500/90",
   "low": "bg-green-500/80 hover:bg-green-500/90",
-  "none": "bg-slate-500/80 hover:bg-slate-500/90"
 };
 
 export function TaskCard({ task, onClick }: TaskCardProps) {
-  // Format the due date with time information
-  const formatDueDate = (dateString?: string) => {
-    if (!dateString) return "";
+  // Format date to readable format
+  const formatDueDate = (dateStr?: string) => {
+    if (!dateStr) return "";
     
-    const date = new Date(dateString);
+    const date = new Date(dateStr);
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     
-    // Reset time part for comparison
-    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const dueDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
     
-    const diffTime = dueDate.getTime() - todayDate.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const dateFormatOptions: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
     
-    // Format date
-    let dateDisplay = date.toLocaleDateString();
-    
-    // Add relative time indicator for upcoming due dates
-    if (diffDays === 0) {
-      return `Today (${dateDisplay})`;
-    } else if (diffDays === 1) {
-      return `Tomorrow (${dateDisplay})`;
-    } else if (diffDays > 1 && diffDays <= 7) {
-      return `In ${diffDays} days (${dateDisplay})`;
-    } else if (diffDays < 0) {
-      return `Overdue: ${dateDisplay}`;
+    if (date.toDateString() === today.toDateString()) {
+      return "Today";
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return "Tomorrow";
+    } else {
+      return date.toLocaleDateString('en-US', dateFormatOptions);
     }
-    
-    return dateDisplay;
   };
 
-  const priorityColor = task.priority ? priorityColorMap[task.priority.toLowerCase()] || priorityColorMap.none : priorityColorMap.none;
+  // Check if task is overdue
+  const isOverdue = () => {
+    if (!task.due_date || task.status === "completed") return false;
+    const dueDate = new Date(task.due_date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return dueDate < today;
+  };
 
   return (
     <div 
-      className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-lg p-4 hover:bg-white/50 transition-all hover:scale-[1.02] cursor-grab active:cursor-grabbing"
+      className="group bg-white/80 hover:bg-white/90 backdrop-blur-md rounded-lg border border-white/40 shadow-sm hover:shadow-md transition-all cursor-pointer p-4"
       onClick={onClick}
     >
-      <div className="flex items-start justify-between">
-        <div className="space-y-3 flex-1">
-          <div className="flex items-center gap-2">
-            <GripVertical className="h-4 w-4 text-slate-500 opacity-50" />
-            <h4 className="font-medium text-slate-800">{task.title}</h4>
-          </div>
-          
-          {/* Priority Badge */}
+      <div className="space-y-2">
+        <div className="flex justify-between items-start">
+          <h3 className="font-medium text-slate-800 line-clamp-2 group-hover:text-slate-900">
+            {task.title}
+          </h3>
           {task.priority && (
-            <Badge className={`${priorityColor} text-white capitalize`}>
+            <Badge className={`${priorityColorMap[task.priority.toLowerCase()] || ""} text-white`}>
               {task.priority}
             </Badge>
           )}
-          
-          {/* Due Date */}
-          {task.due_date && (
-            <div className={`flex items-center space-x-2 text-sm ${
-              new Date(task.due_date) < new Date() && task.status !== "completed" 
-                ? "text-red-600 font-medium" 
-                : "text-slate-500"
-            }`}>
-              {new Date(task.due_date) < new Date() && task.status !== "completed" 
-                ? <Clock className="h-4 w-4" /> 
-                : <Calendar className="h-4 w-4" />
-              }
-              <span>{formatDueDate(task.due_date)}</span>
+        </div>
+
+        {task.description && (
+          <p className="text-sm text-slate-500 line-clamp-2">
+            {task.description}
+          </p>
+        )}
+
+        <div className="pt-2 flex flex-col space-y-2">
+          {/* Project info */}
+          {task.project_name && (
+            <div className="flex items-center text-xs text-slate-500">
+              <Briefcase className="h-3.5 w-3.5 mr-1.5" />
+              <span className="truncate">{task.project_name}</span>
             </div>
           )}
-        </div>
-        {task.assignee && (
-          <Avatar className="ring-2 ring-white">
-            <AvatarImage src={task.assignee.avatar} alt={task.assignee.name} />
-          </Avatar>
-        )}
-      </div>
-      <div className="mt-4 flex items-center justify-between">
-        <div className={`flex items-center space-x-1.5 text-sm ${
-          task.status === "completed" ? "text-green-600" : "text-slate-500"
-        }`}>
-          <CheckCircle2 className="h-4 w-4" />
-          <span>{statusDisplayMap[task.status] || task.status}</span>
+          
+          {/* Due date */}
+          {task.due_date && (
+            <div className={`flex items-center text-xs ${isOverdue() ? "text-red-600 font-medium" : "text-slate-500"}`}>
+              <CalendarIcon className="h-3.5 w-3.5 mr-1.5" />
+              <span>{formatDueDate(task.due_date)}</span>
+              {isOverdue() && <span className="ml-1.5">(Overdue)</span>}
+            </div>
+          )}
+          
+          {/* Assignee */}
+          {task.assignee && (
+            <div className="flex justify-end pt-1">
+              <Avatar className="h-6 w-6 ring-2 ring-white">
+                <AvatarImage src={task.assignee.avatar} alt={task.assignee.name} />
+              </Avatar>
+            </div>
+          )}
         </div>
       </div>
     </div>
