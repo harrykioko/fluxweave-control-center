@@ -14,6 +14,7 @@ import Tasks from "./pages/Tasks";
 import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import Resources from "./pages/Resources";
 
 const queryClient = new QueryClient();
 
@@ -104,7 +105,7 @@ const App = () => (
             path="/resources"
             element={
               <ProtectedRoute>
-                <NotFound />
+                <Resources />
               </ProtectedRoute>
             }
           />

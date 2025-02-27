@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, Plus, Wrench, BookOpen, Users } from "lucide-react";
-import { AppSidebar } from "@/components/layout/AppSidebar";
 import { ResourceSection } from "@/components/resources/ResourceSection";
 import type { Resource, ResourceType } from "@/components/resources/types";
 
@@ -90,10 +89,8 @@ export default function Resources() {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <AppSidebar />
-      
-      <main className="flex-1 ml-24 md:ml-64 p-6">
+    <div className="min-h-screen bg-slate-50">
+      <main className="p-6">
         <div className="max-w-7xl mx-auto">
           <header className="mb-8">
             <h1 className="text-3xl font-bold text-slate-800">Resources</h1>
