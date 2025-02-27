@@ -401,6 +401,42 @@ export type Database = {
           },
         ]
       }
+      resources: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          link: string | null
+          tags: string[] | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          link?: string | null
+          tags?: string[] | null
+          title: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          link?: string | null
+          tags?: string[] | null
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       social_accounts: {
         Row: {
           account_name: string

@@ -8,7 +8,7 @@ export interface Resource {
   link?: string;
   type: ResourceType;
   tags?: string[];
-  createdAt: string;
-  updatedAt?: string;
-  userId?: string;
+  created_at: string;
+  updated_at?: string;
+  user_id?: string;
 }

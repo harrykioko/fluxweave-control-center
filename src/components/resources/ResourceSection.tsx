@@ -40,6 +40,9 @@ export function ResourceSection({
           {resources.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-slate-400">No {title.toLowerCase()} found</p>
+              <p className="text-slate-400 text-sm mt-1">
+                Click "Add Resource" to create one
+              </p>
             </div>
           ) : (
             resources.map((resource) => (
@@ -51,6 +54,7 @@ export function ResourceSection({
                 link={resource.link}
                 type={resource.type}
                 tags={resource.tags}
+                createdAt={resource.created_at}
                 onClick={() => onResourceClick && onResourceClick(resource)}
               />
             ))

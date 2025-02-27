@@ -2,6 +2,7 @@
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
 import { ResourceType } from "./types";
+import { formatDistanceToNow } from "date-fns";
 
 interface ResourceCardProps {
   id: string;
@@ -10,6 +11,7 @@ interface ResourceCardProps {
   link?: string;
   type: ResourceType;
   tags?: string[];
+  createdAt?: string;
   onClick?: () => void;
   className?: string;
 }
@@ -20,6 +22,7 @@ export function ResourceCard({
   link, 
   type, 
   tags,
+  createdAt,
   onClick, 
   className 
 }: ResourceCardProps) {
@@ -31,6 +34,11 @@ export function ResourceCard({
       default: return "Learn more";
     }
   };
+
+  // Format the date if available
+  const formattedDate = createdAt 
+    ? formatDistanceToNow(new Date(createdAt), { addSuffix: true }) 
+    : "";
 
   return (
     <div
@@ -58,18 +66,31 @@ export function ResourceCard({
         </a>
       )}
       
-      {tags && tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mt-3">
-          {tags.map((tag) => (
-            <span 
-              key={tag} 
-              className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
+      <div className="flex justify-between items-end mt-3">
+        {tags && tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {tags.slice(0, 3).map((tag) => (
+              <span 
+                key={tag} 
+                className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
+            {tags.length > 3 && (
+              <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full">
+                +{tags.length - 3}
+              </span>
+            )}
+          </div>
+        )}
+        
+        {formattedDate && (
+          <span className="text-xs text-slate-400 ml-auto">
+            {formattedDate}
+          </span>
+        )}
+      </div>
     </div>
   );
 }

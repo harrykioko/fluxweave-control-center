@@ -1,75 +1,53 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, Plus, Wrench, BookOpen, Users } from "lucide-react";
 import { ResourceSection } from "@/components/resources/ResourceSection";
 import type { Resource, ResourceType } from "@/components/resources/types";
-
-// Sample data - would be replaced with actual data from a database
-const sampleResources: Resource[] = [
-  {
-    id: "1",
-    title: "Figma",
-    description: "Design tool for collaborative interfaces",
-    link: "https://figma.com",
-    type: "tool",
-    tags: ["design", "collaboration", "prototyping"],
-    createdAt: "2023-06-15"
-  },
-  {
-    id: "2",
-    title: "VS Code",
-    description: "Lightweight but powerful source code editor",
-    link: "https://code.visualstudio.com",
-    type: "tool",
-    tags: ["development", "code", "editor"],
-    createdAt: "2023-05-20"
-  },
-  {
-    id: "3",
-    title: "Atomic Habits",
-    description: "An Easy & Proven Way to Build Good Habits & Break Bad Ones",
-    link: "https://jamesclear.com/atomic-habits",
-    type: "read",
-    tags: ["productivity", "habits", "self-improvement"],
-    createdAt: "2023-07-10"
-  },
-  {
-    id: "4",
-    title: "The Lean Startup",
-    description: "How Today's Entrepreneurs Use Continuous Innovation to Create Radically Successful Businesses",
-    link: "https://theleanstartup.com/",
-    type: "read",
-    tags: ["business", "startup", "innovation"],
-    createdAt: "2023-04-25"
-  },
-  {
-    id: "5",
-    title: "Paul Graham",
-    description: "Entrepreneur, investor, and co-founder of Y Combinator",
-    link: "https://paulgraham.com/",
-    type: "influencer",
-    tags: ["startup", "essays", "venture capital"],
-    createdAt: "2023-03-18"
-  },
-  {
-    id: "6",
-    title: "Naval Ravikant",
-    description: "Entrepreneur, philosopher, and tech investor",
-    link: "https://nav.al/",
-    type: "influencer",
-    tags: ["wisdom", "wealth", "philosophy"],
-    createdAt: "2023-08-05"
-  }
-];
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { AddResourceDialog } from "@/components/resources/AddResourceDialog";
 
 export default function Resources() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [resources, setResources] = useState<Resource[]>([]);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const { toast } = useToast();
+  
+  // Fetch resources from Supabase
+  const fetchResources = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from("resources")
+        .select("*")
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      
+      setResources(data || []);
+    } catch (error) {
+      console.error("Error fetching resources:", error);
+      toast({
+        title: "Failed to load resources",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Load resources on component mount
+  useEffect(() => {
+    fetchResources();
+  }, []);
   
   // Filter resources by type and search query
   const filterResources = (type: ResourceType) => {
-    return sampleResources.filter(resource => 
+    return resources.filter(resource => 
       resource.type === type && 
       (searchQuery === "" || 
         resource.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -84,7 +62,6 @@ export default function Resources() {
 
   const handleResourceClick = (resource: Resource) => {
     setSelectedResource(resource);
-    console.log("Selected resource:", resource);
     // In the future, this would open a dialog with more details
   };
 
@@ -111,42 +88,58 @@ export default function Resources() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button className="flex gap-2 bg-purple-600 hover:bg-purple-700">
+            <Button 
+              className="flex gap-2 bg-purple-600 hover:bg-purple-700"
+              onClick={() => setDialogOpen(true)}
+            >
               <Plus className="h-4 w-4" />
               Add Resource
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
-            {/* Tools Section */}
-            <ResourceSection
-              title="Tools"
-              icon={<Wrench className="h-5 w-5 text-emerald-500" />}
-              resources={filteredTools}
-              className="bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-100"
-              onResourceClick={handleResourceClick}
-            />
+          {isLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin h-8 w-8 border-2 border-purple-500 rounded-full border-t-transparent"></div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+              {/* Tools Section */}
+              <ResourceSection
+                title="Tools"
+                icon={<Wrench className="h-5 w-5 text-emerald-500" />}
+                resources={filteredTools}
+                className="bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-100"
+                onResourceClick={handleResourceClick}
+              />
 
-            {/* Reads Section */}
-            <ResourceSection
-              title="Reads"
-              icon={<BookOpen className="h-5 w-5 text-blue-500" />}
-              resources={filteredReads}
-              className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100"
-              onResourceClick={handleResourceClick}
-            />
+              {/* Reads Section */}
+              <ResourceSection
+                title="Reads"
+                icon={<BookOpen className="h-5 w-5 text-blue-500" />}
+                resources={filteredReads}
+                className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100"
+                onResourceClick={handleResourceClick}
+              />
 
-            {/* Influencers Section */}
-            <ResourceSection
-              title="Influencers"
-              icon={<Users className="h-5 w-5 text-purple-500" />}
-              resources={filteredInfluencers}
-              className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-100"
-              onResourceClick={handleResourceClick}
-            />
-          </div>
+              {/* Influencers Section */}
+              <ResourceSection
+                title="Influencers"
+                icon={<Users className="h-5 w-5 text-purple-500" />}
+                resources={filteredInfluencers}
+                className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-100"
+                onResourceClick={handleResourceClick}
+              />
+            </div>
+          )}
         </div>
       </main>
+
+      {/* Add Resource Dialog */}
+      <AddResourceDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onResourceAdded={fetchResources}
+      />
     </div>
   );
 }
