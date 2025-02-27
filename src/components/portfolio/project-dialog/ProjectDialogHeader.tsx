@@ -1,28 +1,21 @@
 
 import { useState, useEffect } from "react";
-import type { Project } from "@/types/portfolio";
-import { cn } from "@/lib/utils";
-import { Link as LinkIcon, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { DomainPicklist } from "./DomainPicklist";
-import { SocialPicklist } from "./SocialPicklist";
+import type { Project } from "@/types/portfolio";
 import { useQuery } from "@tanstack/react-query";
+import { LogoUploader } from "./project-header/LogoUploader";
+import { EditableProjectDetails } from "./project-header/EditableProjectDetails";
+import { ProjectStatus } from "./project-header/ProjectStatus";
 
 interface ProjectDialogHeaderProps {
   project: Project;
 }
 
 export function ProjectDialogHeader({ project }: ProjectDialogHeaderProps) {
-  const [isUploading, setIsUploading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState(project.name);
-  const [description, setDescription] = useState(project.description || "");
-  const [url, setUrl] = useState(project.url || "");
   const [selectedDomainIds, setSelectedDomainIds] = useState<string[]>([]);
   const [selectedSocialIds, setSelectedSocialIds] = useState<string[]>([]);
   const { toast } = useToast();
@@ -52,73 +45,20 @@ export function ProjectDialogHeader({ project }: ProjectDialogHeaderProps) {
     },
   });
 
-  // Set initial selections when data is loaded
   useEffect(() => {
     if (existingDomains) setSelectedDomainIds(existingDomains);
     if (existingSocials) setSelectedSocialIds(existingSocials);
   }, [existingDomains, existingSocials]);
 
-  const handleLogoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Logo must be under 5MB",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      setIsUploading(true);
-      
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${project.id}/${crypto.randomUUID()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('project-logos')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('project-logos')
-        .getPublicUrl(filePath);
-
-      const { error: updateError } = await supabase
-        .from('projects')
-        .update({ logo_url: publicUrl })
-        .eq('id', project.id);
-
-      if (updateError) throw updateError;
-
-      toast({
-        title: "Logo updated",
-        description: "Project logo has been successfully updated",
-      });
-
-    } catch (error: any) {
-      toast({
-        title: "Error updating logo",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const handleSave = async () => {
+  const handleSave = async (details: { name: string; description: string; url: string }) => {
     try {
       // Update project details
       const { error: projectError } = await supabase
         .from('projects')
         .update({
-          name: name.trim(),
-          description: description.trim() || null,
-          url: url.trim() || null,
+          name: details.name,
+          description: details.description || null,
+          url: details.url || null,
         })
         .eq('id', project.id);
 
@@ -191,83 +131,36 @@ export function ProjectDialogHeader({ project }: ProjectDialogHeaderProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="relative group">
-          <img
-            src={project.logo}
-            alt={`${project.name} logo`}
-            className={cn(
-              "w-20 h-20 rounded-xl object-cover",
-              isUploading && "opacity-50"
-            )}
-          />
-          <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl text-white text-sm opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
-            Change
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleLogoChange}
-              disabled={isUploading}
-            />
-          </label>
-        </div>
+        <LogoUploader
+          projectId={project.id}
+          currentLogo={project.logo}
+          projectName={project.name}
+        />
         <div className="flex-1">
           {isEditing ? (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="name">Project Name</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Input
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="url">Project URL</Label>
-                <Input
-                  id="url"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button onClick={handleSave}>Save</Button>
-                <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
-              </div>
-              <Separator className="my-4" />
-              <DomainPicklist
-                selectedDomainIds={selectedDomainIds}
-                onSelect={(domainId) => {
-                  setSelectedDomainIds(prev => 
-                    prev.includes(domainId)
-                      ? prev.filter(id => id !== domainId)
-                      : [...prev, domainId]
-                  );
-                }}
-                className="mb-4"
-              />
-              <SocialPicklist
-                selectedAccountIds={selectedSocialIds}
-                onSelect={(socialId) => {
-                  setSelectedSocialIds(prev =>
-                    prev.includes(socialId)
-                      ? prev.filter(id => id !== socialId)
-                      : [...prev, socialId]
-                  );
-                }}
-              />
-            </div>
+            <EditableProjectDetails
+              name={project.name}
+              description={project.description || ""}
+              url={project.url || ""}
+              selectedDomainIds={selectedDomainIds}
+              selectedSocialIds={selectedSocialIds}
+              onDomainSelect={(domainId) => {
+                setSelectedDomainIds(prev => 
+                  prev.includes(domainId)
+                    ? prev.filter(id => id !== domainId)
+                    : [...prev, domainId]
+                );
+              }}
+              onSocialSelect={(socialId) => {
+                setSelectedSocialIds(prev =>
+                  prev.includes(socialId)
+                    ? prev.filter(id => id !== socialId)
+                    : [...prev, socialId]
+                );
+              }}
+              onSave={handleSave}
+              onCancel={() => setIsEditing(false)}
+            />
           ) : (
             <>
               <div className="flex items-center gap-2">
@@ -282,27 +175,7 @@ export function ProjectDialogHeader({ project }: ProjectDialogHeaderProps) {
                 </Button>
               </div>
               <p className="text-slate-500 mt-1">{project.description}</p>
-              <div className="flex items-center gap-2 mt-2">
-                <span className={cn(
-                  "px-3 py-1 rounded-full text-xs font-medium",
-                  project.status === "live" && "bg-emerald-100/50 text-emerald-700",
-                  project.status === "build" && "bg-amber-100/50 text-amber-700",
-                  project.status === "paused" && "bg-slate-100/50 text-slate-700",
-                )}>
-                  {project.status}
-                </span>
-                {project.url && (
-                  <a
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700"
-                  >
-                    <LinkIcon className="h-3 w-3" />
-                    {project.url.replace('https://', '')}
-                  </a>
-                )}
-              </div>
+              <ProjectStatus status={project.status} url={project.url} />
             </>
           )}
         </div>
@@ -310,4 +183,3 @@ export function ProjectDialogHeader({ project }: ProjectDialogHeaderProps) {
     </div>
   );
 }
-
