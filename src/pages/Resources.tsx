@@ -27,7 +27,15 @@ export default function Resources() {
       
       if (error) throw error;
       
-      setResources(data || []);
+      // Ensure the data conforms to the Resource type
+      const typedResources: Resource[] = data?.map(item => ({
+        ...item,
+        type: item.type as ResourceType,
+        link: item.link || null,
+        tags: item.tags || null
+      })) || [];
+      
+      setResources(typedResources);
     } catch (error) {
       console.error("Error fetching resources:", error);
       toast({

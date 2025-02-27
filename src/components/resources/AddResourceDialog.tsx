@@ -58,12 +58,20 @@ export function AddResourceDialog({
     setIsSubmitting(true);
     
     try {
+      // Get the current authenticated user's ID from Supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+      
       const { error } = await supabase.from("resources").insert({
         title,
         description,
         link: link || null,
         type,
-        tags: tagsArray,
+        tags: tagsArray.length > 0 ? tagsArray : null,
+        user_id: user.id
       });
       
       if (error) throw error;

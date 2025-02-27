@@ -5,10 +5,10 @@ export interface Resource {
   id: string;
   title: string;
   description: string;
-  link?: string;
+  link?: string | null;
   type: ResourceType;
-  tags?: string[];
+  tags?: string[] | null;
   created_at: string;
-  updated_at?: string;
-  user_id?: string;
+  updated_at: string;
+  user_id: string;
 }
