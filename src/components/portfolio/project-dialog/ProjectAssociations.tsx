@@ -30,17 +30,34 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
       try {
         const { data, error } = await supabase
           .from('project_domains')
-          .select('domain:domains!project_domains_domain_id_fkey(*)')
+          .select(`
+            domain:domains!project_domains_domain_id_fkey (
+              id,
+              name,
+              url,
+              status,
+              owner,
+              hosted_on,
+              created_at,
+              updated_at,
+              user_id
+            )
+          `)
           .eq('project_id', project.id);
 
         if (error) {
           throw error;
         }
 
-        // Extract and filter valid domain objects
+        // Extract and filter valid domain objects, ensuring required fields are present
         return (data || [])
           .map(item => item.domain)
-          .filter((domain): domain is Domain => domain !== null);
+          .filter((domain): domain is Domain => 
+            domain !== null && 
+            typeof domain === 'object' && 
+            'id' in domain && 
+            'name' in domain
+          );
       } catch (error) {
         console.error('Error fetching domains:', error);
         toast({
@@ -60,17 +77,32 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
       try {
         const { data, error } = await supabase
           .from('project_socials')
-          .select('social:social_accounts!project_socials_social_id_fkey(*)')
+          .select(`
+            social:social_accounts!project_socials_social_id_fkey (
+              id,
+              platform,
+              handle,
+              account_name,
+              created_at,
+              updated_at,
+              user_id
+            )
+          `)
           .eq('project_id', project.id);
 
         if (error) {
           throw error;
         }
 
-        // Extract and filter valid social account objects
+        // Extract and filter valid social account objects, ensuring required fields are present
         return (data || [])
           .map(item => item.social)
-          .filter((social): social is SocialAccount => social !== null);
+          .filter((social): social is SocialAccount => 
+            social !== null && 
+            typeof social === 'object' && 
+            'id' in social && 
+            'account_name' in social
+          );
       } catch (error) {
         console.error('Error fetching social accounts:', error);
         toast({

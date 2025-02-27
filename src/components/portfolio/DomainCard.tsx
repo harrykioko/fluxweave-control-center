@@ -13,7 +13,7 @@ interface DomainCardProps {
 
 export function DomainCard({ domain, onClick, className }: DomainCardProps) {
   // Early return with error state if domain data is invalid
-  if (!domain || !domain.name) {
+  if (!domain || typeof domain !== 'object' || !('name' in domain) || !domain.name) {
     console.error('Invalid domain data:', domain);
     return (
       <div className={cn(
