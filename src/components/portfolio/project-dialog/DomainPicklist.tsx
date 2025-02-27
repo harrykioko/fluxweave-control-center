@@ -9,12 +9,12 @@ import { cn } from "@/lib/utils";
 type Domain = Database['public']['Tables']['domains']['Row'];
 
 interface DomainPicklistProps {
-  selectedDomainId?: string;
+  selectedDomainIds: string[];
   onSelect: (domainId: string) => void;
   className?: string;
 }
 
-export function DomainPicklist({ selectedDomainId, onSelect, className }: DomainPicklistProps) {
+export function DomainPicklist({ selectedDomainIds, onSelect, className }: DomainPicklistProps) {
   const { data: domains, isLoading } = useQuery({
     queryKey: ['domains'],
     queryFn: async () => {
@@ -44,7 +44,7 @@ export function DomainPicklist({ selectedDomainId, onSelect, className }: Domain
               className={cn(
                 "p-2 rounded-lg cursor-pointer transition-colors",
                 "hover:bg-slate-100",
-                selectedDomainId === domain.id && "bg-slate-100"
+                selectedDomainIds.includes(domain.id) && "bg-slate-100"
               )}
             >
               <div className="font-medium text-slate-800">{domain.name}</div>

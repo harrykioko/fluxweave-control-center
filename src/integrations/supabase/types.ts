@@ -257,6 +257,78 @@ export type Database = {
         }
         Relationships: []
       }
+      project_domains: {
+        Row: {
+          created_at: string | null
+          domain_id: string
+          id: string
+          project_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          domain_id: string
+          id?: string
+          project_id: string
+        }
+        Update: {
+          created_at?: string | null
+          domain_id?: string
+          id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_domains_domain_id_fkey"
+            columns: ["domain_id"]
+            isOneToOne: false
+            referencedRelation: "domains"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_domains_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_socials: {
+        Row: {
+          created_at: string | null
+          id: string
+          project_id: string
+          social_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          project_id: string
+          social_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          project_id?: string
+          social_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_socials_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_socials_social_id_fkey"
+            columns: ["social_id"]
+            isOneToOne: false
+            referencedRelation: "social_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           created_at: string | null

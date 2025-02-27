@@ -9,12 +9,12 @@ import { cn } from "@/lib/utils";
 type SocialAccount = Database['public']['Tables']['social_accounts']['Row'];
 
 interface SocialPicklistProps {
-  selectedAccountId?: string;
+  selectedAccountIds: string[];
   onSelect: (accountId: string) => void;
   className?: string;
 }
 
-export function SocialPicklist({ selectedAccountId, onSelect, className }: SocialPicklistProps) {
+export function SocialPicklist({ selectedAccountIds, onSelect, className }: SocialPicklistProps) {
   const { data: accounts, isLoading } = useQuery({
     queryKey: ['social_accounts'],
     queryFn: async () => {
@@ -44,7 +44,7 @@ export function SocialPicklist({ selectedAccountId, onSelect, className }: Socia
               className={cn(
                 "p-2 rounded-lg cursor-pointer transition-colors",
                 "hover:bg-slate-100",
-                selectedAccountId === account.id && "bg-slate-100"
+                selectedAccountIds.includes(account.id) && "bg-slate-100"
               )}
             >
               <div className="font-medium text-slate-800">{account.account_name}</div>
