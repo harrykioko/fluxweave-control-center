@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Wrench, BookOpen, Users, Plus, Link as LinkIcon } from "lucide-react";
-import { ResourceType } from "./types";
+import { ResourceType, ResourceInsert, ToolResource, ReadResource, SubscriptionResource } from "./types";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
@@ -77,8 +77,8 @@ export function AddResourceDialog({
         throw new Error("User not authenticated");
       }
       
-      // Create the resource object with the base fields
-      const resourceData: Record<string, any> = {
+      // Create the base resource data
+      const baseResource = {
         title,
         description,
         link: link || null,
@@ -87,16 +87,30 @@ export function AddResourceDialog({
         user_id: user.id
       };
       
-      // Add type-specific fields
+      // Create the properly typed resource object based on the selected type
+      let resourceData: ResourceInsert;
+      
       if (type === "tool") {
-        resourceData.pricing = pricing || null;
-        resourceData.category = category || null;
+        resourceData = {
+          ...baseResource,
+          type: "tool", // Explicitly set the type for TypeScript
+          pricing: pricing || null,
+          category: category || null
+        } as ToolResource;
       } else if (type === "read") {
-        resourceData.author = author || null;
-        resourceData.category = category || null;
-      } else if (type === "subscription") {
-        resourceData.platform = platform || null;
-        resourceData.frequency = frequency || null;
+        resourceData = {
+          ...baseResource,
+          type: "read", // Explicitly set the type for TypeScript
+          author: author || null,
+          category: category || null
+        } as ReadResource;
+      } else {
+        resourceData = {
+          ...baseResource,
+          type: "subscription", // Explicitly set the type for TypeScript
+          platform: platform || null,
+          frequency: frequency || null
+        } as SubscriptionResource;
       }
       
       const { error } = await supabase.from("resources").insert(resourceData);

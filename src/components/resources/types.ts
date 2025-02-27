@@ -19,3 +19,35 @@ export interface Resource {
   category?: string | null;
   frequency?: string | null;
 }
+
+// Base resource properties required for insertion
+export interface ResourceInsertBase {
+  title: string;
+  description: string;
+  link?: string | null;
+  type: ResourceType;
+  tags?: string[] | null;
+  user_id: string;
+}
+
+// Type-specific resource properties
+export interface ToolResource extends ResourceInsertBase {
+  type: "tool";
+  pricing?: string | null;
+  category?: string | null;
+}
+
+export interface ReadResource extends ResourceInsertBase {
+  type: "read";
+  author?: string | null;
+  category?: string | null;
+}
+
+export interface SubscriptionResource extends ResourceInsertBase {
+  type: "subscription";
+  platform?: string | null;
+  frequency?: string | null;
+}
+
+// Union type for all resource types
+export type ResourceInsert = ToolResource | ReadResource | SubscriptionResource;
