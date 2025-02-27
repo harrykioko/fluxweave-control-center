@@ -66,11 +66,11 @@ export function SidebarFooter({ collapsed, userProfile, isAuthenticated }: Sideb
               className="flex justify-center w-10 h-10 mx-auto rounded-full text-white/80 hover:bg-white/10 hover:text-white my-1"
               title="Profile"
             >
-              <Avatar className="h-5 w-5">
+              <Avatar className="h-10 w-10">
                 {userProfile?.avatar_url ? (
                   <AvatarImage src={userProfile.avatar_url} alt={getInitials()} />
                 ) : (
-                  <AvatarFallback className="text-xs">{getInitials()}</AvatarFallback>
+                  <AvatarFallback>{getInitials()}</AvatarFallback>
                 )}
               </Avatar>
             </Link>
