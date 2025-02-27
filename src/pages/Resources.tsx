@@ -74,8 +74,8 @@ export default function Resources() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <main className="p-6">
+    <div className="min-h-screen bg-slate-50 pl-0">
+      <main className="p-4 sm:p-6">
         <div className="max-w-7xl mx-auto">
           {/* Search and Add Resource */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">

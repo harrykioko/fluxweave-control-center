@@ -30,7 +30,7 @@ const menuItems = [{
 }];
 
 export function AppSidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true); // Default to collapsed now
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userProfile, setUserProfile] = useState<{ first_name?: string; last_name?: string; avatar_url?: string } | null>(null);
   const location = useLocation();
@@ -73,15 +73,23 @@ export function AppSidebar() {
   return (
     <aside 
       className={cn(
-        "fixed top-4 left-4 z-40 h-[calc(100vh-2rem)] rounded-2xl transition-all duration-300",
+        "fixed top-4 left-2 z-40 transition-all duration-300",
         "bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/10",
         "shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]",
-        collapsed ? "w-20" : "w-64"
+        collapsed 
+          ? "w-16 rounded-full p-0" 
+          : "w-64 left-4 rounded-2xl h-[calc(100vh-2rem)]"
       )}
     >
-      <div className="flex flex-col h-full">
+      <div className={cn(
+        "flex flex-col",
+        collapsed ? "items-center py-2" : "h-full"
+      )}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4">
+        <div className={cn(
+          "flex items-center justify-between",
+          collapsed ? "p-2" : "p-4"
+        )}>
           <span className={cn(
             "text-xl font-bold text-gradient",
             collapsed ? "hidden" : "block"
@@ -99,7 +107,10 @@ export function AppSidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-4 px-3 space-y-2 overflow-y-auto scrollbar-none">
+        <nav className={cn(
+          "py-2 px-1 space-y-2 overflow-y-auto scrollbar-none",
+          collapsed ? "" : "flex-1 py-4 px-3"
+        )}>
           {menuItems.map(item => {
             const isActive = location.pathname === item.href;
             const Icon = item.icon;
@@ -108,16 +119,19 @@ export function AppSidebar() {
                 key={item.label}
                 to={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all relative group",
+                  "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all relative group",
                   isActive 
                     ? "bg-white/20 text-white shadow-sm" 
                     : "text-white/70 hover:bg-white/10 hover:text-white",
-                  collapsed ? "justify-center" : "backdrop-blur-sm"
+                  collapsed 
+                    ? "justify-center w-10 h-10 mx-auto rounded-full" 
+                    : "backdrop-blur-sm px-4 py-3"
                 )}
+                title={collapsed ? item.label : ""}
               >
                 <Icon className={cn(
                   "h-5 w-5 transition-transform",
-                  collapsed ? "h-6 w-6" : "",
+                  collapsed ? "h-5 w-5" : "",
                   isActive ? "text-white" : "text-white/70"
                 )} />
                 {!collapsed && <span>{item.label}</span>}
@@ -126,8 +140,8 @@ export function AppSidebar() {
           })}
         </nav>
 
-        {/* User Profile */}
-        {isAuthenticated && (
+        {/* User Profile - Only show in expanded mode */}
+        {isAuthenticated && !collapsed && (
           <div className="p-4 mx-3 mb-3 border-t border-white/10">
             <UserMenu userProfile={userProfile} isAuthenticated={isAuthenticated} />
           </div>
