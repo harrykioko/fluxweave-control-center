@@ -73,12 +73,12 @@ export function AppSidebar() {
   return (
     <aside 
       className={cn(
-        "fixed top-4 left-2 z-40 transition-all duration-300",
+        "fixed left-2 z-40 transition-all duration-300",
         "bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/10",
         "shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]",
         collapsed 
-          ? "w-16 rounded-full p-0" 
-          : "w-64 left-4 rounded-2xl h-[calc(100vh-2rem)]"
+          ? "w-16 rounded-full p-0 top-1/2 -translate-y-1/2" 
+          : "w-64 left-4 rounded-2xl h-[calc(100vh-2rem)] top-4"
       )}
     >
       <div className={cn(
