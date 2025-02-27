@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { CalendarIcon, Briefcase } from "lucide-react";
+import { CalendarIcon, Briefcase, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface TaskCardProps {
@@ -18,6 +18,7 @@ interface TaskCardProps {
       avatar: string;
     };
     project_name?: string;
+    comment_count?: number;
   };
   onClick: () => void;
 }
@@ -102,14 +103,24 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
             </div>
           )}
           
-          {/* Assignee */}
-          {task.assignee && (
-            <div className="flex justify-end pt-1">
-              <Avatar className="h-6 w-6 ring-2 ring-white">
-                <AvatarImage src={task.assignee.avatar} alt={task.assignee.name} />
-              </Avatar>
-            </div>
-          )}
+          <div className="flex justify-between items-center pt-1">
+            {/* Comment count */}
+            {task.comment_count !== undefined && task.comment_count > 0 && (
+              <div className="flex items-center text-xs text-slate-500">
+                <MessageSquare className="h-3.5 w-3.5 mr-1" />
+                <span>{task.comment_count}</span>
+              </div>
+            )}
+            
+            {/* Assignee */}
+            {task.assignee && (
+              <div className="flex justify-end">
+                <Avatar className="h-6 w-6 ring-2 ring-white">
+                  <AvatarImage src={task.assignee.avatar} alt={task.assignee.name} />
+                </Avatar>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

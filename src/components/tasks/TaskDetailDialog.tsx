@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
 import { Calendar as CalendarIcon, User, Check, Clock, Edit, Briefcase } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { TaskComments } from "./TaskComments";
 
 interface Profile {
   id: string;
@@ -58,8 +60,23 @@ export function TaskDetailDialog({ open, onOpenChange, taskId, profiles }: TaskD
   const [status, setStatus] = useState("pending");
   const [assignedTo, setAssignedTo] = useState("");
   const [projectId, setProjectId] = useState("");
+  const [activeTab, setActiveTab] = useState<"details" | "comments">("details");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Get current user's ID for comments
+  const [currentUserId, setCurrentUserId] = useState<string>("");
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session?.user) {
+        setCurrentUserId(data.session.user.id);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
 
   // Fetch projects for selection
   const { data: projects = [] } = useQuery({
@@ -75,6 +92,23 @@ export function TaskDetailDialog({ open, onOpenChange, taskId, profiles }: TaskD
     enabled: open, // Only fetch when dialog is open
   });
 
+  // Fetch comment count for this task
+  const { data: commentCount = 0 } = useQuery({
+    queryKey: ["taskCommentCount", taskId],
+    queryFn: async () => {
+      if (!taskId) return 0;
+      
+      const { count, error } = await supabase
+        .from("task_comments")
+        .select("*", { count: "exact", head: true })
+        .eq("task_id", taskId);
+
+      if (error) throw error;
+      return count || 0;
+    },
+    enabled: !!taskId && open,
+  });
+
   useEffect(() => {
     if (taskId && open) {
       fetchTaskDetails(taskId);
@@ -84,6 +118,7 @@ export function TaskDetailDialog({ open, onOpenChange, taskId, profiles }: TaskD
       // Reset states when dialog closes
       setIsEditing(false);
       setTask(null);
+      setActiveTab("details");
     }
   }, [taskId, open]);
 
@@ -240,7 +275,7 @@ export function TaskDetailDialog({ open, onOpenChange, taskId, profiles }: TaskD
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-white/90 backdrop-blur-xl">
+      <DialogContent className="sm:max-w-[600px] bg-white/90 backdrop-blur-xl max-h-[85vh] overflow-y-auto">
         {!isEditing && task ? (
           <>
             <DialogHeader className="flex flex-row items-center justify-between">
@@ -257,79 +292,112 @@ export function TaskDetailDialog({ open, onOpenChange, taskId, profiles }: TaskD
               </Button>
             </DialogHeader>
             
-            <div className="space-y-4 mt-2">
-              {/* Status Badge */}
-              <div className="flex items-center space-x-2">
-                <div className={`flex items-center space-x-1.5 text-sm ${
-                  task.status === "completed" ? "text-green-600" : "text-slate-500"
-                } px-2 py-0.5 rounded-full bg-white/60 border border-white/30`}>
-                  <Check className="h-4 w-4" />
-                  <span className="font-medium">{statusDisplayMap[task.status] || task.status}</span>
-                </div>
-                
-                {/* Priority Badge */}
-                {task.priority && (
-                  <Badge className={`${priorityColorMap[task.priority.toLowerCase()] || priorityColorMap.none} text-white capitalize`}>
-                    {task.priority}
-                  </Badge>
+            {/* Tabs */}
+            <div className="flex border-b border-slate-200 mb-4">
+              <button
+                className={`px-4 py-2 font-medium text-sm ${
+                  activeTab === "details"
+                    ? "text-purple-600 border-b-2 border-purple-600"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+                onClick={() => setActiveTab("details")}
+              >
+                Details
+              </button>
+              <button
+                className={`px-4 py-2 font-medium text-sm flex items-center ${
+                  activeTab === "comments"
+                    ? "text-purple-600 border-b-2 border-purple-600"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+                onClick={() => setActiveTab("comments")}
+              >
+                Comments
+                {commentCount > 0 && (
+                  <span className="ml-1.5 bg-purple-100 text-purple-600 rounded-full px-2 py-0.5 text-xs">
+                    {commentCount}
+                  </span>
                 )}
-              </div>
-              
-              {/* Description */}
-              {task.description && (
-                <div className="bg-white/50 rounded-lg p-3 border border-white/30">
-                  <Label className="text-sm text-slate-700 font-medium">Description</Label>
-                  <p className="mt-1 text-slate-600 whitespace-pre-line">{task.description}</p>
-                </div>
-              )}
-              
-              {/* Due Date */}
-              {task.due_date && (
+              </button>
+            </div>
+            
+            {activeTab === "details" ? (
+              <div className="space-y-4 mt-2">
+                {/* Status Badge */}
                 <div className="flex items-center space-x-2">
-                  <div className={`flex items-center space-x-2 text-sm ${
-                    new Date(task.due_date) < new Date() && task.status !== "completed" 
-                      ? "text-red-600 font-medium" 
-                      : "text-slate-500"
-                  }`}>
-                    {new Date(task.due_date) < new Date() && task.status !== "completed" 
-                      ? <Clock className="h-4 w-4" /> 
-                      : <CalendarIcon className="h-4 w-4" />
-                    }
-                    <span>Due: {formatDueDate(task.due_date)}</span>
+                  <div className={`flex items-center space-x-1.5 text-sm ${
+                    task.status === "completed" ? "text-green-600" : "text-slate-500"
+                  } px-2 py-0.5 rounded-full bg-white/60 border border-white/30`}>
+                    <Check className="h-4 w-4" />
+                    <span className="font-medium">{statusDisplayMap[task.status] || task.status}</span>
                   </div>
-                </div>
-              )}
-              
-              {/* Project */}
-              <div className="flex items-center space-x-2 mt-4">
-                <Label className="text-sm text-slate-500">Project:</Label>
-                <div className="flex items-center space-x-2">
-                  {task.project_id ? (
-                    <span className="text-sm font-medium text-slate-700">{getProjectName()}</span>
-                  ) : (
-                    <span className="text-sm text-slate-500 italic">No project assigned</span>
+                  
+                  {/* Priority Badge */}
+                  {task.priority && (
+                    <Badge className={`${priorityColorMap[task.priority.toLowerCase()] || priorityColorMap.none} text-white capitalize`}>
+                      {task.priority}
+                    </Badge>
                   )}
                 </div>
-              </div>
-              
-              {/* Assignee */}
-              <div className="flex items-center space-x-2 mt-4">
-                <Label className="text-sm text-slate-500">Assigned to:</Label>
-                <div className="flex items-center space-x-2">
-                  <Avatar className="h-6 w-6 ring-2 ring-white">
-                    <AvatarImage src={getAssigneeAvatar()} alt={getAssigneeName()} />
-                  </Avatar>
-                  <span className="text-sm font-medium text-slate-700">{getAssigneeName()}</span>
+                
+                {/* Description */}
+                {task.description && (
+                  <div className="bg-white/50 rounded-lg p-3 border border-white/30">
+                    <Label className="text-sm text-slate-700 font-medium">Description</Label>
+                    <p className="mt-1 text-slate-600 whitespace-pre-line">{task.description}</p>
+                  </div>
+                )}
+                
+                {/* Due Date */}
+                {task.due_date && (
+                  <div className="flex items-center space-x-2">
+                    <div className={`flex items-center space-x-2 text-sm ${
+                      new Date(task.due_date) < new Date() && task.status !== "completed" 
+                        ? "text-red-600 font-medium" 
+                        : "text-slate-500"
+                    }`}>
+                      {new Date(task.due_date) < new Date() && task.status !== "completed" 
+                        ? <Clock className="h-4 w-4" /> 
+                        : <CalendarIcon className="h-4 w-4" />
+                      }
+                      <span>Due: {formatDueDate(task.due_date)}</span>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Project */}
+                <div className="flex items-center space-x-2 mt-4">
+                  <Label className="text-sm text-slate-500">Project:</Label>
+                  <div className="flex items-center space-x-2">
+                    {task.project_id ? (
+                      <span className="text-sm font-medium text-slate-700">{getProjectName()}</span>
+                    ) : (
+                      <span className="text-sm text-slate-500 italic">No project assigned</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-              
-              {/* Created by */}
-              {task.creator_first_name && (
-                <div className="text-xs text-slate-400 mt-4">
-                  Created by {task.creator_first_name} {task.creator_last_name} on {new Date(task.created_at).toLocaleDateString()}
+                
+                {/* Assignee */}
+                <div className="flex items-center space-x-2 mt-4">
+                  <Label className="text-sm text-slate-500">Assigned to:</Label>
+                  <div className="flex items-center space-x-2">
+                    <Avatar className="h-6 w-6 ring-2 ring-white">
+                      <AvatarImage src={getAssigneeAvatar()} alt={getAssigneeName()} />
+                    </Avatar>
+                    <span className="text-sm font-medium text-slate-700">{getAssigneeName()}</span>
+                  </div>
                 </div>
-              )}
-            </div>
+                
+                {/* Created by */}
+                {task.creator_first_name && (
+                  <div className="text-xs text-slate-400 mt-4">
+                    Created by {task.creator_first_name} {task.creator_last_name} on {new Date(task.created_at).toLocaleDateString()}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <TaskComments taskId={taskId || ""} currentUserId={currentUserId} />
+            )}
           </>
         ) : (
           <>

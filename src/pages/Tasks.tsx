@@ -30,6 +30,7 @@ interface Task {
   assignee_first_name?: string;
   assignee_last_name?: string;
   assignee_avatar_url?: string;
+  comment_count?: number;
 }
 
 // Updated status mapping with new display labels but same database values
@@ -49,13 +50,39 @@ export default function Tasks() {
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First get the tasks with basic information
+      const { data: tasksData, error: tasksError } = await supabase
         .from("recent_tasks")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      return data as Task[];
+      if (tasksError) throw tasksError;
+
+      // Get comment counts for each task
+      const taskIds = tasksData.map(task => task.id);
+      const { data: commentCounts, error: commentsError } = await supabase
+        .from("task_comments")
+        .select("task_id, count")
+        .in("task_id", taskIds)
+        .select("task_id")
+        .select("count(*)", { count: 'exact', head: false })
+        .group("task_id");
+
+      if (commentsError) console.error("Error fetching comment counts:", commentsError);
+
+      // Create a map of task_id to comment count
+      const commentCountMap = (commentCounts || []).reduce((acc, item) => {
+        acc[item.task_id] = item.count;
+        return acc;
+      }, {});
+
+      // Merge the comment counts into the tasks data
+      const tasksWithCommentCounts = tasksData.map(task => ({
+        ...task,
+        comment_count: commentCountMap[task.id] || 0
+      }));
+
+      return tasksWithCommentCounts as Task[];
     },
   });
 
@@ -208,6 +235,7 @@ export default function Tasks() {
                               ...task,
                               priority: task.priority,
                               project_name: task.project_name,
+                              comment_count: task.comment_count,
                               assignee: task.assignee_first_name ? {
                                 id: task.assigned_to || "",
                                 name: `${task.assignee_first_name} ${task.assignee_last_name}`,
