@@ -9,6 +9,7 @@ import { SocialMediaCard } from "../SocialMediaCard";
 import { DomainDetailDialog } from "../DomainDetailDialog";
 import { SocialDetailDialog } from "../SocialDetailDialog";
 import type { Database } from "@/integrations/supabase/types";
+import { useToast } from "@/hooks/use-toast";
 
 type Domain = Database["public"]["Tables"]["domains"]["Row"];
 type SocialAccount = Database["public"]["Tables"]["social_accounts"]["Row"];
@@ -20,12 +21,14 @@ interface ProjectAssociationsProps {
 export function ProjectAssociations({ project }: ProjectAssociationsProps) {
   const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
   const [selectedSocial, setSelectedSocial] = useState<SocialAccount | null>(null);
+  const { toast } = useToast();
 
-  // Fetch associated domains with error boundaries
-  const { data: domains, isLoading: isLoadingDomains, error: domainsError } = useQuery({
+  // Fetch domains with full data
+  const { data: domains, isLoading: isLoadingDomains } = useQuery({
     queryKey: ['project-domains', project.id],
     queryFn: async () => {
       try {
+        // First get the domain IDs
         const { data: projectDomains, error: projectDomainsError } = await supabase
           .from('project_domains')
           .select('domain_id')
@@ -38,6 +41,7 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
         
         if (!projectDomains?.length) return [];
         
+        // Then fetch the full domain data
         const { data: domains, error: domainsError } = await supabase
           .from('domains')
           .select('*')
@@ -50,15 +54,18 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
 
         return domains || [];
       } catch (error) {
-        console.error('Error in domains query:', error);
-        throw error;
+        toast({
+          title: "Error loading domains",
+          description: "Could not load associated domains. Please try again later.",
+          variant: "destructive"
+        });
+        return [];
       }
     },
-    retry: 1,
   });
 
-  // Fetch associated social accounts with error boundaries
-  const { data: socials, isLoading: isLoadingSocials, error: socialsError } = useQuery({
+  // Fetch social accounts with full data
+  const { data: socials, isLoading: isLoadingSocials } = useQuery({
     queryKey: ['project-socials', project.id],
     queryFn: async () => {
       try {
@@ -86,21 +93,15 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
 
         return socials || [];
       } catch (error) {
-        console.error('Error in socials query:', error);
-        throw error;
+        toast({
+          title: "Error loading social accounts",
+          description: "Could not load associated social accounts. Please try again later.",
+          variant: "destructive"
+        });
+        return [];
       }
     },
-    retry: 1,
   });
-
-  if (domainsError || socialsError) {
-    console.error('Error fetching associations:', { domainsError, socialsError });
-    return (
-      <div className="p-4 text-sm text-red-600 bg-red-50 rounded-lg">
-        Error loading project associations. Please try again later.
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-8">
