@@ -28,13 +28,13 @@ export function ResourceSection({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center space-x-3">
-        <div className="p-2 bg-white/50 backdrop-blur-md rounded-lg">
+    <div className="glass-panel p-6 rounded-xl">
+      <div className="flex items-center space-x-3 mb-4">
+        <div className="p-2 bg-white/10 backdrop-blur-md rounded-lg">
           {icon}
         </div>
-        <h2 className="text-lg font-semibold text-slate-800">
-          {title} ({resources.length})
+        <h2 className="text-xl font-semibold text-white">
+          {title} <span className="text-white/60 text-base">({resources.length})</span>
         </h2>
       </div>
 
@@ -50,9 +50,11 @@ export function ResourceSection({
             ))}
           </div>
         ) : (
-          <p className="text-sm text-slate-500 text-center py-8">
-            No {title.toLowerCase()} added yet
-          </p>
+          <div className="bg-white/5 backdrop-blur-md rounded-lg p-8 text-center">
+            <p className="text-slate-300">
+              No {title.toLowerCase()} added yet
+            </p>
+          </div>
         )}
       </div>
 

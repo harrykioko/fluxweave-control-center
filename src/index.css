@@ -79,6 +79,19 @@
     @apply backdrop-blur-md bg-white/10 border border-white/20 hover:bg-white/20 text-white;
   }
 
+  .glow-effect {
+    @apply relative;
+  }
+  
+  .glow-effect::after {
+    content: "";
+    @apply absolute -inset-px bg-gradient-to-r from-purple-500/50 via-pink-500/50 to-indigo-500/50 rounded-[inherit] opacity-0 transition-opacity blur-md -z-10;
+  }
+  
+  .glow-effect:hover::after {
+    @apply opacity-100;
+  }
+
   .scrollbar-none {
     -ms-overflow-style: none;
     scrollbar-width: none;

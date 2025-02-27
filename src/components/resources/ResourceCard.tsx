@@ -44,21 +44,21 @@ export function ResourceCard({
     <div
       onClick={onClick}
       className={cn(
-        "bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-slate-100",
-        "transition-all duration-200 hover:shadow-md",
+        "bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10",
+        "transition-all duration-200 hover:shadow-lg hover:bg-white/15 hover:scale-[1.02]",
         "cursor-pointer",
         className
       )}
     >
-      <h3 className="font-medium text-slate-800">{title}</h3>
-      <p className="text-sm text-slate-600 mt-1 line-clamp-2">{description}</p>
+      <h3 className="font-medium text-white">{title}</h3>
+      <p className="text-sm text-slate-300 mt-1 line-clamp-2">{description}</p>
       
       {link && (
         <a 
           href={link} 
           target="_blank" 
           rel="noopener noreferrer"
-          className="text-xs text-purple-600 hover:text-purple-800 mt-2 inline-flex items-center gap-1"
+          className="text-xs text-purple-400 hover:text-purple-300 mt-2 inline-flex items-center gap-1"
           onClick={(e) => e.stopPropagation()}
         >
           {getLinkText()}
@@ -72,13 +72,13 @@ export function ResourceCard({
             {tags.slice(0, 3).map((tag) => (
               <span 
                 key={tag} 
-                className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full"
+                className="text-xs px-2 py-0.5 bg-white/5 text-slate-300 border border-white/10 rounded-full"
               >
                 {tag}
               </span>
             ))}
             {tags.length > 3 && (
-              <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full">
+              <span className="text-xs px-2 py-0.5 bg-white/5 text-slate-300 border border-white/10 rounded-full">
                 +{tags.length - 3}
               </span>
             )}
