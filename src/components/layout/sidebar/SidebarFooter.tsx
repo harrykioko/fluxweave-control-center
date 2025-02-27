@@ -1,5 +1,5 @@
 
-import { Menu } from "lucide-react";
+import { Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 
@@ -27,21 +27,8 @@ export function SidebarFooter({ collapsed }: SidebarFooterProps) {
           )}
           title={collapsed ? "Settings" : ""}
         >
-          <Menu className="h-5 w-5" />
+          <Settings className="h-5 w-5" />
           {!collapsed && <span>Settings</span>}
-        </Link>
-        <Link
-          to="/auth"
-          className={cn(
-            "flex items-center gap-3 text-white/80 hover:bg-white/10 hover:text-white my-1",
-            collapsed 
-              ? "justify-center w-10 h-10 mx-auto rounded-full" 
-              : "px-4 py-3 rounded-xl text-sm font-medium"
-          )}
-          title={collapsed ? "Logout" : ""}
-        >
-          <Menu className="h-5 w-5" />
-          {!collapsed && <span>Logout</span>}
         </Link>
       </div>
     </div>
