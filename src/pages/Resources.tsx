@@ -77,12 +77,7 @@ export default function Resources() {
     <div className="min-h-screen bg-slate-50">
       <main className="p-6">
         <div className="max-w-7xl mx-auto">
-          <header className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-800">Resources</h1>
-            <p className="text-slate-500 mt-2">
-              Discover and organize tools, reads, and influencers that help you grow
-            </p>
-          </header>
+          {/* Removed the header with "Resources" text */}
 
           {/* Search and Add Resource */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
