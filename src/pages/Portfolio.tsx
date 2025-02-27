@@ -15,9 +15,35 @@ import { NewSocialDialog } from "@/components/portfolio/NewSocialDialog";
 import { NewProjectDialog } from "@/components/portfolio/NewProjectDialog";
 import { Button } from "@/components/ui/button";
 
+type DatabaseProject = Database["public"]["Tables"]["projects"]["Row"];
 type Domain = Database["public"]["Tables"]["domains"]["Row"];
 type SocialAccount = Database["public"]["Tables"]["social_accounts"]["Row"];
-type Project = Database["public"]["Tables"]["projects"]["Row"];
+
+// Define the Project type that our components expect
+interface Project {
+  id: string;
+  name: string;
+  logo: string;
+  description: string;
+  status: "live" | "build" | "paused";
+  url: string;
+  teamMembers: Array<{
+    id: string;
+    name: string;
+    avatar: string;
+  }>;
+}
+
+// Transform database project to component project
+const transformProject = (dbProject: DatabaseProject): Project => ({
+  id: dbProject.id,
+  name: dbProject.name,
+  logo: dbProject.logo_url || '/placeholder.svg', // Fallback to placeholder if no logo
+  description: dbProject.description || '',
+  status: (dbProject.status as "live" | "build" | "paused") || "build",
+  url: dbProject.url || '#',
+  teamMembers: [], // We can add team members logic later if needed
+});
 
 export default function Portfolio() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -36,7 +62,7 @@ export default function Portfolio() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data.map(transformProject);
     },
   });
 
