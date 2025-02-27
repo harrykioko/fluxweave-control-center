@@ -40,13 +40,17 @@ export function ResourceCard({
     ? formatDistanceToNow(new Date(createdAt), { addSuffix: true }) 
     : "";
 
+  // Different styling based on resource type
+  const isSubscription = type === "subscription";
+
   return (
     <div
       onClick={onClick}
       className={cn(
-        "bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10",
-        "transition-all duration-200 hover:shadow-lg hover:bg-white/15 hover:scale-[1.02]",
-        "cursor-pointer",
+        "rounded-xl p-4 border transition-all duration-300 cursor-pointer",
+        isSubscription 
+          ? "bg-white/10 backdrop-blur-2xl border-white/15 hover:bg-white/15 hover:shadow-xl" 
+          : "bg-white/10 backdrop-blur-md border-white/10 hover:bg-white/15 hover:scale-[1.02] hover:shadow-lg",
         className
       )}
     >

@@ -124,13 +124,15 @@ export default function Resources() {
             />
 
             {/* Subscriptions Section */}
-            <ResourceSection
-              title="Subscriptions"
-              icon={<Users className="h-5 w-5 text-purple-500" />}
-              resources={filteredSubscriptions}
-              className="bg-gradient-to-br from-purple-500/10 to-pink-500/5 border-purple-500/20"
-              onResourceClick={setSelectedResource}
-            />
+            <div className="pt-6 pb-2">
+              <ResourceSection
+                title="Subscriptions"
+                icon={<Users className="h-5 w-5 text-purple-500" />}
+                resources={filteredSubscriptions}
+                className="bg-transparent"
+                onResourceClick={setSelectedResource}
+              />
+            </div>
           </div>
         )}
       </main>
