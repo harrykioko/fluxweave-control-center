@@ -13,4 +13,3 @@ export const transformProject = (dbProject: DatabaseProject): Project => ({
   url: dbProject.url || '#',
   teamMembers: [],
 });
-
