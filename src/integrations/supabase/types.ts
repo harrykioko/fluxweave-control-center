@@ -403,37 +403,58 @@ export type Database = {
       }
       resources: {
         Row: {
+          author: string | null
+          category: string | null
           created_at: string
           description: string
+          frequency: string | null
           id: string
           link: string | null
+          password: string | null
+          price: string | null
+          pricing: string | null
           tags: string[] | null
           title: string
           type: string
           updated_at: string
           user_id: string
+          username: string | null
         }
         Insert: {
+          author?: string | null
+          category?: string | null
           created_at?: string
           description: string
+          frequency?: string | null
           id?: string
           link?: string | null
+          password?: string | null
+          price?: string | null
+          pricing?: string | null
           tags?: string[] | null
           title: string
           type: string
           updated_at?: string
           user_id: string
+          username?: string | null
         }
         Update: {
+          author?: string | null
+          category?: string | null
           created_at?: string
           description?: string
+          frequency?: string | null
           id?: string
           link?: string | null
+          password?: string | null
+          price?: string | null
+          pricing?: string | null
           tags?: string[] | null
           title?: string
           type?: string
           updated_at?: string
           user_id?: string
+          username?: string | null
         }
         Relationships: []
       }
