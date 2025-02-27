@@ -3,11 +3,12 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { Plus, Share2, Calendar } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { NewTaskDialog } from "@/components/tasks/NewTaskDialog";
 import { TaskDetailDialog } from "@/components/tasks/TaskDetailDialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface User {
   id: string;
@@ -42,6 +43,8 @@ export default function Tasks() {
   const [isNewTaskOpen, setIsNewTaskOpen] = useState(false);
   const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ["tasks"],
@@ -71,6 +74,70 @@ export default function Tasks() {
   const handleTaskClick = (taskId: string) => {
     setSelectedTaskId(taskId);
     setIsTaskDetailOpen(true);
+  };
+
+  // Handle drag start event
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, task: Task) => {
+    e.dataTransfer.setData("taskId", task.id);
+    e.dataTransfer.setData("taskTitle", task.title);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  // Handle drag over event
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  // Handle drop event
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>, newStatus: "pending" | "in_progress" | "completed") => {
+    e.preventDefault();
+    
+    const taskId = e.dataTransfer.getData("taskId");
+    const taskTitle = e.dataTransfer.getData("taskTitle");
+    
+    if (!taskId) return;
+
+    // Find the task that is being moved
+    const taskToUpdate = tasks.find(task => task.id === taskId);
+    
+    // If the task is already in this status, do nothing
+    if (taskToUpdate && taskToUpdate.status === newStatus) return;
+    
+    // Optimistically update UI first
+    queryClient.setQueryData(["tasks"], (oldData: Task[] | undefined) => {
+      if (!oldData) return [];
+      return oldData.map(task => 
+        task.id === taskId ? { ...task, status: newStatus } : task
+      );
+    });
+
+    // Update the task status in the database
+    const { error } = await supabase
+      .from("tasks")
+      .update({ status: newStatus })
+      .eq("id", taskId);
+
+    if (error) {
+      console.error("Error updating task status:", error);
+      
+      // Revert optimistic update on error
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      
+      toast({
+        title: "Error",
+        description: "Failed to update task status. Please try again.",
+        variant: "destructive",
+      });
+    } else {
+      const statusLabel = TASK_STATUSES.find(status => status.id === newStatus)?.label;
+      
+      toast({
+        title: "Task Updated",
+        description: `"${taskTitle}" moved to ${statusLabel}`,
+        variant: "default",
+      });
+    }
   };
 
   return (
@@ -107,7 +174,10 @@ export default function Tasks() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Task Status Columns */}
             {TASK_STATUSES.map((statusCol) => (
-              <div key={statusCol.id} className="space-y-4">
+              <div 
+                key={statusCol.id} 
+                className="space-y-4"
+              >
                 {/* Section header directly on background */}
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-2">
@@ -118,25 +188,34 @@ export default function Tasks() {
                   </div>
                 </div>
                 
-                {/* Tasks container with varied glassmorphism */}
-                <div className={`${statusCol.glassBg} backdrop-blur-xl border ${statusCol.glassBorder} rounded-xl p-6 shadow-lg h-full`}>
+                {/* Tasks container with varied glassmorphism - droppable area */}
+                <div 
+                  className={`${statusCol.glassBg} backdrop-blur-xl border ${statusCol.glassBorder} rounded-xl p-6 shadow-lg h-full`}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, statusCol.id as "pending" | "in_progress" | "completed")}
+                >
                   <div className="space-y-4">
                     {tasks
                       .filter(task => task.status === statusCol.id)
                       .map(task => (
-                        <TaskCard 
-                          key={task.id} 
-                          task={{
-                            ...task,
-                            priority: task.priority,
-                            assignee: task.assignee_first_name ? {
-                              id: task.assigned_to || "",
-                              name: `${task.assignee_first_name} ${task.assignee_last_name}`,
-                              avatar: task.assignee_avatar_url || `https://avatar.vercel.sh/${task.assigned_to}`
-                            } : undefined
-                          }}
-                          onClick={() => handleTaskClick(task.id)} 
-                        />
+                        <div 
+                          key={task.id}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, task)}
+                        >
+                          <TaskCard 
+                            task={{
+                              ...task,
+                              priority: task.priority,
+                              assignee: task.assignee_first_name ? {
+                                id: task.assigned_to || "",
+                                name: `${task.assignee_first_name} ${task.assignee_last_name}`,
+                                avatar: task.assignee_avatar_url || `https://avatar.vercel.sh/${task.assigned_to}`
+                              } : undefined
+                            }}
+                            onClick={() => handleTaskClick(task.id)} 
+                          />
+                        </div>
                       ))
                     }
                     {tasks.filter(task => task.status === statusCol.id).length === 0 && (

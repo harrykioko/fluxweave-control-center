@@ -1,7 +1,7 @@
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, CheckCircle2, Clock } from "lucide-react";
+import { Calendar, CheckCircle2, Clock, GripVertical } from "lucide-react";
 
 interface User {
   id: string;
@@ -72,12 +72,15 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
 
   return (
     <div 
-      className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-lg p-4 hover:bg-white/50 transition-all hover-scale cursor-pointer"
+      className="bg-white/40 backdrop-blur-xl border border-white/20 rounded-lg p-4 hover:bg-white/50 transition-all hover:scale-[1.02] cursor-grab active:cursor-grabbing"
       onClick={onClick}
     >
       <div className="flex items-start justify-between">
         <div className="space-y-3 flex-1">
-          <h4 className="font-medium text-slate-800">{task.title}</h4>
+          <div className="flex items-center gap-2">
+            <GripVertical className="h-4 w-4 text-slate-500 opacity-50" />
+            <h4 className="font-medium text-slate-800">{task.title}</h4>
+          </div>
           
           {/* Priority Badge */}
           {task.priority && (
