@@ -33,9 +33,9 @@ interface Task {
 
 // Updated status mapping with new display labels but same database values
 const TASK_STATUSES = [
-  { id: "pending", label: "To-Do" },
-  { id: "in_progress", label: "In Progress" },
-  { id: "completed", label: "Done" }
+  { id: "pending", label: "To-Do", glassBg: "bg-white/5", glassBorder: "border-white/10" },
+  { id: "in_progress", label: "In Progress", glassBg: "bg-white/10", glassBorder: "border-white/20" },
+  { id: "completed", label: "Done", glassBg: "bg-white/15", glassBorder: "border-white/30" }
 ];
 
 export default function Tasks() {
@@ -107,27 +107,44 @@ export default function Tasks() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Task Status Columns */}
             {TASK_STATUSES.map((statusCol) => (
-              <div key={statusCol.id} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
-                <h3 className="text-lg font-semibold text-white mb-4">{statusCol.label}</h3>
-                <div className="space-y-4">
-                  {tasks
-                    .filter(task => task.status === statusCol.id)
-                    .map(task => (
-                      <TaskCard 
-                        key={task.id} 
-                        task={{
-                          ...task,
-                          priority: task.priority,
-                          assignee: task.assignee_first_name ? {
-                            id: task.assigned_to || "",
-                            name: `${task.assignee_first_name} ${task.assignee_last_name}`,
-                            avatar: task.assignee_avatar_url || `https://avatar.vercel.sh/${task.assigned_to}`
-                          } : undefined
-                        }}
-                        onClick={() => handleTaskClick(task.id)} 
-                      />
-                    ))
-                  }
+              <div key={statusCol.id} className="space-y-4">
+                {/* Section header directly on background */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-lg font-semibold text-white">{statusCol.label}</h3>
+                    <span className="text-sm text-white/70 bg-white/10 px-2 py-0.5 rounded-full">
+                      {tasks.filter(task => task.status === statusCol.id).length}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Tasks container with varied glassmorphism */}
+                <div className={`${statusCol.glassBg} backdrop-blur-xl border ${statusCol.glassBorder} rounded-xl p-6 shadow-lg h-full`}>
+                  <div className="space-y-4">
+                    {tasks
+                      .filter(task => task.status === statusCol.id)
+                      .map(task => (
+                        <TaskCard 
+                          key={task.id} 
+                          task={{
+                            ...task,
+                            priority: task.priority,
+                            assignee: task.assignee_first_name ? {
+                              id: task.assigned_to || "",
+                              name: `${task.assignee_first_name} ${task.assignee_last_name}`,
+                              avatar: task.assignee_avatar_url || `https://avatar.vercel.sh/${task.assigned_to}`
+                            } : undefined
+                          }}
+                          onClick={() => handleTaskClick(task.id)} 
+                        />
+                      ))
+                    }
+                    {tasks.filter(task => task.status === statusCol.id).length === 0 && (
+                      <div className="text-center py-8 text-white/50 italic">
+                        No tasks
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
