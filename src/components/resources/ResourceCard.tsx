@@ -28,32 +28,36 @@ const extractDomain = (url?: string): string => {
   }
 };
 
-// Function to get icon based on domain
-const getIconForDomain = (domain: string): keyof typeof Icons => {
-  // Map common domains to their corresponding icons
-  const domainIconMap: Record<string, keyof typeof Icons> = {
-    "github.com": "Github",
-    "gitlab.com": "Gitlab",
-    "slack.com": "Slack",
-    "trello.com": "Trello",
-    "figma.com": "Figma",
-    "youtube.com": "Youtube",
-    "twitch.tv": "Twitch",
-    "linkedin.com": "Linkedin",
-    "facebook.com": "Facebook",
-    "instagram.com": "Instagram",
-    "twitter.com": "Twitter",
-  };
+// Map common domains to their corresponding icons
+const domainIconMap: Record<string, keyof typeof Icons> = {
+  "github.com": "Github",
+  "gitlab.com": "Gitlab",
+  "slack.com": "Slack",
+  "trello.com": "Trello",
+  "figma.com": "Figma",
+  "youtube.com": "Youtube",
+  "twitch.tv": "Twitch",
+  "linkedin.com": "Linkedin",
+  "facebook.com": "Facebook",
+  "instagram.com": "Instagram",
+  "twitter.com": "Twitter",
+};
 
+// Function to get icon based on domain
+const getIconForDomain = (domain: string): React.ElementType => {
+  // Default icon if no match is found
+  let iconName: keyof typeof Icons = "Globe";
+  
   // Check for partial matches if exact match isn't found
-  for (const [domainKey, iconName] of Object.entries(domainIconMap)) {
+  for (const [domainKey, iconValue] of Object.entries(domainIconMap)) {
     if (domain.includes(domainKey.replace(".com", "").replace(".tv", ""))) {
-      return iconName;
+      iconName = iconValue;
+      break;
     }
   }
-
-  // Default icon for unknown domains
-  return "Globe";
+  
+  // Return the actual component from the Icons object
+  return Icons[iconName];
 };
 
 export function ResourceCard({ 
@@ -85,10 +89,9 @@ export function ResourceCard({
 
   // Get domain and corresponding icon for subscriptions
   const domain = isSubscription ? extractDomain(link) : "";
-  const iconName = getIconForDomain(domain);
   
-  // Correctly render the icon component by accessing it from Icons
-  const IconComponent = Icons[iconName];
+  // Get the icon component directly as a React component
+  const IconComponent = getIconForDomain(domain);
 
   return (
     <div
