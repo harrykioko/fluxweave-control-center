@@ -103,11 +103,11 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Associated Domains */}
       <div>
-        <h3 className="text-sm font-medium text-slate-800 mb-4 flex items-center gap-2">
-          <Globe className="h-4 w-4" />
+        <h3 className="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
+          <Globe className="h-5 w-5" />
           Associated Domains
         </h3>
         <div className="grid grid-cols-1 gap-4">
@@ -122,15 +122,17 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
               />
             ))
           ) : (
-            <p className="text-sm text-slate-500">No domains associated with this project</p>
+            <p className="text-sm text-slate-500 bg-slate-50 rounded-lg p-4">
+              No domains associated with this project
+            </p>
           )}
         </div>
       </div>
 
       {/* Associated Social Accounts */}
       <div>
-        <h3 className="text-sm font-medium text-slate-800 mb-4 flex items-center gap-2">
-          <Share2 className="h-4 w-4" />
+        <h3 className="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
+          <Share2 className="h-5 w-5" />
           Associated Social Accounts
         </h3>
         <div className="grid grid-cols-1 gap-4">
@@ -145,7 +147,9 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
               />
             ))
           ) : (
-            <p className="text-sm text-slate-500">No social accounts associated with this project</p>
+            <p className="text-sm text-slate-500 bg-slate-50 rounded-lg p-4">
+              No social accounts associated with this project
+            </p>
           )}
         </div>
       </div>

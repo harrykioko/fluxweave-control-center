@@ -21,22 +21,23 @@ export function DomainCard({ domain, onClick, className }: DomainCardProps) {
     <div
       onClick={onClick}
       className={cn(
-        "bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-4",
-        "transition-all duration-200 hover:shadow-lg hover:bg-white/50 cursor-pointer",
+        "bg-white border border-slate-200 rounded-xl p-4",
+        "transition-all duration-200 hover:shadow-lg hover:border-purple-300",
+        "cursor-pointer shadow-sm",
         className
       )}
     >
       <div>
-        <h3 className="font-medium text-slate-800">{domain.name}</h3>
+        <h3 className="font-medium text-slate-800 text-base">{domain.name}</h3>
         {domain.url && (
           <a
             href={domain.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-slate-500 hover:text-slate-700 transition-colors flex items-center gap-1 mt-1"
+            className="text-sm text-slate-600 hover:text-purple-600 transition-colors flex items-center gap-1.5 mt-2"
             onClick={(e) => e.stopPropagation()}
           >
-            <Globe className="h-3 w-3" />
+            <Globe className="h-4 w-4" />
             {domain.url.replace(/^https?:\/\//, '')}
           </a>
         )}
