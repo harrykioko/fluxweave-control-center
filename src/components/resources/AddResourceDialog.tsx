@@ -29,12 +29,24 @@ export function AddResourceDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
+  // Additional fields for specific resource types
+  const [author, setAuthor] = useState("");
+  const [pricing, setPricing] = useState("");
+  const [platform, setPlatform] = useState("");
+  const [category, setCategory] = useState("");
+  const [frequency, setFrequency] = useState("");
+
   const resetForm = () => {
     setTitle("");
     setDescription("");
     setLink("");
     setTags("");
     setType("tool");
+    setAuthor("");
+    setPricing("");
+    setPlatform("");
+    setCategory("");
+    setFrequency("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,14 +77,29 @@ export function AddResourceDialog({
         throw new Error("User not authenticated");
       }
       
-      const { error } = await supabase.from("resources").insert({
+      // Create the resource object with the base fields
+      const resourceData: Record<string, any> = {
         title,
         description,
         link: link || null,
         type,
         tags: tagsArray.length > 0 ? tagsArray : null,
         user_id: user.id
-      });
+      };
+      
+      // Add type-specific fields
+      if (type === "tool") {
+        resourceData.pricing = pricing || null;
+        resourceData.category = category || null;
+      } else if (type === "read") {
+        resourceData.author = author || null;
+        resourceData.category = category || null;
+      } else if (type === "subscription") {
+        resourceData.platform = platform || null;
+        resourceData.frequency = frequency || null;
+      }
+      
+      const { error } = await supabase.from("resources").insert(resourceData);
       
       if (error) throw error;
       
@@ -108,53 +135,7 @@ export function AddResourceDialog({
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title*</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g., Figma, Atomic Habits, Paul Graham"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Description*</Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="A brief description of this resource"
-                className="min-h-[80px]"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="link">Link</Label>
-              <div className="relative">
-                <LinkIcon className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                <Input
-                  id="link"
-                  value={link}
-                  onChange={(e) => setLink(e.target.value)}
-                  placeholder="https://example.com"
-                  className="pl-9"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="tags">Tags (comma separated)</Label>
-              <Input
-                id="tags"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                placeholder="design, productivity, startup"
-              />
-            </div>
-
+            {/* Resource Type Selector - Moved to the top */}
             <div className="space-y-2">
               <Label>Resource Type*</Label>
               <div className="grid grid-cols-3 gap-2">
@@ -188,6 +169,127 @@ export function AddResourceDialog({
                   Subscription
                 </Button>
               </div>
+            </div>
+
+            {/* Common fields for all resource types */}
+            <div className="space-y-2">
+              <Label htmlFor="title">Title*</Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g., Figma, Atomic Habits, Paul Graham"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description*</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="A brief description of this resource"
+                className="min-h-[80px]"
+                required
+              />
+            </div>
+
+            {/* Dynamic fields based on resource type */}
+            {type === "tool" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="pricing">Pricing</Label>
+                  <Input
+                    id="pricing"
+                    value={pricing}
+                    onChange={(e) => setPricing(e.target.value)}
+                    placeholder="Free, $10/month, One-time $49"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category</Label>
+                  <Input
+                    id="category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    placeholder="Design, Development, Marketing"
+                  />
+                </div>
+              </>
+            )}
+
+            {type === "read" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="author">Author</Label>
+                  <Input
+                    id="author"
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                    placeholder="Author's name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category</Label>
+                  <Input
+                    id="category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    placeholder="Business, Self-help, Technology"
+                  />
+                </div>
+              </>
+            )}
+
+            {type === "subscription" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="platform">Platform</Label>
+                  <Input
+                    id="platform"
+                    value={platform}
+                    onChange={(e) => setPlatform(e.target.value)}
+                    placeholder="YouTube, Substack, Podcast, Twitter"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="frequency">Frequency</Label>
+                  <Input
+                    id="frequency"
+                    value={frequency}
+                    onChange={(e) => setFrequency(e.target.value)}
+                    placeholder="Daily, Weekly, Monthly"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Link field - common for all but with different placeholder */}
+            <div className="space-y-2">
+              <Label htmlFor="link">Link</Label>
+              <div className="relative">
+                <LinkIcon className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Input
+                  id="link"
+                  value={link}
+                  onChange={(e) => setLink(e.target.value)}
+                  placeholder={type === "tool" ? "https://tool-website.com" : 
+                               type === "read" ? "https://book-link.com" : 
+                               "https://subscription-url.com"}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="tags">Tags (comma separated)</Label>
+              <Input
+                id="tags"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="design, productivity, startup"
+              />
             </div>
 
             <Button
