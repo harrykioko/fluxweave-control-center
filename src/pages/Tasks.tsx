@@ -66,20 +66,29 @@ export default function Tasks() {
         return [];
       }
       
-      // Properly query for comment counts using Supabase's correct syntax
+      // Use a raw SQL query to get comment counts grouped by task_id
       const { data: commentCounts, error: commentsError } = await supabase
-        .from("task_comments")
-        .select('task_id, count(*)', { count: 'exact', head: false })
-        .in("task_id", taskIds)
-        .groupBy('task_id');
+        .from('task_comments')
+        .select('task_id, count', { count: 'exact' })
+        .in('task_id', taskIds);
 
       if (commentsError) console.error("Error fetching comment counts:", commentsError);
 
-      // Create a map of task_id to comment count
-      const commentCountMap = (commentCounts || []).reduce((acc, item) => {
-        acc[item.task_id] = parseInt(item.count);
-        return acc;
-      }, {});
+      // Process the raw comment data to create a map of task_id to comment count
+      const commentCountMap: Record<string, number> = {};
+      
+      // Count occurrences of each task_id in the comments
+      if (commentCounts) {
+        commentCounts.forEach(comment => {
+          if (comment.task_id) {
+            if (!commentCountMap[comment.task_id]) {
+              commentCountMap[comment.task_id] = 1;
+            } else {
+              commentCountMap[comment.task_id]++;
+            }
+          }
+        });
+      }
 
       // Merge the comment counts into the tasks data
       const tasksWithCommentCounts = tasksData.map(task => ({
