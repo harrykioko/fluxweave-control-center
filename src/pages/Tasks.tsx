@@ -3,6 +3,9 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { Plus, Share2, Calendar } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 interface User {
   id: string;
@@ -13,42 +16,53 @@ interface User {
 interface Task {
   id: string;
   title: string;
-  assignee: User;
+  description?: string;
   status: "pending" | "in_progress" | "completed";
-  dueDate?: string;
+  priority: string;
+  due_date?: string;
+  assigned_to?: string;
+  project_id?: string;
+  created_by: string;
+  project_name?: string;
+  assignee_first_name?: string;
+  assignee_last_name?: string;
+  assignee_avatar_url?: string;
 }
 
-const teamMembers: User[] = [
-  { id: "1", name: "John Doe", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e" },
-  { id: "2", name: "Jane Smith", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80" },
-  { id: "3", name: "Mike Johnson", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e" },
-];
-
-const tasks: Task[] = [
-  {
-    id: "1",
-    title: "Allocate Case to User",
-    assignee: teamMembers[0],
-    status: "pending",
-    dueDate: "2024-03-20"
-  },
-  {
-    id: "2",
-    title: "Identify Issue Category",
-    assignee: teamMembers[1],
-    status: "in_progress",
-    dueDate: "2024-03-21"
-  },
-  {
-    id: "3",
-    title: "Estimate Resolution Time",
-    assignee: teamMembers[2],
-    status: "completed",
-    dueDate: "2024-03-22"
-  },
+const TASK_STATUSES = [
+  { id: "pending", label: "Case Allocation" },
+  { id: "in_progress", label: "Issue Identification" },
+  { id: "completed", label: "Technical Resolution" }
 ];
 
 export default function Tasks() {
+  const [isNewTaskOpen, setIsNewTaskOpen] = useState(false);
+
+  const { data: tasks = [], isLoading } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("recent_tasks")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data as Task[];
+    },
+  });
+
+  const { data: profiles = [] } = useQuery({
+    queryKey: ["profiles"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, first_name, last_name, avatar_url");
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
   return (
     <main className="min-h-screen pt-20 px-4 md:px-8 bg-gradient-to-br from-slate-800/90 via-slate-700/80 to-slate-800/90">
       <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
@@ -67,7 +81,10 @@ export default function Tasks() {
               <Calendar className="h-4 w-4 mr-2" />
               Schedule
             </Button>
-            <Button className="bg-purple-600/90 hover:bg-purple-700/90 text-white border border-purple-500/30">
+            <Button 
+              className="bg-purple-600/90 hover:bg-purple-700/90 text-white border border-purple-500/30"
+              onClick={() => setIsNewTaskOpen(true)}
+            >
               <Plus className="h-4 w-4 mr-2" />
               New Task
             </Button>
@@ -78,59 +95,68 @@ export default function Tasks() {
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
           <h3 className="text-lg font-semibold text-white mb-4">Team Members</h3>
           <div className="flex -space-x-2 overflow-hidden">
-            {teamMembers.map((member) => (
-              <Avatar key={member.id} className="inline-block ring-2 ring-purple-500/30 border border-white/20">
-                <AvatarImage src={member.avatar} alt={member.name} />
+            {profiles.map((profile) => (
+              <Avatar key={profile.id} className="inline-block ring-2 ring-purple-500/30 border border-white/20">
+                <AvatarImage 
+                  src={profile.avatar_url || `https://avatar.vercel.sh/${profile.id}`} 
+                  alt={`${profile.first_name} ${profile.last_name}`} 
+                />
               </Avatar>
             ))}
-            <button className="inline-flex items-center justify-center w-8 h-8 text-xs font-medium text-white bg-purple-600/80 rounded-full ring-2 ring-purple-500/30 border border-white/20 hover:bg-purple-700/80">
-              +3
-            </button>
+            {profiles.length > 0 && (
+              <button className="inline-flex items-center justify-center w-8 h-8 text-xs font-medium text-white bg-purple-600/80 rounded-full ring-2 ring-purple-500/30 border border-white/20 hover:bg-purple-700/80">
+                +{Math.max(0, profiles.length - 3)}
+              </button>
+            )}
           </div>
         </div>
 
         {/* Tasks Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Case Allocation Column */}
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-white mb-4">Case Allocation</h3>
-            <div className="space-y-4">
-              {tasks.filter(task => task.status === "pending").map(task => (
-                <TaskCard key={task.id} task={task} />
-              ))}
+        {isLoading ? (
+          <div className="text-center text-white">Loading tasks...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Task Status Columns */}
+            {TASK_STATUSES.map((statusCol) => (
+              <div key={statusCol.id} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
+                <h3 className="text-lg font-semibold text-white mb-4">{statusCol.label}</h3>
+                <div className="space-y-4">
+                  {tasks
+                    .filter(task => task.status === statusCol.id)
+                    .map(task => (
+                      <TaskCard 
+                        key={task.id} 
+                        task={{
+                          ...task,
+                          assignee: task.assignee_first_name ? {
+                            id: task.assigned_to || "",
+                            name: `${task.assignee_first_name} ${task.assignee_last_name}`,
+                            avatar: task.assignee_avatar_url || `https://avatar.vercel.sh/${task.assigned_to}`
+                          } : undefined
+                        }} 
+                      />
+                    ))
+                  }
+                </div>
+              </div>
+            ))}
+
+            {/* New Tasks Column */}
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-white mb-4">New Tasks</h3>
+              <button 
+                onClick={() => setIsNewTaskOpen(true)}
+                className="w-full h-32 rounded-lg border-2 border-dashed border-white/20 hover:border-white/30 bg-white/5 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/10 transition-colors"
+              >
+                <Plus className="h-6 w-6 mr-2" />
+                Add Task
+              </button>
             </div>
           </div>
-
-          {/* Issue Identification Column */}
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-white mb-4">Issue Identification</h3>
-            <div className="space-y-4">
-              {tasks.filter(task => task.status === "in_progress").map(task => (
-                <TaskCard key={task.id} task={task} />
-              ))}
-            </div>
-          </div>
-
-          {/* Technical Resolution Column */}
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-white mb-4">Technical Resolution</h3>
-            <div className="space-y-4">
-              {tasks.filter(task => task.status === "completed").map(task => (
-                <TaskCard key={task.id} task={task} />
-              ))}
-            </div>
-          </div>
-
-          {/* New Tasks Column */}
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-white mb-4">New Tasks</h3>
-            <button className="w-full h-32 rounded-lg border-2 border-dashed border-white/20 hover:border-white/30 bg-white/5 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/10 transition-colors">
-              <Plus className="h-6 w-6 mr-2" />
-              Add Task
-            </button>
-          </div>
-        </div>
+        )}
       </div>
+
+      {/* TODO: Implement NewTaskDialog component */}
     </main>
   );
 }

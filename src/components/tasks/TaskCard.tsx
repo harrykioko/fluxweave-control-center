@@ -12,9 +12,9 @@ interface TaskCardProps {
   task: {
     id: string;
     title: string;
-    assignee: User;
     status: "pending" | "in_progress" | "completed";
-    dueDate?: string;
+    due_date?: string;
+    assignee?: User;
   };
 }
 
@@ -24,14 +24,18 @@ export function TaskCard({ task }: TaskCardProps) {
       <div className="flex items-start justify-between">
         <div className="space-y-3">
           <h4 className="font-medium text-slate-800">{task.title}</h4>
-          <div className="flex items-center space-x-2 text-sm text-slate-500">
-            <Calendar className="h-4 w-4" />
-            <span>{task.dueDate}</span>
-          </div>
+          {task.due_date && (
+            <div className="flex items-center space-x-2 text-sm text-slate-500">
+              <Calendar className="h-4 w-4" />
+              <span>{new Date(task.due_date).toLocaleDateString()}</span>
+            </div>
+          )}
         </div>
-        <Avatar className="ring-2 ring-white">
-          <AvatarImage src={task.assignee.avatar} alt={task.assignee.name} />
-        </Avatar>
+        {task.assignee && (
+          <Avatar className="ring-2 ring-white">
+            <AvatarImage src={task.assignee.avatar} alt={task.assignee.name} />
+          </Avatar>
+        )}
       </div>
       <div className="mt-4 flex items-center justify-between">
         <div className={`flex items-center space-x-1.5 text-sm ${
