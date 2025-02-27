@@ -22,7 +22,7 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
   const [selectedSocial, setSelectedSocial] = useState<SocialAccount | null>(null);
 
   // Fetch associated domains
-  const { data: domains } = useQuery({
+  const { data: domains, isLoading: isLoadingDomains, error: domainsError } = useQuery({
     queryKey: ['project-domains', project.id],
     queryFn: async () => {
       const { data: projectDomains, error: projectDomainsError } = await supabase
@@ -32,7 +32,7 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
       
       if (projectDomainsError) throw projectDomainsError;
       
-      if (projectDomains.length === 0) return [];
+      if (!projectDomains?.length) return [];
       
       const { data: domains, error: domainsError } = await supabase
         .from('domains')
@@ -40,12 +40,12 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
         .in('id', projectDomains.map(pd => pd.domain_id));
       
       if (domainsError) throw domainsError;
-      return domains;
+      return domains || [];
     },
   });
 
   // Fetch associated social accounts
-  const { data: socials } = useQuery({
+  const { data: socials, isLoading: isLoadingSocials, error: socialsError } = useQuery({
     queryKey: ['project-socials', project.id],
     queryFn: async () => {
       const { data: projectSocials, error: projectSocialsError } = await supabase
@@ -55,7 +55,7 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
       
       if (projectSocialsError) throw projectSocialsError;
       
-      if (projectSocials.length === 0) return [];
+      if (!projectSocials?.length) return [];
       
       const { data: socials, error: socialsError } = await supabase
         .from('social_accounts')
@@ -63,9 +63,18 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
         .in('id', projectSocials.map(ps => ps.social_id));
       
       if (socialsError) throw socialsError;
-      return socials;
+      return socials || [];
     },
   });
+
+  if (domainsError || socialsError) {
+    console.error('Error fetching associations:', { domainsError, socialsError });
+    return (
+      <div className="p-4 text-sm text-red-600">
+        Error loading project associations. Please try again later.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -76,14 +85,17 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
           Associated Domains
         </h3>
         <div className="grid grid-cols-1 gap-4">
-          {domains?.map((domain) => (
-            <DomainCard
-              key={domain.id}
-              domain={domain}
-              onClick={() => setSelectedDomain(domain)}
-            />
-          ))}
-          {domains?.length === 0 && (
+          {isLoadingDomains ? (
+            <p className="text-sm text-slate-500">Loading domains...</p>
+          ) : domains && domains.length > 0 ? (
+            domains.map((domain) => (
+              <DomainCard
+                key={domain.id}
+                domain={domain}
+                onClick={() => setSelectedDomain(domain)}
+              />
+            ))
+          ) : (
             <p className="text-sm text-slate-500">No domains associated with this project</p>
           )}
         </div>
@@ -96,14 +108,17 @@ export function ProjectAssociations({ project }: ProjectAssociationsProps) {
           Associated Social Accounts
         </h3>
         <div className="grid grid-cols-1 gap-4">
-          {socials?.map((social) => (
-            <SocialMediaCard
-              key={social.id}
-              account={social}
-              onClick={() => setSelectedSocial(social)}
-            />
-          ))}
-          {socials?.length === 0 && (
+          {isLoadingSocials ? (
+            <p className="text-sm text-slate-500">Loading social accounts...</p>
+          ) : socials && socials.length > 0 ? (
+            socials.map((social) => (
+              <SocialMediaCard
+                key={social.id}
+                account={social}
+                onClick={() => setSelectedSocial(social)}
+              />
+            ))
+          ) : (
             <p className="text-sm text-slate-500">No social accounts associated with this project</p>
           )}
         </div>
