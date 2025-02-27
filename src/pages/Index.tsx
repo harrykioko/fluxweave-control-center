@@ -5,7 +5,7 @@ import { Brain, LineChart, Inbox, Target, Rocket, Users, Film, Globe } from "luc
 
 export default function Index() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50/90 to-slate-100/80">
+    <div className="min-h-screen">
       <main className="pt-20 px-4 md:px-8">
         <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
           {/* Header */}

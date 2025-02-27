@@ -74,7 +74,7 @@ export default function Resources() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 pl-0">
+    <div className="min-h-screen pl-0">
       <main className="p-4 sm:p-6">
         <div className="max-w-7xl mx-auto">
           {/* Search and Add Resource */}
