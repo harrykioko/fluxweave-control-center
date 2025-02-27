@@ -18,6 +18,8 @@ export interface Resource {
   platform?: string | null; 
   category?: string | null;
   frequency?: string | null;
+  username?: string | null;
+  password?: string | null;
 }
 
 // Base resource properties required for insertion
@@ -47,6 +49,8 @@ export interface SubscriptionResource extends ResourceInsertBase {
   type: "subscription";
   platform?: string | null;
   frequency?: string | null;
+  username?: string | null;
+  password?: string | null;
 }
 
 // Union type for all resource types

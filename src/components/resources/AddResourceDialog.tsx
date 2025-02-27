@@ -35,6 +35,8 @@ export function AddResourceDialog({
   const [platform, setPlatform] = useState("");
   const [category, setCategory] = useState("");
   const [frequency, setFrequency] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const resetForm = () => {
     setTitle("");
@@ -47,6 +49,8 @@ export function AddResourceDialog({
     setPlatform("");
     setCategory("");
     setFrequency("");
+    setUsername("");
+    setPassword("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -109,7 +113,9 @@ export function AddResourceDialog({
           ...baseResource,
           type: "subscription", // Explicitly set the type for TypeScript
           platform: platform || null,
-          frequency: frequency || null
+          frequency: frequency || null,
+          username: username || null,
+          password: password || null
         } as SubscriptionResource;
       }
       
@@ -274,6 +280,25 @@ export function AddResourceDialog({
                     value={frequency}
                     onChange={(e) => setFrequency(e.target.value)}
                     placeholder="Daily, Weekly, Monthly"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="username">Username</Label>
+                  <Input
+                    id="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Account username"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Account password"
                   />
                 </div>
               </>
