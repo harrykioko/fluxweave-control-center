@@ -38,7 +38,7 @@ export function ResourceSection({
         </h2>
       </div>
 
-      <div className={className}>
+      <div className={`space-y-4 p-4 rounded-lg ${className}`}>
         {resources.map((resource) => (
           <ResourceCard
             key={resource.id}
