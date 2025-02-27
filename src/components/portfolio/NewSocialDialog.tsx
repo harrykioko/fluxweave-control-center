@@ -8,6 +8,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { encryptValue } from "@/utils/encryption";
 
 interface NewSocialDialogProps {
   open: boolean;
@@ -33,6 +34,8 @@ export function NewSocialDialog({ open, onOpenChange, onSocialAdded }: NewSocial
   const [selectedPlatform, setSelectedPlatform] = useState<SocialPlatform | null>(null);
   const [accountName, setAccountName] = useState("");
   const [handle, setHandle] = useState("");
+  const [loginUsername, setLoginUsername] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -54,7 +57,9 @@ export function NewSocialDialog({ open, onOpenChange, onSocialAdded }: NewSocial
           platform: selectedPlatform,
           account_name: accountName,
           handle: handle.startsWith('@') ? handle : `@${handle}`,
-          user_id: user.id, // Add the user_id to the insert
+          user_id: user.id,
+          login_username: loginUsername ? encryptValue(loginUsername) : null,
+          login_password: loginPassword ? encryptValue(loginPassword) : null
         });
 
       if (error) throw error;
@@ -68,6 +73,8 @@ export function NewSocialDialog({ open, onOpenChange, onSocialAdded }: NewSocial
       setSelectedPlatform(null);
       setAccountName("");
       setHandle("");
+      setLoginUsername("");
+      setLoginPassword("");
       onSocialAdded?.();
       onOpenChange(false);
     } catch (error) {
@@ -134,6 +141,27 @@ export function NewSocialDialog({ open, onOpenChange, onSocialAdded }: NewSocial
                   onChange={(e) => setHandle(e.target.value)}
                   placeholder={`@username`}
                   required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="loginUsername">Login Username</Label>
+                <Input
+                  id="loginUsername"
+                  value={loginUsername}
+                  onChange={(e) => setLoginUsername(e.target.value)}
+                  placeholder="Account login username"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="loginPassword">Login Password</Label>
+                <Input
+                  id="loginPassword"
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  placeholder="Account login password"
                 />
               </div>
             </>

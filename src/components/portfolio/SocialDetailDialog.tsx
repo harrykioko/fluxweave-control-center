@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { encryptValue, decryptValue } from "@/utils/encryption";
 
 type SocialAccount = Database["public"]["Tables"]["social_accounts"]["Row"];
 
@@ -25,6 +26,10 @@ export function SocialDetailDialog({ open, onOpenChange, account }: SocialDetail
 
   if (!account) return null;
 
+  // Decrypt the credentials when displaying them
+  const decryptedUsername = account.login_username ? decryptValue(account.login_username) : '';
+  const decryptedPassword = account.login_password ? decryptValue(account.login_password) : '';
+
   const handleSave = async () => {
     if (!editedAccount) return;
 
@@ -35,8 +40,10 @@ export function SocialDetailDialog({ open, onOpenChange, account }: SocialDetail
         platform: editedAccount.platform,
         account_name: editedAccount.account_name,
         handle: editedAccount.handle,
-        login_username: editedAccount.login_username,
-        login_password: editedAccount.login_password
+        login_username: editedAccount.login_username !== account.login_username ? 
+          encryptValue(editedAccount.login_username || '') : account.login_username,
+        login_password: editedAccount.login_password !== account.login_password ? 
+          encryptValue(editedAccount.login_password || '') : account.login_password
       })
       .eq('id', account.id);
 
@@ -122,12 +129,12 @@ export function SocialDetailDialog({ open, onOpenChange, account }: SocialDetail
               <Label>Login Username</Label>
               {isEditing ? (
                 <Input
-                  value={editedAccount?.login_username || ''}
+                  value={editedAccount?.login_username === account.login_username ? decryptedUsername : editedAccount?.login_username || ''}
                   onChange={(e) => setEditedAccount(prev => prev ? {...prev, login_username: e.target.value} : prev)}
                   placeholder="Account login username"
                 />
               ) : (
-                <p className="text-sm text-slate-600">{account.login_username || 'Not specified'}</p>
+                <p className="text-sm text-slate-600">{decryptedUsername || 'Not specified'}</p>
               )}
             </div>
 
@@ -136,7 +143,7 @@ export function SocialDetailDialog({ open, onOpenChange, account }: SocialDetail
               {isEditing ? (
                 <Input
                   type="password"
-                  value={editedAccount?.login_password || ''}
+                  value={editedAccount?.login_password === account.login_password ? decryptedPassword : editedAccount?.login_password || ''}
                   onChange={(e) => setEditedAccount(prev => prev ? {...prev, login_password: e.target.value} : prev)}
                   placeholder="Account login password"
                 />

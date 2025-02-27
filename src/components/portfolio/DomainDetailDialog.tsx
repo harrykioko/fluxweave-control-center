@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { encryptValue, decryptValue } from "@/utils/encryption";
 
 type Domain = Database["public"]["Tables"]["domains"]["Row"];
 
@@ -25,6 +26,10 @@ export function DomainDetailDialog({ open, onOpenChange, domain }: DomainDetailD
 
   if (!domain) return null;
 
+  // Decrypt the credentials when displaying them
+  const decryptedUsername = domain.login_username ? decryptValue(domain.login_username) : '';
+  const decryptedPassword = domain.login_password ? decryptValue(domain.login_password) : '';
+
   const handleSave = async () => {
     if (!editedDomain) return;
 
@@ -36,8 +41,10 @@ export function DomainDetailDialog({ open, onOpenChange, domain }: DomainDetailD
         url: editedDomain.url,
         hosted_on: editedDomain.hosted_on,
         owner: editedDomain.owner,
-        login_username: editedDomain.login_username,
-        login_password: editedDomain.login_password
+        login_username: editedDomain.login_username !== domain.login_username ? 
+          encryptValue(editedDomain.login_username || '') : domain.login_username,
+        login_password: editedDomain.login_password !== domain.login_password ? 
+          encryptValue(editedDomain.login_password || '') : domain.login_password
       })
       .eq('id', domain.id);
 
@@ -145,12 +152,12 @@ export function DomainDetailDialog({ open, onOpenChange, domain }: DomainDetailD
               <Label>Login Username</Label>
               {isEditing ? (
                 <Input
-                  value={editedDomain?.login_username || ''}
+                  value={editedDomain?.login_username === domain.login_username ? decryptedUsername : editedDomain?.login_username || ''}
                   onChange={(e) => setEditedDomain(prev => prev ? {...prev, login_username: e.target.value} : prev)}
                   placeholder="Admin username"
                 />
               ) : (
-                <p className="text-sm text-slate-600">{domain.login_username || 'Not specified'}</p>
+                <p className="text-sm text-slate-600">{decryptedUsername || 'Not specified'}</p>
               )}
             </div>
 
@@ -159,7 +166,7 @@ export function DomainDetailDialog({ open, onOpenChange, domain }: DomainDetailD
               {isEditing ? (
                 <Input
                   type="password"
-                  value={editedDomain?.login_password || ''}
+                  value={editedDomain?.login_password === domain.login_password ? decryptedPassword : editedDomain?.login_password || ''}
                   onChange={(e) => setEditedDomain(prev => prev ? {...prev, login_password: e.target.value} : prev)}
                   placeholder="Admin password"
                 />

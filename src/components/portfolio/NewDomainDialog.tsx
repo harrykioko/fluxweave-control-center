@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { encryptValue } from "@/utils/encryption";
 
 interface NewDomainDialogProps {
   open: boolean;
@@ -61,8 +62,8 @@ export function NewDomainDialog({ open, onOpenChange, onDomainAdded }: NewDomain
         user_id: user.id,
         hosted_on: hostedOn.trim() || null,
         owner: owner.trim() || null,
-        login_username: loginUsername.trim() || null,
-        login_password: loginPassword.trim() || null
+        login_username: loginUsername.trim() ? encryptValue(loginUsername.trim()) : null,
+        login_password: loginPassword.trim() ? encryptValue(loginPassword.trim()) : null
       });
 
     setIsLoading(false);

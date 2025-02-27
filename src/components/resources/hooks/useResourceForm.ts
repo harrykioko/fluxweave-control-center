@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ResourceType, ResourceInsert, ToolResource, ReadResource, SubscriptionResource } from "../types";
+import { encryptValue } from "@/utils/encryption";
 
 interface UseResourceFormProps {
   onResourceAdded: () => void;
@@ -98,13 +99,14 @@ export function useResourceForm({ onResourceAdded, onFormSubmitted }: UseResourc
           category: category || null
         } as ReadResource;
       } else {
+        // Encrypt the username and password before saving to the database
         resourceData = {
           ...baseResource,
           type: "subscription",
           price: price || null,
           frequency: frequency || null,
-          username: username || null,
-          password: password || null
+          username: username ? encryptValue(username) : null,
+          password: password ? encryptValue(password) : null
         } as SubscriptionResource;
       }
       
