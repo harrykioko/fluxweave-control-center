@@ -66,7 +66,7 @@ export default function Resources() {
   
   const filteredTools = filterResources("tool");
   const filteredReads = filterResources("read");
-  const filteredInfluencers = filterResources("influencer");
+  const filteredSubscriptions = filterResources("subscription");
 
   const handleResourceClick = (resource: Resource) => {
     setSelectedResource(resource);
@@ -124,11 +124,11 @@ export default function Resources() {
                 onResourceClick={handleResourceClick}
               />
 
-              {/* Influencers Section */}
+              {/* Subscriptions Section (formerly Influencers) */}
               <ResourceSection
-                title="Influencers"
+                title="Subscriptions"
                 icon={<Users className="h-5 w-5 text-purple-500" />}
-                resources={filteredInfluencers}
+                resources={filteredSubscriptions}
                 className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-100"
                 onResourceClick={handleResourceClick}
               />

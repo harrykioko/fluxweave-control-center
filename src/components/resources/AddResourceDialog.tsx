@@ -180,12 +180,12 @@ export function AddResourceDialog({
                 
                 <Button
                   type="button"
-                  variant={type === "influencer" ? "default" : "outline"}
-                  className={type === "influencer" ? "bg-purple-500 hover:bg-purple-600" : ""}
-                  onClick={() => setType("influencer")}
+                  variant={type === "subscription" ? "default" : "outline"}
+                  className={type === "subscription" ? "bg-purple-500 hover:bg-purple-600" : ""}
+                  onClick={() => setType("subscription")}
                 >
                   <Users className="mr-2 h-4 w-4" />
-                  Influencer
+                  Subscription
                 </Button>
               </div>
             </div>

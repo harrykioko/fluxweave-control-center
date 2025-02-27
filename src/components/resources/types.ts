@@ -1,5 +1,5 @@
 
-export type ResourceType = "tool" | "read" | "influencer";
+export type ResourceType = "tool" | "read" | "subscription";
 
 export interface Resource {
   id: string;

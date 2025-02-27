@@ -30,7 +30,7 @@ export function ResourceCard({
     switch (type) {
       case "tool": return "Visit website";
       case "read": return "Read more";
-      case "influencer": return "View profile";
+      case "subscription": return "View subscription";
       default: return "Learn more";
     }
   };
