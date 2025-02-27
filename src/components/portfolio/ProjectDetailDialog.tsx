@@ -4,7 +4,6 @@ import { Separator } from "@/components/ui/separator";
 import type { Project } from "@/types/portfolio";
 import { ProjectDialogHeader } from "./project-dialog/ProjectDialogHeader";
 import { ProjectAIWorkspace } from "./project-dialog/ProjectAIWorkspace";
-import { ProjectOperations } from "./project-dialog/ProjectOperations";
 import { ProjectAssociations } from "./project-dialog/ProjectAssociations";
 
 interface ProjectDetailDialogProps {
@@ -29,9 +28,8 @@ export function ProjectDetailDialog({ open, onOpenChange, project }: ProjectDeta
             <Separator />
             <ProjectAssociations project={project} />
           </div>
-          <div className="p-6 space-y-6">
+          <div className="p-6">
             <ProjectAIWorkspace />
-            <ProjectOperations />
           </div>
         </div>
       </DialogContent>
