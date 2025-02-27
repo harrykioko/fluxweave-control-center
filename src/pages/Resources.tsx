@@ -77,8 +77,6 @@ export default function Resources() {
     <div className="min-h-screen bg-slate-50">
       <main className="p-6">
         <div className="max-w-7xl mx-auto">
-          {/* Removed the header with "Resources" text */}
-
           {/* Search and Add Resource */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
             <div className="relative w-full sm:w-auto">
@@ -105,8 +103,8 @@ export default function Resources() {
               <div className="animate-spin h-8 w-8 border-2 border-purple-500 rounded-full border-t-transparent"></div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
-              {/* Tools Section */}
+            <div className="space-y-8">
+              {/* Tools Section - Top */}
               <ResourceSection
                 title="Tools"
                 icon={<Wrench className="h-5 w-5 text-emerald-500" />}
@@ -115,7 +113,7 @@ export default function Resources() {
                 onResourceClick={handleResourceClick}
               />
 
-              {/* Reads Section */}
+              {/* Reads Section - Middle */}
               <ResourceSection
                 title="Reads"
                 icon={<BookOpen className="h-5 w-5 text-blue-500" />}
@@ -124,7 +122,7 @@ export default function Resources() {
                 onResourceClick={handleResourceClick}
               />
 
-              {/* Subscriptions Section (formerly Influencers) */}
+              {/* Subscriptions Section - Bottom */}
               <ResourceSection
                 title="Subscriptions"
                 icon={<Users className="h-5 w-5 text-purple-500" />}

@@ -38,17 +38,18 @@ export function ResourceSection({
         </h2>
       </div>
 
-      <div className={`space-y-4 p-4 rounded-lg ${className}`}>
-        {resources.map((resource) => (
-          <ResourceCard
-            key={resource.id}
-            {...resource}
-            onClick={() => handleResourceClick(resource)}
-            className="mb-4 last:mb-0"
-          />
-        ))}
-
-        {resources.length === 0 && (
+      <div className={`p-4 rounded-lg ${className}`}>
+        {resources.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {resources.map((resource) => (
+              <ResourceCard
+                key={resource.id}
+                {...resource}
+                onClick={() => handleResourceClick(resource)}
+              />
+            ))}
+          </div>
+        ) : (
           <p className="text-sm text-slate-500 text-center py-8">
             No {title.toLowerCase()} added yet
           </p>
