@@ -29,7 +29,7 @@ const extractDomain = (url?: string): string => {
 };
 
 // Function to get icon based on domain
-const getIconForDomain = (domain: string) => {
+const getIconForDomain = (domain: string): keyof typeof Icons => {
   // Map common domains to their corresponding icons
   const domainIconMap: Record<string, keyof typeof Icons> = {
     "github.com": "Github",
@@ -86,7 +86,9 @@ export function ResourceCard({
   // Get domain and corresponding icon for subscriptions
   const domain = isSubscription ? extractDomain(link) : "";
   const iconName = getIconForDomain(domain);
-  const DynamicIcon = Icons[iconName as keyof typeof Icons];
+  
+  // Correctly render the icon component by accessing it from Icons
+  const IconComponent = Icons[iconName];
 
   return (
     <div
@@ -102,7 +104,7 @@ export function ResourceCard({
       <div className="flex items-start gap-3">
         {isSubscription && (
           <div className="flex-shrink-0 p-2 bg-white/10 backdrop-blur-md rounded-lg mt-0.5">
-            <DynamicIcon className="h-4 w-4 text-purple-400" />
+            <IconComponent className="h-4 w-4 text-purple-400" />
           </div>
         )}
         <div className="flex-1">
