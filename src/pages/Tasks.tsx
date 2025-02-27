@@ -96,7 +96,7 @@ export default function Tasks() {
         {isLoading ? (
           <div className="text-center text-white">Loading tasks...</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Task Status Columns */}
             {TASK_STATUSES.map((statusCol) => (
               <div key={statusCol.id} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
@@ -121,18 +121,6 @@ export default function Tasks() {
                 </div>
               </div>
             ))}
-
-            {/* New Tasks Column */}
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-semibold text-white mb-4">New Tasks</h3>
-              <button 
-                onClick={() => setIsNewTaskOpen(true)}
-                className="w-full h-32 rounded-lg border-2 border-dashed border-white/20 hover:border-white/30 bg-white/5 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/10 transition-colors"
-              >
-                <Plus className="h-6 w-6 mr-2" />
-                Add Task
-              </button>
-            </div>
           </div>
         )}
       </div>
