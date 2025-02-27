@@ -278,6 +278,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_project_domains_domain"
+            columns: ["domain_id"]
+            isOneToOne: false
+            referencedRelation: "domains"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_project_domains_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "project_domains_domain_id_fkey"
             columns: ["domain_id"]
             isOneToOne: false
@@ -313,6 +327,20 @@ export type Database = {
           social_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_project_socials_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_project_socials_social"
+            columns: ["social_id"]
+            isOneToOne: false
+            referencedRelation: "social_accounts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "project_socials_project_id_fkey"
             columns: ["project_id"]
