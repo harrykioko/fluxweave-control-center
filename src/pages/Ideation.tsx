@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 
 interface Idea {
@@ -134,7 +133,7 @@ export default function Ideation() {
           <div className="text-center text-white">Loading ideas...</div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {STAGES.map((stage, index) => (
+            {STAGES.map((stage) => (
               <div 
                 key={stage.id}
                 className="glass-panel p-6 space-y-4"
@@ -164,11 +163,6 @@ export default function Ideation() {
                     ))
                   }
                 </div>
-                {index < STAGES.length - 1 && (
-                  <div className="hidden lg:block">
-                    <Separator orientation="vertical" className="h-full absolute right-0 top-0 opacity-20" />
-                  </div>
-                )}
               </div>
             ))}
           </div>
@@ -194,3 +188,4 @@ export default function Ideation() {
     </main>
   );
 }
+
