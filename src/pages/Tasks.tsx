@@ -66,12 +66,12 @@ export default function Tasks() {
         return [];
       }
       
-      // Get comment counts by using a proper query
+      // Fixed query: Use a single select with count and group by
       const { data: commentCounts, error: commentsError } = await supabase
         .from("task_comments")
-        .select("task_id, count(*)")
+        .select('task_id, count', { count: 'exact', head: false })
         .in("task_id", taskIds)
-        .group("task_id");
+        .groupBy('task_id');
 
       if (commentsError) console.error("Error fetching comment counts:", commentsError);
 
