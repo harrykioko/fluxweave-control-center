@@ -38,11 +38,13 @@ export function ProjectCard({ project, onClick, className }: ProjectCardProps) {
     >
       {/* Logo and Status */}
       <div className="flex items-start justify-between mb-4">
-        <img
-          src={project.logo}
-          alt={`${project.name} logo`}
-          className="w-16 h-16 rounded-lg object-cover"
-        />
+        <div className="w-20 h-20 rounded-lg overflow-hidden bg-white/50 flex items-center justify-center">
+          <img
+            src={project.logo}
+            alt={`${project.name} logo`}
+            className="w-full h-full object-contain p-1"
+          />
+        </div>
         <span className={cn(
           "px-3 py-1 rounded-full text-xs font-medium",
           project.status === "live" && "bg-emerald-100/50 text-emerald-700",
