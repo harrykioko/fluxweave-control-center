@@ -2,9 +2,12 @@
 import { useState } from "react";
 import type { Project } from "@/types/portfolio";
 import { cn } from "@/lib/utils";
-import { Link as LinkIcon } from "lucide-react";
+import { Link as LinkIcon, Pencil } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface ProjectDialogHeaderProps {
   project: Project;
@@ -12,6 +15,10 @@ interface ProjectDialogHeaderProps {
 
 export function ProjectDialogHeader({ project }: ProjectDialogHeaderProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(project.name);
+  const [description, setDescription] = useState(project.description || "");
+  const [url, setUrl] = useState(project.url || "");
   const { toast } = useToast();
 
   const handleLogoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +73,33 @@ export function ProjectDialogHeader({ project }: ProjectDialogHeaderProps) {
     }
   };
 
+  const handleSave = async () => {
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .update({
+          name: name.trim(),
+          description: description.trim() || null,
+          url: url.trim() || null,
+        })
+        .eq('id', project.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Project updated",
+        description: "Project details have been successfully updated",
+      });
+      setIsEditing(false);
+    } catch (error: any) {
+      toast({
+        title: "Error updating project",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="flex items-start gap-4">
       <div className="relative group">
@@ -88,28 +122,78 @@ export function ProjectDialogHeader({ project }: ProjectDialogHeaderProps) {
           />
         </label>
       </div>
-      <div>
-        <h2 className="text-2xl font-semibold text-slate-800">{project.name}</h2>
-        <p className="text-slate-500 mt-1">{project.description}</p>
-        <div className="flex items-center gap-2 mt-2">
-          <span className={cn(
-            "px-3 py-1 rounded-full text-xs font-medium",
-            project.status === "live" && "bg-emerald-100/50 text-emerald-700",
-            project.status === "build" && "bg-amber-100/50 text-amber-700",
-            project.status === "paused" && "bg-slate-100/50 text-slate-700",
-          )}>
-            {project.status}
-          </span>
-          <a
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700"
-          >
-            <LinkIcon className="h-3 w-3" />
-            {project.url.replace('https://', '')}
-          </a>
-        </div>
+      <div className="flex-1">
+        {isEditing ? (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Project Name</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Input
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="url">Project URL</Label>
+              <Input
+                id="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleSave}>Save</Button>
+              <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl font-semibold text-slate-800">{project.name}</h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsEditing(true)}
+                className="h-8 w-8"
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            </div>
+            <p className="text-slate-500 mt-1">{project.description}</p>
+            <div className="flex items-center gap-2 mt-2">
+              <span className={cn(
+                "px-3 py-1 rounded-full text-xs font-medium",
+                project.status === "live" && "bg-emerald-100/50 text-emerald-700",
+                project.status === "build" && "bg-amber-100/50 text-amber-700",
+                project.status === "paused" && "bg-slate-100/50 text-slate-700",
+              )}>
+                {project.status}
+              </span>
+              {project.url && (
+                <a
+                  href={project.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700"
+                >
+                  <LinkIcon className="h-3 w-3" />
+                  {project.url.replace('https://', '')}
+                </a>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
