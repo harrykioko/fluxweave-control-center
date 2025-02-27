@@ -5,6 +5,7 @@ import type { Project } from "@/types/portfolio";
 import { ProjectDialogHeader } from "./project-dialog/ProjectDialogHeader";
 import { ProjectAIWorkspace } from "./project-dialog/ProjectAIWorkspace";
 import { ProjectOperations } from "./project-dialog/ProjectOperations";
+import { ProjectAssociations } from "./project-dialog/ProjectAssociations";
 
 interface ProjectDetailDialogProps {
   open: boolean;
@@ -19,8 +20,10 @@ export function ProjectDetailDialog({ open, onOpenChange, project }: ProjectDeta
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-7xl h-[90vh] p-0 bg-white/60 backdrop-blur-xl">
         <div className="grid grid-cols-2 h-full">
-          <div className="p-6 space-y-6 border-r border-slate-200">
+          <div className="p-6 space-y-6 border-r border-slate-200 overflow-y-auto">
             <ProjectDialogHeader project={project} />
+            <Separator />
+            <ProjectAssociations project={project} />
           </div>
           <div className="p-6 space-y-6">
             <ProjectAIWorkspace />
