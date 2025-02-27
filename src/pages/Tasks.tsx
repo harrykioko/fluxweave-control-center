@@ -6,6 +6,7 @@ import { Plus, Share2, Calendar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
+import { NewTaskDialog } from "@/components/tasks/NewTaskDialog";
 
 interface User {
   id: string;
@@ -156,7 +157,12 @@ export default function Tasks() {
         )}
       </div>
 
-      {/* TODO: Implement NewTaskDialog component */}
+      {/* New Task Dialog */}
+      <NewTaskDialog 
+        open={isNewTaskOpen} 
+        onOpenChange={setIsNewTaskOpen} 
+        profiles={profiles} 
+      />
     </main>
   );
 }
