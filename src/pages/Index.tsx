@@ -8,11 +8,45 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, MessageSquare, CalendarIcon, Briefcase, CheckSquare, Lightbulb, FileText, Layers } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export default function Index() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [activeTab, setActiveTab] = useState<string>("focus");
   const [expandButtons, setExpandButtons] = useState(false);
+  
+  // Use custom hook to check screen size
+  const isSmallScreen = useMediaQuery("(max-width: 640px)");
+  const isMediumScreen = useMediaQuery("(min-width: 641px) and (max-width: 1024px)");
+  const isLargeScreen = useMediaQuery("(min-width: 1025px)");
+  
+  // Dynamically calculate translation distances based on screen size
+  const getTranslationDistance = () => {
+    if (isSmallScreen) {
+      return {
+        first: -70,
+        second: -25,
+        third: 25,
+        fourth: 70
+      };
+    } else if (isMediumScreen) {
+      return {
+        first: -100,
+        second: -35,
+        third: 35,
+        fourth: 100
+      };
+    } else {
+      return {
+        first: -130,
+        second: -45,
+        third: 45,
+        fourth: 130
+      };
+    }
+  };
+  
+  const distances = getTranslationDistance();
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -32,7 +66,7 @@ export default function Index() {
               {/* Top 3 Resources */}
               <div className="space-y-4">
                 <h2 className="text-xl font-bold text-white px-1">Top 3 Resources</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {[1, 2, 3].map((item) => (
                     <div 
                       key={item} 
@@ -48,7 +82,7 @@ export default function Index() {
               {/* Upcoming Tasks */}
               <div className="space-y-4">
                 <h2 className="text-xl font-bold text-white px-1">Upcoming Tasks</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {[1, 2, 3].map((task) => (
                     <div 
                       key={task} 
@@ -75,7 +109,7 @@ export default function Index() {
                       <DialogTrigger asChild>
                         <Button 
                           className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
-                            expandButtons ? "translate-x-[-90px] md:translate-x-[-120px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
+                            expandButtons ? `translate-x-[${distances.first}px] transform scale-105 shadow-purple-500/20 border-purple-500/30` : ""
                           }`}
                         >
                           <Lightbulb className="h-4 w-4 mr-2" />
@@ -88,7 +122,7 @@ export default function Index() {
                       <DialogTrigger asChild>
                         <Button 
                           className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
-                            expandButtons ? "translate-x-[-30px] md:translate-x-[-40px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
+                            expandButtons ? `translate-x-[${distances.second}px] transform scale-105 shadow-purple-500/20 border-purple-500/30` : ""
                           }`}
                         >
                           <CheckSquare className="h-4 w-4 mr-2" />
@@ -101,7 +135,7 @@ export default function Index() {
                       <DialogTrigger asChild>
                         <Button 
                           className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
-                            expandButtons ? "translate-x-[30px] md:translate-x-[40px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
+                            expandButtons ? `translate-x-[${distances.third}px] transform scale-105 shadow-purple-500/20 border-purple-500/30` : ""
                           }`}
                         >
                           <FileText className="h-4 w-4 mr-2" />
@@ -114,7 +148,7 @@ export default function Index() {
                       <DialogTrigger asChild>
                         <Button 
                           className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
-                            expandButtons ? "translate-x-[90px] md:translate-x-[120px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
+                            expandButtons ? `translate-x-[${distances.fourth}px] transform scale-105 shadow-purple-500/20 border-purple-500/30` : ""
                           }`}
                         >
                           <Layers className="h-4 w-4 mr-2" />
@@ -139,11 +173,11 @@ export default function Index() {
               {/* Message Board with Tabs */}
               <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-lg overflow-hidden">
                 {/* Tabs */}
-                <div className="flex border-b border-white/20">
+                <div className="flex overflow-x-auto scrollbar-none border-b border-white/20">
                   {["focus", "note", "resource", "project"].map((tab) => (
                     <button
                       key={tab}
-                      className={`px-4 py-3 text-sm font-medium ${
+                      className={`px-4 py-3 text-sm font-medium whitespace-nowrap ${
                         activeTab === tab
                           ? "border-b-2 border-purple-500 text-white"
                           : "text-slate-300 hover:text-white"
@@ -156,7 +190,7 @@ export default function Index() {
                 </div>
                 
                 {/* Message Content */}
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   <div className="space-y-4">
                     {[1, 2].map((message) => (
                       <div key={message} className="flex items-start gap-3">
@@ -164,9 +198,9 @@ export default function Index() {
                           <span className="text-xs font-medium text-white">JD</span>
                         </div>
                         <div className="flex-1">
-                          <div className="flex items-baseline">
+                          <div className="flex flex-col sm:flex-row sm:items-baseline">
                             <p className="font-medium text-white">John Doe</p>
-                            <span className="ml-2 text-xs text-slate-400">2 hours ago</span>
+                            <span className="text-xs text-slate-400 sm:ml-2">2 hours ago</span>
                           </div>
                           <p className="text-sm text-slate-300 mt-1">
                             Just finished the wireframes for the new dashboard layout. Let me know what you think!
@@ -195,20 +229,22 @@ export default function Index() {
             {/* Right Column - 4 columns wide */}
             <div className="lg:col-span-4 space-y-6">
               {/* Activity Feed */}
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 sm:p-6 shadow-lg">
                 <h2 className="text-xl font-bold text-white mb-4">Activity Feed</h2>
                 <ActivityFeed />
               </div>
               
               {/* Calendar */}
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 sm:p-6 shadow-lg">
                 <h2 className="text-xl font-bold text-white mb-4">Calendar</h2>
-                <CalendarComponent
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  className="bg-white/5 rounded-md border border-white/20 text-white"
-                />
+                <div className="max-w-full overflow-x-auto">
+                  <CalendarComponent
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    className="bg-white/5 rounded-md border border-white/20 text-white"
+                  />
+                </div>
                 
                 <div className="mt-4">
                   <h3 className="font-medium text-white mb-2">Upcoming Events</h3>
