@@ -2,18 +2,21 @@
 import React from "react";
 import { TaskStatusColumn } from "./TaskStatusColumn";
 
+// Define task status type
+type TaskStatus = "pending" | "in_progress" | "completed";
+
 // Define task status configurations
 export const TASK_STATUSES = [
-  { id: "pending", label: "To-Do", glassBg: "bg-white/5", glassBorder: "border-white/10" },
-  { id: "in_progress", label: "In Progress", glassBg: "bg-white/10", glassBorder: "border-white/20" },
-  { id: "completed", label: "Done", glassBg: "bg-white/15", glassBorder: "border-white/30" }
+  { id: "pending" as TaskStatus, label: "To-Do", glassBg: "bg-white/5", glassBorder: "border-white/10" },
+  { id: "in_progress" as TaskStatus, label: "In Progress", glassBg: "bg-white/10", glassBorder: "border-white/20" },
+  { id: "completed" as TaskStatus, label: "Done", glassBg: "bg-white/15", glassBorder: "border-white/30" }
 ];
 
 interface Task {
   id: string;
   title: string;
   description?: string;
-  status: "pending" | "in_progress" | "completed";
+  status: TaskStatus;
   priority: string;
   due_date?: string;
   assigned_to?: string;
@@ -32,7 +35,7 @@ interface TasksBoardProps {
   onTaskClick: (taskId: string) => void;
   onDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task) => void;
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
-  onDrop: (e: React.DragEvent<HTMLDivElement>, newStatus: "pending" | "in_progress" | "completed") => void;
+  onDrop: (e: React.DragEvent<HTMLDivElement>, newStatus: TaskStatus) => void;
 }
 
 export function TasksBoard({ 
