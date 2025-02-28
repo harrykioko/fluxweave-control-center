@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Share2, Calendar, Plus } from "lucide-react";
 
@@ -7,7 +7,8 @@ interface TasksHeaderProps {
   onNewTaskClick: () => void;
 }
 
-export function TasksHeader({ onNewTaskClick }: TasksHeaderProps) {
+// Using memo to prevent unnecessary re-renders
+export const TasksHeader = memo(function TasksHeader({ onNewTaskClick }: TasksHeaderProps) {
   return (
     <div className="flex justify-between items-center bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
       <div>
@@ -32,4 +33,4 @@ export function TasksHeader({ onNewTaskClick }: TasksHeaderProps) {
       </div>
     </div>
   );
-}
+});

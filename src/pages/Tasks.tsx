@@ -1,4 +1,5 @@
 
+import React, { useCallback } from "react";
 import { NewTaskDialog } from "@/components/tasks/NewTaskDialog";
 import { TaskDetailDialog } from "@/components/tasks/TaskDetailDialog";
 import { TasksHeader } from "@/components/tasks/board/TasksHeader";
@@ -21,11 +22,15 @@ export default function Tasks() {
     handleDrop,
   } = useTasks();
 
+  const handleNewTaskClick = useCallback(() => {
+    setIsNewTaskOpen(true);
+  }, [setIsNewTaskOpen]);
+
   return (
     <main className="min-h-screen pt-20 px-4 md:px-8 bg-gradient-to-br from-slate-800/90 via-slate-700/80 to-slate-800/90">
       <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
         {/* Header */}
-        <TasksHeader onNewTaskClick={() => setIsNewTaskOpen(true)} />
+        <TasksHeader onNewTaskClick={handleNewTaskClick} />
 
         {/* Tasks Board */}
         <TasksBoard

@@ -1,6 +1,6 @@
 
-import React from "react";
-import { TaskCard } from "@/components/tasks/TaskCard";
+import React, { memo, useMemo } from "react";
+import { TaskCard } from "../TaskCard";
 
 interface Task {
   id: string;
@@ -19,7 +19,7 @@ interface Task {
   comment_count?: number;
 }
 
-interface StatusColumnProps {
+interface TaskStatusColumnProps {
   status: {
     id: "pending" | "in_progress" | "completed";
     label: string;
@@ -33,64 +33,54 @@ interface StatusColumnProps {
   onDrop: (e: React.DragEvent<HTMLDivElement>, newStatus: "pending" | "in_progress" | "completed") => void;
 }
 
-export function TaskStatusColumn({ 
-  status, 
-  tasks, 
-  onTaskClick, 
-  onDragStart, 
+// Using memo to prevent unnecessary re-renders
+export const TaskStatusColumn = memo(function TaskStatusColumn({
+  status,
+  tasks,
+  onTaskClick,
+  onDragStart,
   onDragOver,
-  onDrop 
-}: StatusColumnProps) {
-  const filteredTasks = tasks.filter(task => task.status === status.id);
+  onDrop
+}: TaskStatusColumnProps) {
+  // Using useMemo to filter tasks only when tasks or status changes
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => task.status === status.id);
+  }, [tasks, status.id]);
+  
+  // Using useMemo for the handler to maintain reference stability
+  const handleDrop = useMemo(() => {
+    return (e: React.DragEvent<HTMLDivElement>) => onDrop(e, status.id);
+  }, [onDrop, status.id]);
 
   return (
-    <div className="space-y-4">
-      {/* Section header */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center space-x-2">
-          <h3 className="text-lg font-semibold text-white">{status.label}</h3>
-          <span className="text-sm text-white/70 bg-white/10 px-2 py-0.5 rounded-full">
-            {filteredTasks.length}
-          </span>
-        </div>
+    <div
+      className={`rounded-xl p-6 ${status.glassBg} backdrop-blur-xl border ${status.glassBorder} shadow-lg`}
+      onDragOver={onDragOver}
+      onDrop={handleDrop}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-white font-medium">{status.label}</h3>
+        <span className="bg-white/10 text-white/70 text-xs font-medium px-2 py-1 rounded-md">
+          {filteredTasks.length}
+        </span>
       </div>
       
-      {/* Tasks container - droppable area */}
-      <div 
-        className={`${status.glassBg} backdrop-blur-xl border ${status.glassBorder} rounded-xl p-6 shadow-lg h-full`}
-        onDragOver={onDragOver}
-        onDrop={(e) => onDrop(e, status.id)}
-      >
-        <div className="space-y-4">
-          {filteredTasks.map(task => (
-            <div 
+      <div className="space-y-4">
+        {filteredTasks.length === 0 ? (
+          <div className="text-white/50 text-sm text-center py-4">
+            No tasks
+          </div>
+        ) : (
+          filteredTasks.map((task) => (
+            <TaskCard
               key={task.id}
-              draggable
+              task={task}
+              onClick={() => onTaskClick(task.id)}
               onDragStart={(e) => onDragStart(e, task)}
-            >
-              <TaskCard 
-                task={{
-                  ...task,
-                  priority: task.priority,
-                  project_name: task.project_name,
-                  comment_count: task.comment_count,
-                  assignee: task.assignee_first_name ? {
-                    id: task.assigned_to || "",
-                    name: `${task.assignee_first_name} ${task.assignee_last_name}`,
-                    avatar: task.assignee_avatar_url || `https://avatar.vercel.sh/${task.assigned_to}`
-                  } : undefined
-                }}
-                onClick={() => onTaskClick(task.id)} 
-              />
-            </div>
-          ))}
-          {filteredTasks.length === 0 && (
-            <div className="text-center py-8 text-white/50 italic">
-              No tasks
-            </div>
-          )}
-        </div>
+            />
+          ))
+        )}
       </div>
     </div>
   );
-}
+});

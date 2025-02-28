@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { memo } from "react";
 import { TaskStatusColumn } from "./TaskStatusColumn";
 
 // Define task status type
@@ -38,7 +38,8 @@ interface TasksBoardProps {
   onDrop: (e: React.DragEvent<HTMLDivElement>, newStatus: TaskStatus) => void;
 }
 
-export function TasksBoard({ 
+// Using memo to prevent unnecessary re-renders
+export const TasksBoard = memo(function TasksBoard({ 
   tasks, 
   isLoading, 
   onTaskClick, 
@@ -65,4 +66,4 @@ export function TasksBoard({
       ))}
     </div>
   );
-}
+});

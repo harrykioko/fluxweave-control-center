@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -38,6 +38,7 @@ export function useTaskDetail(taskId: string | null, open: boolean, onOpenChange
       return data;
     },
     enabled: !!taskId && open,
+    staleTime: 30000, // Add stale time to reduce unnecessary refetches
   });
 
   // Update task mutation
@@ -95,15 +96,15 @@ export function useTaskDetail(taskId: string | null, open: boolean, onOpenChange
   });
 
   // Handle field updates
-  const handleFieldUpdate = (field: string, value: any) => {
+  const handleFieldUpdate = useCallback((field: string, value: any) => {
     updateTaskMutation.mutate({ [field]: value });
-  };
+  }, [updateTaskMutation]);
 
-  const handleDeleteTask = () => {
+  const handleDeleteTask = useCallback(() => {
     if (window.confirm("Are you sure you want to delete this task?")) {
       deleteTaskMutation.mutate();
     }
-  };
+  }, [deleteTaskMutation]);
 
   return {
     task,

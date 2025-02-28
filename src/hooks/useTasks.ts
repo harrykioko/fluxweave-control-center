@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -79,6 +79,7 @@ export function useTasks() {
 
       return tasksWithCommentCounts as Task[];
     },
+    staleTime: 30000, // Add stale time to reduce unnecessary refetches
   });
 
   const { data: profiles = [] } = useQuery({
@@ -91,28 +92,30 @@ export function useTasks() {
       if (error) throw error;
       return data;
     },
+    staleTime: 300000, // Profile data changes less frequently
   });
 
-  const handleTaskClick = (taskId: string) => {
+  // Use useCallback to maintain reference stability for event handlers
+  const handleTaskClick = useCallback((taskId: string) => {
     setSelectedTaskId(taskId);
     setIsTaskDetailOpen(true);
-  };
+  }, []);
 
   // Handle drag start event
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, task: Task) => {
+  const handleDragStart = useCallback((e: React.DragEvent<HTMLDivElement>, task: Task) => {
     e.dataTransfer.setData("taskId", task.id);
     e.dataTransfer.setData("taskTitle", task.title);
     e.dataTransfer.effectAllowed = "move";
-  };
+  }, []);
 
   // Handle drag over event
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
-  };
+  }, []);
 
   // Handle drop event
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>, newStatus: "pending" | "in_progress" | "completed") => {
+  const handleDrop = useCallback(async (e: React.DragEvent<HTMLDivElement>, newStatus: "pending" | "in_progress" | "completed") => {
     e.preventDefault();
     
     const taskId = e.dataTransfer.getData("taskId");
@@ -160,7 +163,7 @@ export function useTasks() {
         variant: "default",
       });
     }
-  };
+  }, [queryClient, tasks, toast]);
 
   return {
     tasks,

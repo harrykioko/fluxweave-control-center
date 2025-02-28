@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
@@ -24,6 +24,7 @@ export function useTaskComments(taskId: string, currentUserId: string) {
       return data as TaskComment[];
     },
     enabled: !!taskId,
+    staleTime: 10000, // Add stale time to reduce unnecessary refetches
   });
 
   // Add comment mutation
@@ -95,15 +96,15 @@ export function useTaskComments(taskId: string, currentUserId: string) {
     },
   });
 
-  const handleAddComment = (content: string) => {
+  const handleAddComment = useCallback((content: string) => {
     addCommentMutation.mutate(content);
-  };
+  }, [addCommentMutation]);
 
-  const handleDeleteComment = (commentId: string) => {
+  const handleDeleteComment = useCallback((commentId: string) => {
     if (window.confirm("Are you sure you want to delete this comment?")) {
       deleteCommentMutation.mutate(commentId);
     }
-  };
+  }, [deleteCommentMutation]);
 
   return {
     comments,

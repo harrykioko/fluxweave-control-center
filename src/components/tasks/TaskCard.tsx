@@ -1,123 +1,98 @@
 
-import React from "react";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { CalendarIcon, Briefcase, MessageSquare } from "lucide-react";
+import React, { memo } from "react";
+import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { CalendarDays, MessageSquare } from "lucide-react";
+import { format } from "date-fns";
 
-interface TaskCardProps {
-  task: {
-    id: string;
-    title: string;
-    description?: string;
-    status: string;
-    priority: string;
-    due_date?: string;
-    assignee?: {
-      id: string;
-      name: string;
-      avatar: string;
-    };
-    project_name?: string;
-    comment_count?: number;
-  };
-  onClick: () => void;
+interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  status: "pending" | "in_progress" | "completed";
+  priority: string;
+  due_date?: string;
+  assigned_to?: string;
+  project_id?: string;
+  created_by: string;
+  project_name?: string;
+  assignee_first_name?: string;
+  assignee_last_name?: string;
+  assignee_avatar_url?: string;
+  comment_count?: number;
 }
 
-// Priority badge colors
-const priorityColorMap: Record<string, string> = {
-  "high": "bg-red-500/80 hover:bg-red-500/90",
-  "medium": "bg-amber-500/80 hover:bg-amber-500/90",
-  "low": "bg-green-500/80 hover:bg-green-500/90",
-};
+interface TaskCardProps {
+  task: Task;
+  onClick: () => void;
+  onDragStart: (e: React.DragEvent<HTMLDivElement>) => void;
+}
 
-export function TaskCard({ task, onClick }: TaskCardProps) {
-  // Format date to readable format
-  const formatDueDate = (dateStr?: string) => {
-    if (!dateStr) return "";
-    
-    const date = new Date(dateStr);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    const dateFormatOptions: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-    
-    if (date.toDateString() === today.toDateString()) {
-      return "Today";
-    } else if (date.toDateString() === tomorrow.toDateString()) {
-      return "Tomorrow";
-    } else {
-      return date.toLocaleDateString('en-US', dateFormatOptions);
-    }
+// Using memo to prevent unnecessary re-renders
+export const TaskCard = memo(function TaskCard({ task, onClick, onDragStart }: TaskCardProps) {
+  // Map priority to appropriate tailwind classes for styling
+  const priorityClasses = {
+    low: "bg-blue-100 text-blue-800",
+    medium: "bg-amber-100 text-amber-800",
+    high: "bg-red-100 text-red-800",
   };
 
-  // Check if task is overdue
-  const isOverdue = () => {
-    if (!task.due_date || task.status === "completed") return false;
-    const dueDate = new Date(task.due_date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return dueDate < today;
-  };
+  // Get the appropriate priority class or default to gray
+  const priorityClass = 
+    task.priority && priorityClasses[task.priority as keyof typeof priorityClasses]
+    ? priorityClasses[task.priority as keyof typeof priorityClasses]
+    : "bg-gray-100 text-gray-800";
 
   return (
-    <div 
-      className="group bg-white/80 hover:bg-white/90 backdrop-blur-md rounded-lg border border-white/40 shadow-sm hover:shadow-md transition-all cursor-pointer p-4"
+    <div
+      className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-lg p-4 shadow-md hover:shadow-lg cursor-pointer hover:bg-white/15 transition-all duration-200 hover:translate-y-[-2px] draggable"
       onClick={onClick}
+      draggable
+      onDragStart={onDragStart}
+      data-task-id={task.id}
     >
-      <div className="space-y-2">
+      <div className="flex flex-col space-y-3">
         <div className="flex justify-between items-start">
-          <h3 className="font-medium text-slate-800 line-clamp-2 group-hover:text-slate-900">
-            {task.title}
-          </h3>
-          {task.priority && (
-            <Badge className={`${priorityColorMap[task.priority.toLowerCase()] || ""} text-white`}>
-              {task.priority}
-            </Badge>
-          )}
+          <h3 className="font-medium text-white">{task.title}</h3>
+          <Badge variant="outline" className={`${priorityClass} text-xs`}>
+            {task.priority || "No priority"}
+          </Badge>
         </div>
 
         {task.description && (
-          <p className="text-sm text-slate-500 line-clamp-2">
-            {task.description}
-          </p>
+          <p className="text-xs text-white/70 line-clamp-2">{task.description}</p>
         )}
 
-        <div className="pt-2 flex flex-col space-y-2">
-          {/* Project info */}
-          {task.project_name && (
-            <div className="flex items-center text-xs text-slate-500">
-              <Briefcase className="h-3.5 w-3.5 mr-1.5" />
-              <span className="truncate">{task.project_name}</span>
+        <div className="flex justify-between items-center pt-2">
+          {task.assignee_first_name ? (
+            <div className="flex items-center gap-1">
+              <Avatar 
+                className="h-5 w-5 border border-white/20"
+                src={task.assignee_avatar_url || undefined}
+                alt={`${task.assignee_first_name} ${task.assignee_last_name}`}
+              />
+              <span className="text-xs text-white/70">
+                {task.assignee_first_name}
+              </span>
             </div>
+          ) : (
+            <span className="text-xs text-white/50">Unassigned</span>
           )}
-          
-          {/* Due date */}
-          {task.due_date && (
-            <div className={`flex items-center text-xs ${isOverdue() ? "text-red-600 font-medium" : "text-slate-500"}`}>
-              <CalendarIcon className="h-3.5 w-3.5 mr-1.5" />
-              <span>{formatDueDate(task.due_date)}</span>
-              {isOverdue() && <span className="ml-1.5">(Overdue)</span>}
-            </div>
-          )}
-          
-          <div className="flex justify-between items-center pt-1">
-            {/* Comment count */}
-            {task.comment_count !== undefined && task.comment_count > 0 && (
-              <div className="flex items-center text-xs text-slate-500">
-                <MessageSquare className="h-3.5 w-3.5 mr-1" />
-                <span>{task.comment_count}</span>
+
+          <div className="flex items-center gap-2">
+            {task.due_date && (
+              <div className="flex items-center space-x-1 text-white/70">
+                <CalendarDays className="h-3 w-3" />
+                <span className="text-xs">
+                  {format(new Date(task.due_date), "MMM d")}
+                </span>
               </div>
             )}
             
-            {/* Assignee */}
-            {task.assignee && (
-              <div className="flex justify-end">
-                <Avatar className="h-6 w-6 ring-2 ring-white">
-                  <AvatarImage src={task.assignee.avatar} alt={task.assignee.name} />
-                </Avatar>
+            {task.comment_count !== undefined && task.comment_count > 0 && (
+              <div className="flex items-center space-x-1 text-white/70">
+                <MessageSquare className="h-3 w-3" />
+                <span className="text-xs">{task.comment_count}</span>
               </div>
             )}
           </div>
@@ -125,4 +100,4 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       </div>
     </div>
   );
-}
+});
