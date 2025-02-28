@@ -5,13 +5,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { DashboardMetricCard } from "@/components/dashboard/DashboardMetricCard";
 import { ActivityFeed } from "@/components/profile/ActivityFeed";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, MessageSquare, CalendarIcon, Briefcase, CheckSquare } from "lucide-react";
+import { Plus, MessageSquare, CalendarIcon, Briefcase, CheckSquare, Lightbulb, FileText, Layers, Calendar } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function Index() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [activeTab, setActiveTab] = useState<string>("focus");
+  const [expandButtons, setExpandButtons] = useState(false);
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -63,43 +64,89 @@ export default function Index() {
                 </div>
               </div>
               
-              {/* Create New Buttons */}
-              <div className="flex flex-wrap gap-3">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Focus
-                    </Button>
-                  </DialogTrigger>
-                </Dialog>
-                
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Note
-                    </Button>
-                  </DialogTrigger>
-                </Dialog>
-                
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Resource
-                    </Button>
-                  </DialogTrigger>
-                </Dialog>
-                
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Project
-                    </Button>
-                  </DialogTrigger>
-                </Dialog>
+              {/* Expandable Create New Buttons */}
+              <div className="relative flex justify-center my-8">
+                {/* Action Buttons that expand */}
+                <div className="flex items-center justify-center">
+                  <div className={`absolute flex flex-wrap gap-3 transition-all duration-300 ${
+                    expandButtons ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+                  }`}>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 ${
+                            expandButtons ? "translate-x-[-200px] md:translate-x-[-250px]" : ""
+                          }`}
+                        >
+                          <Lightbulb className="h-4 w-4 mr-2" />
+                          Idea
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
+                    
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 ${
+                            expandButtons ? "translate-x-[-100px] md:translate-x-[-125px]" : ""
+                          }`}
+                        >
+                          <CheckSquare className="h-4 w-4 mr-2" />
+                          Task
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 ${
+                            expandButtons ? "translate-x-[100px] md:translate-x-[125px]" : ""
+                          }`}
+                        >
+                          <FileText className="h-4 w-4 mr-2" />
+                          Resource
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
+                    
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 ${
+                            expandButtons ? "translate-x-[200px] md:translate-x-[250px]" : ""
+                          }`}
+                        >
+                          <Layers className="h-4 w-4 mr-2" />
+                          Portfolio
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 ${
+                            expandButtons ? "translate-y-[60px]" : ""
+                          }`}
+                        >
+                          <Calendar className="h-4 w-4 mr-2" />
+                          Event
+                        </Button>
+                      </DialogTrigger>
+                    </Dialog>
+                  </div>
+
+                  {/* Main Create New Button */}
+                  <Button 
+                    onClick={() => setExpandButtons(!expandButtons)}
+                    className="relative z-10 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
+                    size="lg"
+                  >
+                    <Plus className={`h-5 w-5 mr-2 transition-transform duration-300 ${expandButtons ? "rotate-45" : ""}`} />
+                    Create New
+                  </Button>
+                </div>
               </div>
               
               {/* Message Board with Tabs */}
