@@ -1,9 +1,10 @@
 
 import React from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useTaskDetail } from "./detail/useTaskDetail";
-import { TaskDetailHeader } from "./detail/TaskDetailHeader";
-import { TaskDetailContent } from "./detail/TaskDetailContent";
+import { Separator } from "@/components/ui/separator";
+import { TaskDetailHeader } from "@/components/tasks/detail";
+import { TaskDetailContent } from "@/components/tasks/detail";
+import { useTaskDetail } from "@/components/tasks/detail/useTaskDetail";
 
 interface TaskDetailDialogProps {
   open: boolean;
@@ -13,48 +14,43 @@ interface TaskDetailDialogProps {
 }
 
 export function TaskDetailDialog({ open, onOpenChange, taskId, profiles }: TaskDetailDialogProps) {
-  const {
-    task,
-    isLoading,
-    currentUserId,
-    handleFieldUpdate,
-    handleDeleteTask
-  } = useTaskDetail(taskId, open, onOpenChange);
-
-  if (isLoading) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[600px]">
-          <p>Loading task details...</p>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  if (!task) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[600px]">
-          <p>Task not found.</p>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  const { task, isLoading, currentUserId, handleFieldUpdate, handleDeleteTask } = useTaskDetail(
+    taskId,
+    open,
+    onOpenChange
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <TaskDetailHeader 
-          title={task.title} 
-          onDeleteTask={handleDeleteTask} 
-        />
-        
-        <TaskDetailContent 
-          task={task} 
-          profiles={profiles}
-          currentUserId={currentUserId}
-          onFieldUpdate={handleFieldUpdate}
-        />
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white border-none">
+        {isLoading ? (
+          <div className="flex items-center justify-center h-40">
+            <div className="animate-spin h-8 w-8 border-4 border-purple-500 rounded-full border-t-transparent"></div>
+          </div>
+        ) : task ? (
+          <div className="space-y-6">
+            {/* Task Detail Header */}
+            <TaskDetailHeader
+              title={task.title}
+              onTitleChange={(title) => handleFieldUpdate("title", title)}
+              onDeleteTask={handleDeleteTask}
+            />
+            
+            <Separator />
+            
+            {/* Task Detail Content */}
+            <TaskDetailContent
+              task={task}
+              profiles={profiles}
+              currentUserId={currentUserId}
+              onFieldUpdate={handleFieldUpdate}
+            />
+          </div>
+        ) : (
+          <div className="text-center text-gray-500 py-8">
+            This task could not be found or has been deleted.
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

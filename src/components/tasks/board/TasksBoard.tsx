@@ -1,22 +1,20 @@
 
 import React, { memo } from "react";
 import { TaskStatusColumn } from "./TaskStatusColumn";
+import { TaskCard } from "../card";
 
-// Define task status type
-type TaskStatus = "pending" | "in_progress" | "completed";
-
-// Define task status configurations
+// Define the task statuses
 export const TASK_STATUSES = [
-  { id: "pending" as TaskStatus, label: "To-Do", glassBg: "bg-white/5", glassBorder: "border-white/10" },
-  { id: "in_progress" as TaskStatus, label: "In Progress", glassBg: "bg-white/10", glassBorder: "border-white/20" },
-  { id: "completed" as TaskStatus, label: "Done", glassBg: "bg-white/15", glassBorder: "border-white/30" }
+  { id: "pending", label: "To Do" },
+  { id: "in_progress", label: "In Progress" },
+  { id: "completed", label: "Completed" },
 ];
 
 interface Task {
   id: string;
   title: string;
   description?: string;
-  status: TaskStatus;
+  status: "pending" | "in_progress" | "completed";
   priority: string;
   due_date?: string;
   assigned_to?: string;
@@ -35,35 +33,46 @@ interface TasksBoardProps {
   onTaskClick: (taskId: string) => void;
   onDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task) => void;
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
-  onDrop: (e: React.DragEvent<HTMLDivElement>, newStatus: TaskStatus) => void;
+  onDrop: (e: React.DragEvent<HTMLDivElement>, newStatus: "pending" | "in_progress" | "completed") => void;
 }
 
 // Using memo to prevent unnecessary re-renders
-export const TasksBoard = memo(function TasksBoard({ 
-  tasks, 
-  isLoading, 
-  onTaskClick, 
-  onDragStart, 
-  onDragOver, 
-  onDrop 
+export const TasksBoard = memo(function TasksBoard({
+  tasks,
+  isLoading,
+  onTaskClick,
+  onDragStart,
+  onDragOver,
+  onDrop,
 }: TasksBoardProps) {
-  if (isLoading) {
-    return <div className="text-center text-white">Loading tasks...</div>;
-  }
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {TASK_STATUSES.map((statusCol) => (
-        <TaskStatusColumn
-          key={statusCol.id}
-          status={statusCol}
-          tasks={tasks}
-          onTaskClick={onTaskClick}
-          onDragStart={onDragStart}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
-        />
-      ))}
+      {TASK_STATUSES.map((statusColumn) => {
+        // Filter tasks for this column
+        const columnTasks = tasks.filter(task => task.status === statusColumn.id);
+        
+        return (
+          <TaskStatusColumn
+            key={statusColumn.id}
+            title={statusColumn.label}
+            statusId={statusColumn.id as "pending" | "in_progress" | "completed"}
+            tasks={columnTasks}
+            isLoading={isLoading}
+            onTaskClick={onTaskClick}
+            onDragStart={onDragStart}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            renderTask={(task) => (
+              <TaskCard
+                key={task.id} 
+                task={task}
+                onClick={() => onTaskClick(task.id)}
+                onDragStart={(e) => onDragStart(e, task)}
+              />
+            )}
+          />
+        );
+      })}
     </div>
   );
 });

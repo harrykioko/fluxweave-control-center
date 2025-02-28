@@ -1,6 +1,5 @@
 
-import React, { memo, useMemo } from "react";
-import { TaskCard } from "../TaskCard";
+import React from "react";
 
 interface Task {
   id: string;
@@ -20,67 +19,70 @@ interface Task {
 }
 
 interface TaskStatusColumnProps {
-  status: {
-    id: "pending" | "in_progress" | "completed";
-    label: string;
-    glassBg: string;
-    glassBorder: string;
-  };
+  title: string;
+  statusId: "pending" | "in_progress" | "completed";
   tasks: Task[];
+  isLoading: boolean;
   onTaskClick: (taskId: string) => void;
   onDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task) => void;
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (e: React.DragEvent<HTMLDivElement>, newStatus: "pending" | "in_progress" | "completed") => void;
+  renderTask: (task: Task) => React.ReactNode;
 }
 
-// Using memo to prevent unnecessary re-renders
-export const TaskStatusColumn = memo(function TaskStatusColumn({
-  status,
+export function TaskStatusColumn({
+  title,
+  statusId,
   tasks,
-  onTaskClick,
-  onDragStart,
+  isLoading,
   onDragOver,
-  onDrop
+  onDrop,
+  renderTask,
 }: TaskStatusColumnProps) {
-  // Using useMemo to filter tasks only when tasks or status changes
-  const filteredTasks = useMemo(() => {
-    return tasks.filter((task) => task.status === status.id);
-  }, [tasks, status.id]);
-  
-  // Using useMemo for the handler to maintain reference stability
-  const handleDrop = useMemo(() => {
-    return (e: React.DragEvent<HTMLDivElement>) => onDrop(e, status.id);
-  }, [onDrop, status.id]);
+  // Get color based on status
+  const getStatusColor = () => {
+    switch (statusId) {
+      case "pending":
+        return "bg-blue-500/20 text-blue-100";
+      case "in_progress":
+        return "bg-amber-500/20 text-amber-100";
+      case "completed":
+        return "bg-green-500/20 text-green-100";
+      default:
+        return "bg-gray-500/20 text-gray-100";
+    }
+  };
 
   return (
-    <div
-      className={`rounded-xl p-6 ${status.glassBg} backdrop-blur-xl border ${status.glassBorder} shadow-lg`}
+    <div 
+      className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden flex flex-col"
       onDragOver={onDragOver}
-      onDrop={handleDrop}
+      onDrop={(e) => onDrop(e, statusId)}
     >
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-white font-medium">{status.label}</h3>
-        <span className="bg-white/10 text-white/70 text-xs font-medium px-2 py-1 rounded-md">
-          {filteredTasks.length}
-        </span>
+      {/* Column Header */}
+      <div className={`px-4 py-3 border-b border-white/10 ${getStatusColor()}`}>
+        <div className="flex justify-between items-center">
+          <h3 className="font-medium">{title}</h3>
+          <span className="text-xs px-2 py-1 bg-white/10 rounded-full">
+            {tasks.length}
+          </span>
+        </div>
       </div>
       
-      <div className="space-y-4">
-        {filteredTasks.length === 0 ? (
-          <div className="text-white/50 text-sm text-center py-4">
+      {/* Column Content */}
+      <div className="flex-1 p-4 space-y-3 min-h-[300px] max-h-[70vh] overflow-y-auto">
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="animate-spin h-6 w-6 border-4 border-white/30 rounded-full border-t-transparent"></div>
+          </div>
+        ) : tasks.length > 0 ? (
+          tasks.map(renderTask)
+        ) : (
+          <div className="flex items-center justify-center h-full text-white/50 text-sm italic">
             No tasks
           </div>
-        ) : (
-          filteredTasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onClick={() => onTaskClick(task.id)}
-              onDragStart={(e) => onDragStart(e, task)}
-            />
-          ))
         )}
       </div>
     </div>
   );
-});
+}

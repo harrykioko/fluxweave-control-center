@@ -2,8 +2,8 @@
 import React, { useCallback } from "react";
 import { NewTaskDialog } from "@/components/tasks/NewTaskDialog";
 import { TaskDetailDialog } from "@/components/tasks/TaskDetailDialog";
-import { TasksHeader } from "@/components/tasks/board/TasksHeader";
-import { TasksBoard } from "@/components/tasks/board/TasksBoard";
+import { TasksHeader } from "@/components/tasks/board";
+import { TasksBoard } from "@/components/tasks/board";
 import { useTasks } from "@/hooks/useTasks";
 
 export default function Tasks() {

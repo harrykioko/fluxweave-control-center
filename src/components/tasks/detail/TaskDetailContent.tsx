@@ -8,7 +8,7 @@ import { TaskStatusSelector } from "./TaskStatusSelector";
 import { TaskPrioritySelector } from "./TaskPrioritySelector";
 import { TaskDueDate } from "./TaskDueDate";
 import { TaskCreatorInfo } from "./TaskCreatorInfo";
-import { TaskComments } from "../TaskComments";
+import { TaskComments } from "../comments/TaskComments";
 
 interface Profile {
   id: string;
