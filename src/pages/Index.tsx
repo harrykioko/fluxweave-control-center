@@ -146,13 +146,13 @@ export default function Index() {
                 )}
               </div>
               
-              {/* Message Board - Removed tabs and adjusted height */}
+              {/* Message Board - Height adjusted to match Calendar */}
               <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-lg overflow-hidden">
                 {/* Message Content */}
                 <div className="p-4 sm:p-6">
                   <h2 className="text-xl font-bold text-white mb-4">Message Board</h2>
                   
-                  <ScrollArea className="h-[400px] lg:h-[500px]">
+                  <ScrollArea className="h-[280px]">
                     <div className="space-y-4">
                       {[1, 2, 3, 4, 5].map((message) => (
                         <div key={message} className="flex items-start gap-3">
@@ -199,30 +199,32 @@ export default function Index() {
                 </ScrollArea>
               </div>
               
-              {/* Calendar */}
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 sm:p-6 shadow-lg">
+              {/* Calendar - Container to match Message Board */}
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 sm:p-6 shadow-lg flex flex-col h-[435px]">
                 <h2 className="text-xl font-bold text-white mb-4">Calendar</h2>
-                <div className="max-w-full overflow-x-auto">
-                  <CalendarComponent
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    className="bg-white/5 rounded-md border border-white/20 text-white"
-                  />
-                </div>
-                
-                <div className="mt-4">
-                  <h3 className="font-medium text-white mb-2">Upcoming Events</h3>
-                  <div className="space-y-2">
-                    {[1, 2].map((event) => (
-                      <div key={event} className="flex items-center gap-2 p-2 bg-white/5 border border-white/10 rounded">
-                        <div className="w-1 h-full min-h-[24px] bg-blue-500 rounded-full"></div>
-                        <div>
-                          <p className="font-medium text-sm text-white">Team Meeting</p>
-                          <p className="text-xs text-slate-300">3:00 PM - 4:00 PM</p>
+                <div className="flex-grow flex flex-col">
+                  <div className="max-w-full overflow-x-auto">
+                    <CalendarComponent
+                      mode="single"
+                      selected={date}
+                      onSelect={setDate}
+                      className="bg-white/5 rounded-md border border-white/20 text-white"
+                    />
+                  </div>
+                  
+                  <div className="mt-auto">
+                    <h3 className="font-medium text-white mb-2">Upcoming Events</h3>
+                    <div className="space-y-2">
+                      {[1, 2].map((event) => (
+                        <div key={event} className="flex items-center gap-2 p-2 bg-white/5 border border-white/10 rounded">
+                          <div className="w-1 h-full min-h-[24px] bg-blue-500 rounded-full"></div>
+                          <div>
+                            <p className="font-medium text-sm text-white">Team Meeting</p>
+                            <p className="text-xs text-slate-300">3:00 PM - 4:00 PM</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
