@@ -74,8 +74,8 @@ export default function Index() {
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button 
-                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 ${
-                            expandButtons ? "translate-x-[-200px] md:translate-x-[-250px]" : ""
+                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
+                            expandButtons ? "translate-x-[-150px] md:translate-x-[-180px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
                           }`}
                         >
                           <Lightbulb className="h-4 w-4 mr-2" />
@@ -87,8 +87,8 @@ export default function Index() {
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button 
-                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 ${
-                            expandButtons ? "translate-x-[-100px] md:translate-x-[-125px]" : ""
+                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
+                            expandButtons ? "translate-x-[-75px] md:translate-x-[-90px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
                           }`}
                         >
                           <CheckSquare className="h-4 w-4 mr-2" />
@@ -100,8 +100,8 @@ export default function Index() {
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button 
-                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 ${
-                            expandButtons ? "translate-x-[100px] md:translate-x-[125px]" : ""
+                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
+                            expandButtons ? "translate-x-[75px] md:translate-x-[90px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
                           }`}
                         >
                           <FileText className="h-4 w-4 mr-2" />
@@ -113,8 +113,8 @@ export default function Index() {
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button 
-                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 ${
-                            expandButtons ? "translate-x-[200px] md:translate-x-[250px]" : ""
+                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
+                            expandButtons ? "translate-x-[150px] md:translate-x-[180px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
                           }`}
                         >
                           <Layers className="h-4 w-4 mr-2" />
@@ -126,8 +126,8 @@ export default function Index() {
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button 
-                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 ${
-                            expandButtons ? "translate-y-[60px]" : ""
+                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
+                            expandButtons ? "translate-y-[50px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
                           }`}
                         >
                           <CalendarIcon className="h-4 w-4 mr-2" />
