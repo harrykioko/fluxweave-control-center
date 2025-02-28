@@ -13,7 +13,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Index() {
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const [activeTab, setActiveTab] = useState<string>("focus");
   const [expandButtons, setExpandButtons] = useState(false);
   
   // Use custom hook to check screen size
@@ -147,45 +146,32 @@ export default function Index() {
                 )}
               </div>
               
-              {/* Message Board with Tabs */}
+              {/* Message Board - Removed tabs and adjusted height */}
               <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-lg overflow-hidden">
-                {/* Tabs */}
-                <div className="flex overflow-x-auto scrollbar-none border-b border-white/20">
-                  {["focus", "note", "resource", "project"].map((tab) => (
-                    <button
-                      key={tab}
-                      className={`px-4 py-3 text-sm font-medium whitespace-nowrap ${
-                        activeTab === tab
-                          ? "border-b-2 border-purple-500 text-white"
-                          : "text-slate-300 hover:text-white"
-                      }`}
-                      onClick={() => setActiveTab(tab)}
-                    >
-                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                    </button>
-                  ))}
-                </div>
-                
                 {/* Message Content */}
                 <div className="p-4 sm:p-6">
-                  <div className="space-y-4">
-                    {[1, 2].map((message) => (
-                      <div key={message} className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                          <span className="text-xs font-medium text-white">JD</span>
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex flex-col sm:flex-row sm:items-baseline">
-                            <p className="font-medium text-white">John Doe</p>
-                            <span className="text-xs text-slate-400 sm:ml-2">2 hours ago</span>
+                  <h2 className="text-xl font-bold text-white mb-4">Message Board</h2>
+                  
+                  <ScrollArea className="h-[400px] lg:h-[500px]">
+                    <div className="space-y-4">
+                      {[1, 2, 3, 4, 5].map((message) => (
+                        <div key={message} className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                            <span className="text-xs font-medium text-white">JD</span>
                           </div>
-                          <p className="text-sm text-slate-300 mt-1">
-                            Just finished the wireframes for the new dashboard layout. Let me know what you think!
-                          </p>
+                          <div className="flex-1">
+                            <div className="flex flex-col sm:flex-row sm:items-baseline">
+                              <p className="font-medium text-white">John Doe</p>
+                              <span className="text-xs text-slate-400 sm:ml-2">2 hours ago</span>
+                            </div>
+                            <p className="text-sm text-slate-300 mt-1">
+                              Just finished the wireframes for the new dashboard layout. Let me know what you think!
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
                   
                   <Separator className="my-4 bg-white/20" />
                   
