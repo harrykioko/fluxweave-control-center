@@ -199,16 +199,16 @@ export default function Index() {
                 </ScrollArea>
               </div>
               
-              {/* Calendar - Container to match Message Board */}
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 sm:p-6 shadow-lg flex flex-col h-[435px]">
+              {/* Calendar - Enhanced with integrated upcoming events */}
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 sm:p-6 shadow-lg h-[435px]">
                 <h2 className="text-xl font-bold text-white mb-4">Calendar</h2>
-                <div className="flex-grow flex flex-col">
-                  <div className="max-w-full overflow-x-auto">
+                <div className="flex flex-col h-[calc(100%-2rem)]">
+                  <div className="bg-white/5 border border-white/20 rounded-lg p-3 mb-4">
                     <CalendarComponent
                       mode="single"
                       selected={date}
                       onSelect={setDate}
-                      className="bg-white/5 rounded-md border border-white/20 text-white"
+                      className="text-white"
                     />
                   </div>
                   
