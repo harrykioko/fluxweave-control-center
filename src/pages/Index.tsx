@@ -17,36 +17,6 @@ export default function Index() {
   
   // Use custom hook to check screen size
   const isSmallScreen = useMediaQuery("(max-width: 640px)");
-  const isMediumScreen = useMediaQuery("(min-width: 641px) and (max-width: 1024px)");
-  const isLargeScreen = useMediaQuery("(min-width: 1025px)");
-  
-  // Dynamically calculate translation distances based on screen size
-  const getTranslationDistance = () => {
-    if (isSmallScreen) {
-      return {
-        first: -70,
-        second: -25,
-        third: 25,
-        fourth: 70
-      };
-    } else if (isMediumScreen) {
-      return {
-        first: -100,
-        second: -35,
-        third: 35,
-        fourth: 100
-      };
-    } else {
-      return {
-        first: -130,
-        second: -45,
-        third: 45,
-        fourth: 130
-      };
-    }
-  };
-  
-  const distances = getTranslationDistance();
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -98,76 +68,82 @@ export default function Index() {
                 </div>
               </div>
               
-              {/* Expandable Create New Buttons */}
-              <div className="relative flex justify-center my-8">
-                {/* Action Buttons that expand */}
-                <div className="flex items-center justify-center">
-                  <div className={`absolute flex flex-wrap gap-3 transition-all duration-300 ${
-                    expandButtons ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
-                  }`}>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button 
-                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
-                            expandButtons ? `translate-x-[${distances.first}px] transform scale-105 shadow-purple-500/20 border-purple-500/30` : ""
-                          }`}
-                        >
-                          <Lightbulb className="h-4 w-4 mr-2" />
-                          Idea
-                        </Button>
-                      </DialogTrigger>
-                    </Dialog>
-                    
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button 
-                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
-                            expandButtons ? `translate-x-[${distances.second}px] transform scale-105 shadow-purple-500/20 border-purple-500/30` : ""
-                          }`}
-                        >
-                          <CheckSquare className="h-4 w-4 mr-2" />
-                          Task
-                        </Button>
-                      </DialogTrigger>
-                    </Dialog>
+              {/* Expandable Create New Buttons - Redesigned Approach */}
+              <div className="my-8">
+                {expandButtons ? (
+                  <div className="animate-fade-in">
+                    {/* Grid layout for expanded buttons - more reliable across screen sizes */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
+                          >
+                            <Lightbulb className="h-4 w-4 mr-2" />
+                            Idea
+                          </Button>
+                        </DialogTrigger>
+                      </Dialog>
+                      
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
+                          >
+                            <CheckSquare className="h-4 w-4 mr-2" />
+                            Task
+                          </Button>
+                        </DialogTrigger>
+                      </Dialog>
 
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button 
-                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
-                            expandButtons ? `translate-x-[${distances.third}px] transform scale-105 shadow-purple-500/20 border-purple-500/30` : ""
-                          }`}
-                        >
-                          <FileText className="h-4 w-4 mr-2" />
-                          Resource
-                        </Button>
-                      </DialogTrigger>
-                    </Dialog>
-                    
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button 
-                          className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
-                            expandButtons ? `translate-x-[${distances.fourth}px] transform scale-105 shadow-purple-500/20 border-purple-500/30` : ""
-                          }`}
-                        >
-                          <Layers className="h-4 w-4 mr-2" />
-                          Portfolio
-                        </Button>
-                      </DialogTrigger>
-                    </Dialog>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
+                          >
+                            <FileText className="h-4 w-4 mr-2" />
+                            Resource
+                          </Button>
+                        </DialogTrigger>
+                      </Dialog>
+                      
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
+                          >
+                            <Layers className="h-4 w-4 mr-2" />
+                            Portfolio
+                          </Button>
+                        </DialogTrigger>
+                      </Dialog>
+                    </div>
+
+                    {/* Main Create New Button - Close configuration */}
+                    <div className="flex justify-center">
+                      <Button 
+                        onClick={() => setExpandButtons(false)}
+                        className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
+                        size="lg"
+                      >
+                        <Plus className="h-5 w-5 mr-2 rotate-45" />
+                        Close
+                      </Button>
+                    </div>
                   </div>
-
-                  {/* Main Create New Button */}
-                  <Button 
-                    onClick={() => setExpandButtons(!expandButtons)}
-                    className="relative z-10 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
-                    size="lg"
-                  >
-                    <Plus className={`h-5 w-5 mr-2 transition-transform duration-300 ${expandButtons ? "rotate-45" : ""}`} />
-                    Create New
-                  </Button>
-                </div>
+                ) : (
+                  <div className="flex justify-center">
+                    {/* Main Create New Button - Expand configuration */}
+                    <Button 
+                      onClick={() => setExpandButtons(true)}
+                      className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
+                      size="lg"
+                    >
+                      <Plus className="h-5 w-5 mr-2" />
+                      Create New
+                    </Button>
+                  </div>
+                )}
               </div>
               
               {/* Message Board with Tabs */}
