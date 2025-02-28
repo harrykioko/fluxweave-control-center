@@ -47,27 +47,28 @@ export function useTasks() {
         return [];
       }
       
-      // Use a count query to get comment counts grouped by task_id
-      const { data: commentCounts, error: commentsError } = await supabase
+      // Count comments for each task - using a simple select approach instead of groupBy
+      const { data: commentsData, error: commentsError } = await supabase
         .from('task_comments')
-        .select('task_id, count', { count: 'exact', head: false })
-        .in('task_id', taskIds)
-        .groupBy('task_id');
+        .select('task_id')
+        .in('task_id', taskIds);
 
       if (commentsError) {
         console.error("Error fetching comment counts:", commentsError);
         // Continue with tasks but without comment counts
-        return tasksData;
+        return tasksData.map(task => ({
+          ...task,
+          status: task.status as "pending" | "in_progress" | "completed"
+        })) as Task[];
       }
 
-      // Process the comment data to create a map of task_id to comment count
+      // Count comments manually by iterating through the results
       const commentCountMap: Record<string, number> = {};
       
-      // Use the returned counts from the grouped query
-      if (commentCounts) {
-        commentCounts.forEach(item => {
-          if (item.task_id && item.count) {
-            commentCountMap[item.task_id] = item.count;
+      if (commentsData) {
+        commentsData.forEach(comment => {
+          if (comment.task_id) {
+            commentCountMap[comment.task_id] = (commentCountMap[comment.task_id] || 0) + 1;
           }
         });
       }
@@ -75,6 +76,7 @@ export function useTasks() {
       // Merge the comment counts into the tasks data
       const tasksWithCommentCounts = tasksData.map(task => ({
         ...task,
+        status: task.status as "pending" | "in_progress" | "completed",
         comment_count: commentCountMap[task.id] || 0
       }));
 
