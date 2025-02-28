@@ -5,7 +5,7 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { DashboardMetricCard } from "@/components/dashboard/DashboardMetricCard";
 import { ActivityFeed } from "@/components/profile/ActivityFeed";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, MessageSquare, CalendarIcon, Briefcase, CheckSquare, Lightbulb, FileText, Layers, Calendar as CalendarIcon } from "lucide-react";
+import { Plus, MessageSquare, CalendarIcon, Briefcase, CheckSquare, Lightbulb, FileText, Layers } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
