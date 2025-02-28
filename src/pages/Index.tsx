@@ -75,7 +75,7 @@ export default function Index() {
                       <DialogTrigger asChild>
                         <Button 
                           className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
-                            expandButtons ? "translate-x-[-150px] md:translate-x-[-180px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
+                            expandButtons ? "translate-x-[-80px] md:translate-x-[-100px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
                           }`}
                         >
                           <Lightbulb className="h-4 w-4 mr-2" />
@@ -88,7 +88,7 @@ export default function Index() {
                       <DialogTrigger asChild>
                         <Button 
                           className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
-                            expandButtons ? "translate-x-[-75px] md:translate-x-[-90px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
+                            expandButtons ? "translate-x-[-40px] md:translate-x-[-50px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
                           }`}
                         >
                           <CheckSquare className="h-4 w-4 mr-2" />
@@ -101,7 +101,7 @@ export default function Index() {
                       <DialogTrigger asChild>
                         <Button 
                           className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
-                            expandButtons ? "translate-x-[75px] md:translate-x-[90px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
+                            expandButtons ? "translate-x-[40px] md:translate-x-[50px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
                           }`}
                         >
                           <FileText className="h-4 w-4 mr-2" />
@@ -114,7 +114,7 @@ export default function Index() {
                       <DialogTrigger asChild>
                         <Button 
                           className={`bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white transition-all duration-300 shadow-lg ${
-                            expandButtons ? "translate-x-[150px] md:translate-x-[180px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
+                            expandButtons ? "translate-x-[80px] md:translate-x-[100px] transform scale-105 shadow-purple-500/20 border-purple-500/30" : ""
                           }`}
                         >
                           <Layers className="h-4 w-4 mr-2" />
