@@ -7,9 +7,10 @@ import { Trash } from "lucide-react";
 interface TaskDetailHeaderProps {
   title: string;
   onDeleteTask: () => void;
+  onTitleChange?: (title: string) => void; // Added the missing prop
 }
 
-export function TaskDetailHeader({ title, onDeleteTask }: TaskDetailHeaderProps) {
+export function TaskDetailHeader({ title, onDeleteTask, onTitleChange }: TaskDetailHeaderProps) {
   return (
     <DialogHeader>
       <div className="flex justify-between items-center">

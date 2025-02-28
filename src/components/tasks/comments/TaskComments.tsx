@@ -36,6 +36,7 @@ export function TaskComments({ taskId, currentUserId }: TaskCommentsProps) {
         setNewComment={setNewComment}
         handleSubmitComment={handleSubmitComment}
         isSubmitting={addCommentMutation.isPending}
+        currentUserId={currentUserId}
       />
       
       <CommentList 

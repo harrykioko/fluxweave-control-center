@@ -1,22 +1,34 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 
 interface CommentFormProps {
-  currentUserId: string;
-  onAddComment: (content: string) => void;
-  isSubmitting: boolean;
+  currentUserId?: string;
+  onAddComment?: (content: string) => void;
+  isSubmitting?: boolean;
+  // Add the missing props
+  newComment: string;
+  setNewComment: React.Dispatch<React.SetStateAction<string>>;
+  handleSubmitComment: (e: React.FormEvent) => void;
 }
 
-export function CommentForm({ currentUserId, onAddComment, isSubmitting }: CommentFormProps) {
-  const [newComment, setNewComment] = useState("");
-
+export function CommentForm({ 
+  currentUserId, 
+  onAddComment, 
+  isSubmitting,
+  newComment,
+  setNewComment,
+  handleSubmitComment
+}: CommentFormProps) {
+  // Use the provided handleSubmitComment function
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newComment.trim()) {
+    handleSubmitComment(e);
+    
+    // If onAddComment is provided, also call it (for backward compatibility)
+    if (onAddComment && newComment.trim()) {
       onAddComment(newComment);
     }
   };
