@@ -1,11 +1,11 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { DashboardMetricCard } from "@/components/dashboard/DashboardMetricCard";
 import { ActivityFeed } from "@/components/profile/ActivityFeed";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, MessageSquare, CalendarIcon, Briefcase, CheckSquare, Lightbulb, FileText, Layers, Calendar } from "lucide-react";
+import { Plus, MessageSquare, CalendarIcon, Briefcase, CheckSquare, Lightbulb, FileText, Layers, Calendar as CalendarIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -130,7 +130,7 @@ export default function Index() {
                             expandButtons ? "translate-y-[60px]" : ""
                           }`}
                         >
-                          <Calendar className="h-4 w-4 mr-2" />
+                          <CalendarIcon className="h-4 w-4 mr-2" />
                           Event
                         </Button>
                       </DialogTrigger>
@@ -216,7 +216,7 @@ export default function Index() {
               {/* Calendar */}
               <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
                 <h2 className="text-xl font-bold text-white mb-4">Calendar</h2>
-                <Calendar
+                <CalendarComponent
                   mode="single"
                   selected={date}
                   onSelect={setDate}
