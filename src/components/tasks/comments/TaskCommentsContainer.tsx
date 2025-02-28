@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { MessageSquare } from "lucide-react";
 import { CommentForm } from "./CommentForm";
@@ -12,6 +12,7 @@ interface TaskCommentsContainerProps {
 }
 
 export function TaskCommentsContainer({ taskId, currentUserId }: TaskCommentsContainerProps) {
+  const [newComment, setNewComment] = useState("");
   const {
     comments,
     isLoading,
@@ -19,6 +20,14 @@ export function TaskCommentsContainer({ taskId, currentUserId }: TaskCommentsCon
     handleDeleteComment,
     addCommentMutation,
   } = useTaskComments(taskId, currentUserId);
+
+  const handleSubmitComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newComment.trim()) {
+      handleAddComment(newComment);
+      setNewComment("");
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -36,6 +45,9 @@ export function TaskCommentsContainer({ taskId, currentUserId }: TaskCommentsCon
         currentUserId={currentUserId}
         onAddComment={handleAddComment}
         isSubmitting={addCommentMutation.isPending}
+        newComment={newComment}
+        setNewComment={setNewComment}
+        handleSubmitComment={handleSubmitComment}
       />
 
       <div className="space-y-4 mt-6">
