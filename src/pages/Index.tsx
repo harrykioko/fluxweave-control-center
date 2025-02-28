@@ -14,28 +14,31 @@ export default function Index() {
   const [activeTab, setActiveTab] = useState<string>("focus");
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <main className="pt-10 px-4 md:px-8">
         <div className="max-w-7xl mx-auto animate-fade-in">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column - 8 columns wide */}
             <div className="lg:col-span-8 space-y-6">
               {/* Welcome Message */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <h1 className="text-2xl font-bold text-slate-800">Hello, Henry</h1>
-                <p className="text-slate-600 mt-2">
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
+                <h1 className="text-2xl font-bold text-white">Hello, Henry</h1>
+                <p className="text-slate-300 mt-2">
                   You have 3 resources and 5 tasks due this week.
                 </p>
               </div>
               
               {/* Top 3 Resources */}
               <div className="space-y-4">
-                <h2 className="text-xl font-bold text-slate-800 px-1">Top 3 Resources</h2>
+                <h2 className="text-xl font-bold text-white px-1">Top 3 Resources</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {[1, 2, 3].map((item) => (
-                    <div key={item} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                      <h3 className="font-medium text-slate-800">Resource {item}</h3>
-                      <p className="text-sm text-slate-500 mt-1">Brief description here</p>
+                    <div 
+                      key={item} 
+                      className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-5 shadow-lg hover:bg-white/15 transition-all duration-200"
+                    >
+                      <h3 className="font-medium text-white">Resource {item}</h3>
+                      <p className="text-sm text-slate-300 mt-1">Brief description here</p>
                     </div>
                   ))}
                 </div>
@@ -43,14 +46,17 @@ export default function Index() {
               
               {/* Upcoming Tasks */}
               <div className="space-y-4">
-                <h2 className="text-xl font-bold text-slate-800 px-1">Upcoming Tasks</h2>
+                <h2 className="text-xl font-bold text-white px-1">Upcoming Tasks</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {[1, 2, 3].map((task) => (
-                    <div key={task} className="flex items-start p-4 bg-white rounded-xl shadow-sm border border-gray-100">
+                    <div 
+                      key={task} 
+                      className="flex items-start p-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-lg"
+                    >
                       <div className="w-2 h-2 rounded-full bg-amber-500 mt-2 mr-3 flex-shrink-0"></div>
                       <div>
-                        <p className="font-medium text-slate-800">Complete project proposal</p>
-                        <p className="text-xs text-slate-500">Due in 2 days</p>
+                        <p className="font-medium text-white">Complete project proposal</p>
+                        <p className="text-xs text-slate-300">Due in 2 days</p>
                       </div>
                     </div>
                   ))}
@@ -61,7 +67,7 @@ export default function Index() {
               <div className="flex flex-wrap gap-3">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button className="bg-slate-800 hover:bg-slate-700 text-white">
+                    <Button className="bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white">
                       <Plus className="h-4 w-4 mr-2" />
                       Focus
                     </Button>
@@ -70,7 +76,7 @@ export default function Index() {
                 
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button className="bg-slate-800 hover:bg-slate-700 text-white">
+                    <Button className="bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white">
                       <Plus className="h-4 w-4 mr-2" />
                       Note
                     </Button>
@@ -79,7 +85,7 @@ export default function Index() {
                 
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button className="bg-slate-800 hover:bg-slate-700 text-white">
+                    <Button className="bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white">
                       <Plus className="h-4 w-4 mr-2" />
                       Resource
                     </Button>
@@ -88,7 +94,7 @@ export default function Index() {
                 
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button className="bg-slate-800 hover:bg-slate-700 text-white">
+                    <Button className="bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white">
                       <Plus className="h-4 w-4 mr-2" />
                       Project
                     </Button>
@@ -97,16 +103,16 @@ export default function Index() {
               </div>
               
               {/* Message Board with Tabs */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-lg overflow-hidden">
                 {/* Tabs */}
-                <div className="flex border-b border-gray-200">
+                <div className="flex border-b border-white/20">
                   {["focus", "note", "resource", "project"].map((tab) => (
                     <button
                       key={tab}
                       className={`px-4 py-3 text-sm font-medium ${
                         activeTab === tab
-                          ? "border-b-2 border-slate-800 text-slate-800"
-                          : "text-slate-500 hover:text-slate-700"
+                          ? "border-b-2 border-purple-500 text-white"
+                          : "text-slate-300 hover:text-white"
                       }`}
                       onClick={() => setActiveTab(tab)}
                     >
@@ -120,15 +126,15 @@ export default function Index() {
                   <div className="space-y-4">
                     {[1, 2].map((message) => (
                       <div key={message} className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
-                          <span className="text-xs font-medium text-slate-600">JD</span>
+                        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                          <span className="text-xs font-medium text-white">JD</span>
                         </div>
                         <div className="flex-1">
                           <div className="flex items-baseline">
-                            <p className="font-medium text-slate-800">John Doe</p>
-                            <span className="ml-2 text-xs text-slate-500">2 hours ago</span>
+                            <p className="font-medium text-white">John Doe</p>
+                            <span className="ml-2 text-xs text-slate-400">2 hours ago</span>
                           </div>
-                          <p className="text-sm text-slate-600 mt-1">
+                          <p className="text-sm text-slate-300 mt-1">
                             Just finished the wireframes for the new dashboard layout. Let me know what you think!
                           </p>
                         </div>
@@ -136,16 +142,16 @@ export default function Index() {
                     ))}
                   </div>
                   
-                  <Separator className="my-4" />
+                  <Separator className="my-4 bg-white/20" />
                   
                   <div className="mt-2">
                     <Textarea 
-                      className="w-full p-3 border border-gray-200 rounded-lg text-sm"
+                      className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-sm text-white placeholder:text-slate-400 focus:ring-1 focus:ring-purple-500"
                       placeholder="Type..."
                       rows={2}
                     />
                     <div className="flex justify-end mt-2">
-                      <Button size="sm">Send</Button>
+                      <Button className="bg-purple-600/90 hover:bg-purple-700/90 text-white border border-purple-500/30">Send</Button>
                     </div>
                   </div>
                 </div>
@@ -155,30 +161,30 @@ export default function Index() {
             {/* Right Column - 4 columns wide */}
             <div className="lg:col-span-4 space-y-6">
               {/* Activity Feed */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <h2 className="text-xl font-bold text-slate-800 mb-4">Activity Feed</h2>
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
+                <h2 className="text-xl font-bold text-white mb-4">Activity Feed</h2>
                 <ActivityFeed />
               </div>
               
               {/* Calendar */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <h2 className="text-xl font-bold text-slate-800 mb-4">Calendar</h2>
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
+                <h2 className="text-xl font-bold text-white mb-4">Calendar</h2>
                 <Calendar
                   mode="single"
                   selected={date}
                   onSelect={setDate}
-                  className="rounded-md border"
+                  className="bg-white/5 rounded-md border border-white/20 text-white"
                 />
                 
                 <div className="mt-4">
-                  <h3 className="font-medium text-slate-800 mb-2">Upcoming Events</h3>
+                  <h3 className="font-medium text-white mb-2">Upcoming Events</h3>
                   <div className="space-y-2">
                     {[1, 2].map((event) => (
-                      <div key={event} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
+                      <div key={event} className="flex items-center gap-2 p-2 bg-white/5 border border-white/10 rounded">
                         <div className="w-1 h-full min-h-[24px] bg-blue-500 rounded-full"></div>
                         <div>
-                          <p className="font-medium text-sm">Team Meeting</p>
-                          <p className="text-xs text-slate-500">3:00 PM - 4:00 PM</p>
+                          <p className="font-medium text-sm text-white">Team Meeting</p>
+                          <p className="text-xs text-slate-300">3:00 PM - 4:00 PM</p>
                         </div>
                       </div>
                     ))}
