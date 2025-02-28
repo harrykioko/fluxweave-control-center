@@ -37,7 +37,7 @@ export function TaskAssignee({
       >
         <SelectTrigger id="assignee" className="w-full">
           <SelectValue placeholder="Select assignee">
-            {assignedTo ? (
+            {assignedTo && assigneeFirstName ? (
               <div className="flex items-center gap-2">
                 <Avatar className="h-6 w-6">
                   <AvatarImage src={assigneeAvatarUrl || `https://avatar.vercel.sh/${assignedTo}`} />
