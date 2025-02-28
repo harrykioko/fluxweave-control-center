@@ -1,6 +1,6 @@
 
 import React, { memo } from "react";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
@@ -66,11 +66,12 @@ export const TaskCard = memo(function TaskCard({ task, onClick, onDragStart }: T
         <div className="flex justify-between items-center pt-2">
           {task.assignee_first_name ? (
             <div className="flex items-center gap-1">
-              <Avatar 
-                className="h-5 w-5 border border-white/20"
-                src={task.assignee_avatar_url || undefined}
-                alt={`${task.assignee_first_name} ${task.assignee_last_name}`}
-              />
+              <Avatar className="h-5 w-5 border border-white/20">
+                <AvatarImage 
+                  src={task.assignee_avatar_url || undefined}
+                  alt={`${task.assignee_first_name} ${task.assignee_last_name}`}
+                />
+              </Avatar>
               <span className="text-xs text-white/70">
                 {task.assignee_first_name}
               </span>
