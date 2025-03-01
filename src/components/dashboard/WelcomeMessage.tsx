@@ -34,10 +34,8 @@ export function WelcomeMessage() {
   }, []);
 
   return (
-    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
-      <h1 className="text-2xl font-bold text-white">
-        {loading ? "Hello" : `Hello, ${firstName}`}
-      </h1>
-    </div>
+    <h1 className="text-3xl font-bold text-white mb-6">
+      {loading ? "Hello" : `Hello, ${firstName}`}
+    </h1>
   );
 }
