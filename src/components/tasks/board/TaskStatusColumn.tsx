@@ -1,3 +1,4 @@
+
 import React from "react";
 import { TaskCard } from "../card";
 import { Task } from "@/types/task";
@@ -37,7 +38,7 @@ export function TaskStatusColumn({
       </div>
       
       {tasks.length > 0 ? (
-        <div className="space-y-3 max-h-[calc(100vh-240px)] overflow-y-auto pr-1 scrollbar-thin">
+        <div className="space-y-3 max-h-[calc(100vh-240px)] overflow-y-auto pr-1 scrollbar-none">
           {tasks.map((task) => (
             <TaskCard
               key={task.id}
