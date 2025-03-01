@@ -1,41 +1,17 @@
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { DashboardMetricCard } from "@/components/dashboard/DashboardMetricCard";
-import { ActivityFeed } from "@/components/profile/ActivityFeed";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, MessageSquare, CalendarIcon, Briefcase, CheckSquare, Lightbulb, FileText, Layers } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { ActivityFeed } from "@/components/profile/ActivityFeed";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { supabase } from "@/integrations/supabase/client";
-import { transformProject } from "@/utils/projectTransforms";
-import type { Project } from "@/types/portfolio";
+import { WelcomeMessage } from "@/components/dashboard/WelcomeMessage";
+import { RecentProjects } from "@/components/dashboard/RecentProjects";
+import { UpcomingTasks } from "@/components/dashboard/UpcomingTasks";
+import { CreateNewButton } from "@/components/dashboard/CreateNewButton";
+import { MessageBoard } from "@/components/dashboard/MessageBoard";
+import { DashboardCalendar } from "@/components/dashboard/DashboardCalendar";
 
 export default function Index() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  const [expandButtons, setExpandButtons] = useState(false);
-  
   // Use custom hook to check screen size
   const isSmallScreen = useMediaQuery("(max-width: 640px)");
-  
-  // Fetch the recent projects
-  const { data: recentProjects, isLoading } = useQuery({
-    queryKey: ['recentProjects'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(3);
-
-      if (error) throw error;
-      return data.map(transformProject);
-    },
-  });
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -45,200 +21,19 @@ export default function Index() {
             {/* Left Column - 8 columns wide */}
             <div className="lg:col-span-8 space-y-6">
               {/* Welcome Message */}
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
-                <h1 className="text-2xl font-bold text-white">Hello, Henry</h1>
-                <p className="text-slate-300 mt-2">
-                  You have 3 resources and 5 tasks due this week.
-                </p>
-              </div>
+              <WelcomeMessage />
               
               {/* Recent Projects */}
-              <div className="space-y-4">
-                <h2 className="text-xl font-bold text-white px-1">Recent Projects</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {isLoading ? (
-                    // Loading state
-                    Array(3).fill(0).map((_, i) => (
-                      <div 
-                        key={i} 
-                        className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-5 shadow-lg h-36 animate-pulse"
-                      />
-                    ))
-                  ) : recentProjects && recentProjects.length > 0 ? (
-                    // Projects found
-                    recentProjects.map((project) => (
-                      <div 
-                        key={project.id} 
-                        className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-5 shadow-lg hover:bg-white/15 transition-all duration-200"
-                      >
-                        <div className="flex items-start space-x-3">
-                          <div className="h-12 w-12 rounded-md bg-white/20 flex-shrink-0 flex items-center justify-center overflow-hidden">
-                            <img 
-                              src={project.logo} 
-                              alt={project.name} 
-                              className="h-full w-full object-contain"
-                            />
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-white">{project.name}</h3>
-                            <p className="text-sm text-slate-300 mt-1 line-clamp-2">{project.description}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    // No projects found
-                    <div className="col-span-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-8 text-center">
-                      <p className="text-slate-300">No projects found. Create your first project to get started.</p>
-                      <Button 
-                        className="mt-4 bg-white/10 hover:bg-white/20 text-white"
-                        onClick={() => window.location.href = '/portfolio'}
-                      >
-                        Create Project
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <RecentProjects />
               
               {/* Upcoming Tasks */}
-              <div className="space-y-4">
-                <h2 className="text-xl font-bold text-white px-1">Upcoming Tasks</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {[1, 2, 3].map((task) => (
-                    <div 
-                      key={task} 
-                      className="flex items-start p-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-lg"
-                    >
-                      <div className="w-2 h-2 rounded-full bg-amber-500 mt-2 mr-3 flex-shrink-0"></div>
-                      <div>
-                        <p className="font-medium text-white">Complete project proposal</p>
-                        <p className="text-xs text-slate-300">Due in 2 days</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <UpcomingTasks />
               
-              {/* Expandable Create New Buttons - Redesigned Approach */}
-              <div className="my-8">
-                {expandButtons ? (
-                  <div className="animate-fade-in">
-                    {/* Grid layout for expanded buttons - more reliable across screen sizes */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button 
-                            className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
-                          >
-                            <Lightbulb className="h-4 w-4 mr-2" />
-                            Idea
-                          </Button>
-                        </DialogTrigger>
-                      </Dialog>
-                      
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button 
-                            className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
-                          >
-                            <CheckSquare className="h-4 w-4 mr-2" />
-                            Task
-                          </Button>
-                        </DialogTrigger>
-                      </Dialog>
-
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button 
-                            className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
-                          >
-                            <FileText className="h-4 w-4 mr-2" />
-                            Resource
-                          </Button>
-                        </DialogTrigger>
-                      </Dialog>
-                      
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button 
-                            className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
-                          >
-                            <Layers className="h-4 w-4 mr-2" />
-                            Portfolio
-                          </Button>
-                        </DialogTrigger>
-                      </Dialog>
-                    </div>
-
-                    {/* Main Create New Button - Close configuration */}
-                    <div className="flex justify-center">
-                      <Button 
-                        onClick={() => setExpandButtons(false)}
-                        className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
-                        size="lg"
-                      >
-                        <Plus className="h-5 w-5 mr-2 rotate-45" />
-                        Close
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex justify-center">
-                    {/* Main Create New Button - Expand configuration */}
-                    <Button 
-                      onClick={() => setExpandButtons(true)}
-                      className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
-                      size="lg"
-                    >
-                      <Plus className="h-5 w-5 mr-2" />
-                      Create New
-                    </Button>
-                  </div>
-                )}
-              </div>
+              {/* Expandable Create New Buttons */}
+              <CreateNewButton />
               
-              {/* Message Board - Height adjusted to match Calendar */}
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-lg overflow-hidden">
-                {/* Message Content */}
-                <div className="p-4 sm:p-6">
-                  <h2 className="text-xl font-bold text-white mb-4">Message Board</h2>
-                  
-                  <ScrollArea className="h-[280px]">
-                    <div className="space-y-4">
-                      {[1, 2, 3, 4, 5].map((message) => (
-                        <div key={message} className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                            <span className="text-xs font-medium text-white">JD</span>
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex flex-col sm:flex-row sm:items-baseline">
-                              <p className="font-medium text-white">John Doe</p>
-                              <span className="text-xs text-slate-400 sm:ml-2">2 hours ago</span>
-                            </div>
-                            <p className="text-sm text-slate-300 mt-1">
-                              Just finished the wireframes for the new dashboard layout. Let me know what you think!
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                  
-                  <Separator className="my-4 bg-white/20" />
-                  
-                  <div className="mt-2">
-                    <Textarea 
-                      className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-sm text-white placeholder:text-slate-400 focus:ring-1 focus:ring-purple-500"
-                      placeholder="Type..."
-                      rows={2}
-                    />
-                    <div className="flex justify-end mt-2">
-                      <Button className="bg-purple-600/90 hover:bg-purple-700/90 text-white border border-purple-500/30">Send</Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/* Message Board */}
+              <MessageBoard />
             </div>
             
             {/* Right Column - 4 columns wide */}
@@ -251,35 +46,8 @@ export default function Index() {
                 </ScrollArea>
               </div>
               
-              {/* Calendar - Enhanced with integrated upcoming events */}
-              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 sm:p-6 shadow-lg h-[435px]">
-                <h2 className="text-xl font-bold text-white mb-4">Calendar</h2>
-                <div className="flex flex-col h-[calc(100%-2rem)]">
-                  <div className="bg-white/5 border border-white/20 rounded-lg p-3 mb-4">
-                    <CalendarComponent
-                      mode="single"
-                      selected={date}
-                      onSelect={setDate}
-                      className="text-white"
-                    />
-                  </div>
-                  
-                  <div className="mt-auto">
-                    <h3 className="font-medium text-white mb-2">Upcoming Events</h3>
-                    <div className="space-y-2">
-                      {[1, 2].map((event) => (
-                        <div key={event} className="flex items-center gap-2 p-2 bg-white/5 border border-white/10 rounded">
-                          <div className="w-1 h-full min-h-[24px] bg-blue-500 rounded-full"></div>
-                          <div>
-                            <p className="font-medium text-sm text-white">Team Meeting</p>
-                            <p className="text-xs text-slate-300">3:00 PM - 4:00 PM</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/* Calendar */}
+              <DashboardCalendar />
             </div>
           </div>
         </div>
