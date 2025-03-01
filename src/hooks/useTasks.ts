@@ -1,25 +1,8 @@
-
 import { useState, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
-interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  status: "pending" | "in_progress" | "completed";
-  priority: string;
-  due_date?: string;
-  assigned_to?: string;
-  project_id?: string;
-  created_by: string;
-  project_name?: string;
-  assignee_first_name?: string;
-  assignee_last_name?: string;
-  assignee_avatar_url?: string;
-  comment_count?: number;
-}
+import { Task, TASK_STATUSES } from "@/types/task";
 
 export function useTasks() {
   const [isNewTaskOpen, setIsNewTaskOpen] = useState(false);
@@ -31,7 +14,6 @@ export function useTasks() {
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
-      // First get the tasks with basic information
       const { data: tasksData, error: tasksError } = await supabase
         .from("recent_tasks")
         .select("*")
@@ -39,15 +21,12 @@ export function useTasks() {
 
       if (tasksError) throw tasksError;
 
-      // Get comment counts for each task
       const taskIds = tasksData.map(task => task.id);
       
-      // If there are no tasks, return empty array
       if (taskIds.length === 0) {
         return [];
       }
       
-      // Count comments for each task - using a simple select approach instead of groupBy
       const { data: commentsData, error: commentsError } = await supabase
         .from('task_comments')
         .select('task_id')
@@ -55,14 +34,12 @@ export function useTasks() {
 
       if (commentsError) {
         console.error("Error fetching comment counts:", commentsError);
-        // Continue with tasks but without comment counts
         return tasksData.map(task => ({
           ...task,
           status: task.status as "pending" | "in_progress" | "completed"
         })) as Task[];
       }
 
-      // Count comments manually by iterating through the results
       const commentCountMap: Record<string, number> = {};
       
       if (commentsData) {
@@ -73,7 +50,6 @@ export function useTasks() {
         });
       }
 
-      // Merge the comment counts into the tasks data
       const tasksWithCommentCounts = tasksData.map(task => ({
         ...task,
         status: task.status as "pending" | "in_progress" | "completed",
@@ -82,7 +58,7 @@ export function useTasks() {
 
       return tasksWithCommentCounts as Task[];
     },
-    staleTime: 30000, // Add stale time to reduce unnecessary refetches
+    staleTime: 30000,
   });
 
   const { data: profiles = [] } = useQuery({
@@ -95,29 +71,30 @@ export function useTasks() {
       if (error) throw error;
       return data;
     },
-    staleTime: 300000, // Profile data changes less frequently
+    staleTime: 300000,
   });
 
-  // Use useCallback to maintain reference stability for event handlers
   const handleTaskClick = useCallback((taskId: string) => {
     setSelectedTaskId(taskId);
     setIsTaskDetailOpen(true);
   }, []);
 
-  // Handle drag start event
-  const handleDragStart = useCallback((e: React.DragEvent<HTMLDivElement>, task: Task) => {
-    e.dataTransfer.setData("taskId", task.id);
-    e.dataTransfer.setData("taskTitle", task.title);
+  const handleDragStart = useCallback((e: React.DragEvent<HTMLDivElement>, taskId: string, status: string) => {
+    e.dataTransfer.setData("taskId", taskId);
+    
+    const task = tasks?.find(t => t.id === taskId);
+    if (task?.title) {
+      e.dataTransfer.setData("taskTitle", task.title);
+    }
+    
     e.dataTransfer.effectAllowed = "move";
-  }, []);
+  }, [tasks]);
 
-  // Handle drag over event
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
   }, []);
 
-  // Handle drop event
   const handleDrop = useCallback(async (e: React.DragEvent<HTMLDivElement>, newStatus: "pending" | "in_progress" | "completed") => {
     e.preventDefault();
     
@@ -126,13 +103,10 @@ export function useTasks() {
     
     if (!taskId) return;
 
-    // Find the task that is being moved
     const taskToUpdate = tasks.find(task => task.id === taskId);
     
-    // If the task is already in this status, do nothing
     if (taskToUpdate && taskToUpdate.status === newStatus) return;
     
-    // Optimistically update UI first
     queryClient.setQueryData(["tasks"], (oldData: Task[] | undefined) => {
       if (!oldData) return [];
       return oldData.map(task => 
@@ -140,7 +114,6 @@ export function useTasks() {
       );
     });
 
-    // Update the task status in the database
     const { error } = await supabase
       .from("tasks")
       .update({ status: newStatus })
@@ -149,7 +122,6 @@ export function useTasks() {
     if (error) {
       console.error("Error updating task status:", error);
       
-      // Revert optimistic update on error
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       
       toast({
@@ -183,6 +155,3 @@ export function useTasks() {
     handleDrop,
   };
 }
-
-// Import TASK_STATUSES from the board component
-import { TASK_STATUSES } from "@/components/tasks/board/TasksBoard";

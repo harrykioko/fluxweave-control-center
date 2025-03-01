@@ -1,26 +1,9 @@
-
 import React, { memo } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
-
-interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  status: "pending" | "in_progress" | "completed";
-  priority: string;
-  due_date?: string;
-  assigned_to?: string;
-  project_id?: string;
-  created_by: string;
-  project_name?: string;
-  assignee_first_name?: string;
-  assignee_last_name?: string;
-  assignee_avatar_url?: string;
-  comment_count?: number;
-}
+import { Task } from "@/types/task";
 
 interface TaskCardProps {
   task: Task;

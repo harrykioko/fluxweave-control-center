@@ -1,23 +1,6 @@
-
 import React from "react";
 import { TaskCard } from "../card";
-
-interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  status: string;
-  priority: string;
-  due_date?: string;
-  assigned_to?: string;
-  project_id?: string;
-  created_by: string;
-  // Additional fields for display
-  assignee_first_name?: string;
-  assignee_last_name?: string;
-  assignee_avatar_url?: string;
-  comment_count?: number;
-}
+import { Task } from "@/types/task";
 
 interface TaskStatusColumnProps {
   title: string;

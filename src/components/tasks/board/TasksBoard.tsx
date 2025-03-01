@@ -1,24 +1,7 @@
-
 import React from "react";
 import { TaskStatusColumn } from "./TaskStatusColumn";
 import { Skeleton } from "@/components/ui/skeleton";
-
-interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  status: "pending" | "in_progress" | "completed";
-  priority: string;
-  due_date?: string;
-  assigned_to?: string;
-  project_id?: string;
-  created_by: string;
-  // Additional fields for display
-  assignee_first_name?: string;
-  assignee_last_name?: string;
-  assignee_avatar_url?: string;
-  comment_count?: number;
-}
+import { Task, TASK_STATUSES } from "@/types/task";
 
 interface TasksBoardProps {
   tasks: Task[];
@@ -26,7 +9,7 @@ interface TasksBoardProps {
   onTaskClick: (taskId: string) => void;
   onDragStart: (e: React.DragEvent<HTMLDivElement>, taskId: string, status: string) => void;
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
-  onDrop: (e: React.DragEvent<HTMLDivElement>, newStatus: string) => void;
+  onDrop: (e: React.DragEvent<HTMLDivElement>, newStatus: "pending" | "in_progress" | "completed") => void;
 }
 
 export function TasksBoard({
@@ -100,3 +83,5 @@ export function TasksBoard({
     </div>
   );
 }
+
+export { TASK_STATUSES } from "@/types/task";
