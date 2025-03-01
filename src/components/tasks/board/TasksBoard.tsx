@@ -1,14 +1,7 @@
 
-import React, { memo } from "react";
+import React from "react";
 import { TaskStatusColumn } from "./TaskStatusColumn";
-import { TaskCard } from "../card";
-
-// Define the task statuses
-export const TASK_STATUSES = [
-  { id: "pending", label: "To Do" },
-  { id: "in_progress", label: "In Progress" },
-  { id: "completed", label: "Completed" },
-];
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Task {
   id: string;
@@ -20,7 +13,7 @@ interface Task {
   assigned_to?: string;
   project_id?: string;
   created_by: string;
-  project_name?: string;
+  // Additional fields for display
   assignee_first_name?: string;
   assignee_last_name?: string;
   assignee_avatar_url?: string;
@@ -31,13 +24,12 @@ interface TasksBoardProps {
   tasks: Task[];
   isLoading: boolean;
   onTaskClick: (taskId: string) => void;
-  onDragStart: (e: React.DragEvent<HTMLDivElement>, task: Task) => void;
+  onDragStart: (e: React.DragEvent<HTMLDivElement>, taskId: string, status: string) => void;
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
-  onDrop: (e: React.DragEvent<HTMLDivElement>, newStatus: "pending" | "in_progress" | "completed") => void;
+  onDrop: (e: React.DragEvent<HTMLDivElement>, newStatus: string) => void;
 }
 
-// Using memo to prevent unnecessary re-renders
-export const TasksBoard = memo(function TasksBoard({
+export function TasksBoard({
   tasks,
   isLoading,
   onTaskClick,
@@ -45,34 +37,66 @@ export const TasksBoard = memo(function TasksBoard({
   onDragOver,
   onDrop,
 }: TasksBoardProps) {
+  // Filter tasks by status
+  const todoTasks = tasks.filter((task) => task.status === "pending");
+  const inProgressTasks = tasks.filter((task) => task.status === "in_progress");
+  const completedTasks = tasks.filter((task) => task.status === "completed");
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="bg-white/5 backdrop-blur-sm rounded-lg p-5 h-[500px] border border-white/10">
+            <Skeleton className="h-7 w-1/2 bg-white/10 mb-6" />
+            <div className="space-y-4">
+              {[...Array(3)].map((_, j) => (
+                <Skeleton key={j} className="h-32 w-full bg-white/10" />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {TASK_STATUSES.map((statusColumn) => {
-        // Filter tasks for this column
-        const columnTasks = tasks.filter(task => task.status === statusColumn.id);
-        
-        return (
-          <TaskStatusColumn
-            key={statusColumn.id}
-            title={statusColumn.label}
-            statusId={statusColumn.id as "pending" | "in_progress" | "completed"}
-            tasks={columnTasks}
-            isLoading={isLoading}
-            onTaskClick={onTaskClick}
-            onDragStart={onDragStart}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
-            renderTask={(task) => (
-              <TaskCard
-                key={task.id} 
-                task={task}
-                onClick={() => onTaskClick(task.id)}
-                onDragStart={(e) => onDragStart(e, task)}
-              />
-            )}
-          />
-        );
-      })}
+      {/* To Do Column */}
+      <TaskStatusColumn
+        title="To Do"
+        tasks={todoTasks}
+        onTaskClick={onTaskClick}
+        onDragStart={(e, taskId) => onDragStart(e, taskId, "pending")}
+        onDragOver={onDragOver}
+        onDrop={(e) => onDrop(e, "pending")}
+        className="bg-white/5 border border-white/10"
+        emptyMessage="No tasks to do yet"
+      />
+
+      {/* In Progress Column */}
+      <TaskStatusColumn
+        title="In Progress"
+        tasks={inProgressTasks}
+        onTaskClick={onTaskClick}
+        onDragStart={(e, taskId) => onDragStart(e, taskId, "in_progress")}
+        onDragOver={onDragOver}
+        onDrop={(e) => onDrop(e, "in_progress")}
+        className="bg-white/5 border border-white/10"
+        emptyMessage="No tasks in progress"
+      />
+
+      {/* Completed Column */}
+      <TaskStatusColumn
+        title="Done"
+        tasks={completedTasks}
+        onTaskClick={onTaskClick}
+        onDragStart={(e, taskId) => onDragStart(e, taskId, "completed")}
+        onDragOver={onDragOver}
+        onDrop={(e) => onDrop(e, "completed")}
+        className="bg-white/5 border border-white/10"
+        emptyMessage="No completed tasks yet"
+      />
     </div>
   );
-});
+}
