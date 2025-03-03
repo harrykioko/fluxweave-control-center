@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -8,6 +9,9 @@ import { AddResourceDialog } from "@/components/resources/AddResourceDialog";
 import { NewProjectDialog } from "@/components/portfolio/NewProjectDialog";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { PortfolioSelectionDialog } from "@/components/portfolio/PortfolioSelectionDialog";
+import { NewDomainDialog } from "@/components/portfolio/NewDomainDialog";
+import { NewSocialDialog } from "@/components/portfolio/NewSocialDialog";
 
 export function CreateNewButton() {
   const [expandButtons, setExpandButtons] = useState(false);
@@ -16,7 +20,10 @@ export function CreateNewButton() {
   const [ideaDialogOpen, setIdeaDialogOpen] = useState(false);
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
   const [resourceDialogOpen, setResourceDialogOpen] = useState(false);
+  const [portfolioSelectionOpen, setPortfolioSelectionOpen] = useState(false);
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
+  const [domainDialogOpen, setDomainDialogOpen] = useState(false);
+  const [socialDialogOpen, setSocialDialogOpen] = useState(false);
   
   // Fetch profiles for use in the task dialog
   const { data: profiles = [] } = useQuery({
@@ -41,6 +48,21 @@ export function CreateNewButton() {
   // Handle refreshes after creation (can be expanded later)
   const handleCreationSuccess = () => {
     // Could trigger refreshes or notifications
+  };
+  
+  // Handle portfolio selection
+  const handlePortfolioSelection = (option: "project" | "domain" | "social") => {
+    switch (option) {
+      case "project":
+        setProjectDialogOpen(true);
+        break;
+      case "domain":
+        setDomainDialogOpen(true);
+        break;
+      case "social":
+        setSocialDialogOpen(true);
+        break;
+    }
   };
   
   return (
@@ -84,7 +106,7 @@ export function CreateNewButton() {
             
             <Button 
               onClick={() => {
-                setProjectDialogOpen(true);
+                setPortfolioSelectionOpen(true);
                 setExpandButtons(false);
               }}
               className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
@@ -141,11 +163,32 @@ export function CreateNewButton() {
         onResourceAdded={handleCreationSuccess} 
       />
 
+      {/* Portfolio Selection Dialog */}
+      <PortfolioSelectionDialog
+        open={portfolioSelectionOpen}
+        onOpenChange={setPortfolioSelectionOpen}
+        onSelectOption={handlePortfolioSelection}
+      />
+
       {/* Project Dialog */}
       <NewProjectDialog 
         open={projectDialogOpen} 
         onOpenChange={setProjectDialogOpen} 
         onProjectAdded={handleCreationSuccess} 
+      />
+
+      {/* Domain Dialog */}
+      <NewDomainDialog
+        open={domainDialogOpen}
+        onOpenChange={setDomainDialogOpen}
+        onDomainAdded={handleCreationSuccess}
+      />
+
+      {/* Social Dialog */}
+      <NewSocialDialog
+        open={socialDialogOpen}
+        onOpenChange={setSocialDialogOpen}
+        onSocialAdded={handleCreationSuccess}
       />
     </div>
   );
