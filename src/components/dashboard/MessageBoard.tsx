@@ -1,9 +1,10 @@
 
-import { MessageSquare, Send } from "lucide-react";
+import { MessageSquare, Send, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMessages } from "@/hooks/useMessages";
 import { format, formatDistanceToNow } from "date-fns";
 
@@ -43,12 +44,12 @@ export function MessageBoard() {
           Message Board
         </h2>
         
-        <ScrollArea className="h-[280px]">
+        <ScrollArea className="h-[300px] pr-4">
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex items-start gap-3 animate-pulse">
-                  <div className="w-8 h-8 rounded-full bg-white/20"></div>
+                  <div className="w-10 h-10 rounded-full bg-white/20"></div>
                   <div className="flex-1 space-y-2">
                     <div className="h-4 bg-white/20 rounded w-32"></div>
                     <div className="h-3 bg-white/10 rounded w-full"></div>
@@ -59,31 +60,42 @@ export function MessageBoard() {
           ) : messages.length > 0 ? (
             <div className="space-y-4">
               {messages.map((message) => (
-                <div key={message.id} className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                    <span className="text-xs font-medium text-white">
+                <div key={message.id} className="flex items-start gap-3 group">
+                  <Avatar className="h-10 w-10 border-2 border-purple-500/30 bg-white/10">
+                    <AvatarImage src={message.avatar_url || ""} alt={`${message.first_name} ${message.last_name}`} />
+                    <AvatarFallback className="bg-purple-600/30 text-white">
                       {getInitials(message.first_name, message.last_name)}
-                    </span>
-                  </div>
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="flex-1">
-                    <div className="flex flex-col sm:flex-row sm:items-baseline">
-                      <p className="font-medium text-white">
-                        {message.first_name} {message.last_name}
+                    <div className="bg-white/10 p-3 rounded-xl rounded-tl-none text-white">
+                      <div className="flex justify-between items-baseline mb-1">
+                        <p className="font-medium text-purple-300">
+                          {message.first_name} {message.last_name}
+                        </p>
+                        <span className="text-xs text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {formatMessageTime(message.created_at)}
+                        </span>
+                      </div>
+                      <p className="text-sm text-slate-200 whitespace-pre-line">
+                        {message.content}
                       </p>
-                      <span className="text-xs text-slate-400 sm:ml-2">
+                    </div>
+                    <div className="mt-1 ml-2">
+                      <span className="text-xs text-slate-500">
                         {formatMessageTime(message.created_at)}
                       </span>
                     </div>
-                    <p className="text-sm text-slate-300 mt-1 whitespace-pre-line">
-                      {message.content}
-                    </p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             <div className="flex items-center justify-center h-full">
-              <p className="text-slate-400 text-sm">No messages yet. Be the first to post!</p>
+              <div className="text-center">
+                <User className="h-12 w-12 text-purple-400/60 mx-auto mb-2" />
+                <p className="text-slate-400 text-sm">No messages yet. Be the first to post!</p>
+              </div>
             </div>
           )}
         </ScrollArea>
