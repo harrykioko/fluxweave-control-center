@@ -226,6 +226,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          mentioned_users: string[] | null
           updated_at: string
           user_id: string
         }
@@ -233,6 +234,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          mentioned_users?: string[] | null
           updated_at?: string
           user_id: string
         }
@@ -240,6 +242,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          mentioned_users?: string[] | null
           updated_at?: string
           user_id?: string
         }
@@ -671,6 +674,7 @@ export type Database = {
           first_name: string | null
           id: string | null
           last_name: string | null
+          mentioned_users: string[] | null
           updated_at: string | null
           user_id: string | null
         }

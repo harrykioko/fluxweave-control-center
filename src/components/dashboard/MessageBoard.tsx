@@ -15,7 +15,11 @@ export function MessageBoard() {
     newMessage, 
     setNewMessage, 
     sendMessage, 
-    handleKeyDown 
+    handleKeyDown,
+    handleChange,
+    showSuggestions,
+    profileSuggestions,
+    selectUserSuggestion
   } = useMessages();
 
   const getInitials = (firstName?: string, lastName?: string) => {
@@ -138,15 +142,44 @@ export function MessageBoard() {
         
         <Separator className="my-4 bg-white/20" />
         
-        <div className="mt-2">
+        <div className="mt-2 relative">
           <Textarea 
             className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-sm text-white placeholder:text-slate-400 focus:ring-1 focus:ring-purple-500"
             placeholder="Type a message... Use @username to mention someone"
             rows={2}
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
+          
+          {/* User suggestions dropdown */}
+          {showSuggestions && profileSuggestions.length > 0 && (
+            <div className="absolute z-10 mt-1 w-64 bg-white/10 backdrop-blur-xl border border-white/20 rounded-lg overflow-hidden shadow-lg">
+              <div className="max-h-48 overflow-y-auto">
+                {profileSuggestions.map((profile) => (
+                  <div 
+                    key={profile.id} 
+                    className="flex items-center gap-2 p-2 hover:bg-purple-500/20 cursor-pointer transition-colors"
+                    onClick={() => selectUserSuggestion(profile.username || `${profile.first_name}${profile.last_name}`.toLowerCase())}
+                  >
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={profile.avatar_url || ""} />
+                      <AvatarFallback className="bg-purple-600/30 text-white text-xs">
+                        {getInitials(profile.first_name, profile.last_name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm text-white">{profile.first_name} {profile.last_name}</p>
+                      {profile.username && (
+                        <p className="text-xs text-slate-400">@{profile.username}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
           <div className="flex justify-end mt-2">
             <Button 
               className="bg-purple-600/90 hover:bg-purple-700/90 text-white border border-purple-500/30"

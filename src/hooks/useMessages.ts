@@ -18,6 +18,9 @@ export function useMessages() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newMessage, setNewMessage] = useState("");
+  const [profileSuggestions, setProfileSuggestions] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState(0);
 
   useEffect(() => {
     fetchMessages();
@@ -87,7 +90,7 @@ export function useMessages() {
     }
   };
 
-  // Notify mentioned users via email (we'll call this from the Edge Function)
+  // Notify mentioned users via email
   const notifyMentionedUsers = async (mentionedUserIds: string[], messageContent: string) => {
     if (mentionedUserIds.length === 0) return;
     
@@ -145,10 +148,13 @@ export function useMessages() {
       // If we have mentioned users, notify them
       if (mentionedUserIds.length > 0) {
         await notifyMentionedUsers(mentionedUserIds, newMessage);
+        toast.success(`Mentioned ${mentionedUsernames.join(', ')}`);
+      } else {
+        toast.success('Message sent');
       }
       
       setNewMessage("");
-      toast.success('Message sent');
+      setShowSuggestions(false);
     } catch (error: any) {
       console.error('Error sending message:', error);
       toast.error('Failed to send message');
@@ -159,7 +165,71 @@ export function useMessages() {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
+    } else if (e.key === '@') {
+      // Show suggestions when @ is typed
+      fetchUserSuggestions("");
+      setShowSuggestions(true);
+      setCursorPosition((e.target as HTMLTextAreaElement).selectionStart + 1);
+    } else if (showSuggestions && e.key === 'Escape') {
+      setShowSuggestions(false);
     }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNewMessage(e.target.value);
+    
+    // Check if we should show user suggestions
+    const curPos = e.target.selectionStart;
+    setCursorPosition(curPos);
+    
+    const textBeforeCursor = e.target.value.substring(0, curPos);
+    const matches = textBeforeCursor.match(/@(\w*)$/);
+    
+    if (matches) {
+      const query = matches[1];
+      fetchUserSuggestions(query);
+      setShowSuggestions(true);
+    } else {
+      setShowSuggestions(false);
+    }
+  };
+
+  const fetchUserSuggestions = async (query: string) => {
+    try {
+      let queryBuilder = supabase
+        .from('profiles')
+        .select('id, username, first_name, last_name, avatar_url');
+      
+      if (query) {
+        queryBuilder = queryBuilder.ilike('username', `${query}%`);
+      }
+      
+      const { data, error } = await queryBuilder.limit(5);
+      
+      if (error) throw error;
+      
+      setProfileSuggestions(data || []);
+    } catch (error: any) {
+      console.error('Error fetching user suggestions:', error);
+    }
+  };
+
+  const selectUserSuggestion = (username: string) => {
+    // Find the position of the @ symbol that started the current mention
+    const textBeforeCursor = newMessage.substring(0, cursorPosition);
+    const lastAtPos = textBeforeCursor.lastIndexOf('@');
+    
+    if (lastAtPos >= 0) {
+      // Replace the partial @mention with the full username
+      const newText = 
+        newMessage.substring(0, lastAtPos) + 
+        '@' + username + ' ' + 
+        newMessage.substring(cursorPosition);
+      
+      setNewMessage(newText);
+    }
+    
+    setShowSuggestions(false);
   };
 
   return {
@@ -168,6 +238,10 @@ export function useMessages() {
     newMessage,
     setNewMessage,
     sendMessage,
-    handleKeyDown
+    handleKeyDown,
+    handleChange,
+    showSuggestions,
+    profileSuggestions,
+    selectUserSuggestion
   };
 }
