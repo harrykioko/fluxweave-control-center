@@ -35,6 +35,42 @@ export function MessageBoard() {
     }
   };
 
+  // Format message content to highlight @mentions
+  const formatMessageWithMentions = (content: string) => {
+    const mentionRegex = /@(\w+)/g;
+    
+    // Split the content by @mentions and render them with different styling
+    const parts = content.split(mentionRegex);
+    
+    if (parts.length <= 1) {
+      return <span>{content}</span>;
+    }
+    
+    const mentions = content.match(mentionRegex) || [];
+    const result: React.ReactNode[] = [];
+    
+    parts.forEach((part, index) => {
+      // Add the regular text part
+      if (part) {
+        result.push(<span key={`text-${index}`}>{part}</span>);
+      }
+      
+      // Add the mention if there is one for this position
+      if (index < mentions.length) {
+        result.push(
+          <span 
+            key={`mention-${index}`} 
+            className="bg-purple-100 text-purple-800 px-1 rounded font-medium"
+          >
+            {mentions[index]}
+          </span>
+        );
+      }
+    });
+    
+    return <>{result}</>;
+  };
+
   return (
     <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-lg overflow-hidden">
       {/* Message Content */}
@@ -78,7 +114,7 @@ export function MessageBoard() {
                         </span>
                       </div>
                       <p className="text-sm text-slate-200 whitespace-pre-line">
-                        {message.content}
+                        {formatMessageWithMentions(message.content)}
                       </p>
                     </div>
                     <div className="mt-1 ml-2">
@@ -105,7 +141,7 @@ export function MessageBoard() {
         <div className="mt-2">
           <Textarea 
             className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-sm text-white placeholder:text-slate-400 focus:ring-1 focus:ring-purple-500"
-            placeholder="Type a message..."
+            placeholder="Type a message... Use @username to mention someone"
             rows={2}
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
