@@ -221,6 +221,30 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -638,6 +662,19 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      recent_messages: {
+        Row: {
+          avatar_url: string | null
+          content: string | null
+          created_at: string | null
+          first_name: string | null
+          id: string | null
+          last_name: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Relationships: []
       }
       recent_task_comments: {
         Row: {
