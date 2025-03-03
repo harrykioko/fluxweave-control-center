@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -7,6 +6,8 @@ import { NewIdeaDialog } from "@/components/ideation/NewIdeaDialog";
 import { NewTaskDialog } from "@/components/tasks/NewTaskDialog";
 import { AddResourceDialog } from "@/components/resources/AddResourceDialog";
 import { NewProjectDialog } from "@/components/portfolio/NewProjectDialog";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export function CreateNewButton() {
   const [expandButtons, setExpandButtons] = useState(false);
@@ -16,6 +17,20 @@ export function CreateNewButton() {
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
   const [resourceDialogOpen, setResourceDialogOpen] = useState(false);
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
+  
+  // Fetch profiles for use in the task dialog
+  const { data: profiles = [] } = useQuery({
+    queryKey: ["profiles"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, first_name, last_name, avatar_url");
+
+      if (error) throw error;
+      return data;
+    },
+    staleTime: 300000,
+  });
   
   // Handle idea evaluation (required by NewIdeaDialog)
   const handleIdeaEvaluation = (idea: string) => {
@@ -112,10 +127,11 @@ export function CreateNewButton() {
         onEvaluate={handleIdeaEvaluation} 
       />
 
-      {/* Task Dialog */}
+      {/* Task Dialog - now passing the profiles prop */}
       <NewTaskDialog 
         open={taskDialogOpen} 
         onOpenChange={setTaskDialogOpen} 
+        profiles={profiles}
       />
 
       {/* Resource Dialog */}
