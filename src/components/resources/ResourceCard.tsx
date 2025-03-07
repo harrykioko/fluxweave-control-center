@@ -41,7 +41,7 @@ const domainIconMap: Record<string, keyof typeof Icons> = {
   "facebook.com": "Facebook",
   "instagram.com": "Instagram",
   "twitter.com": "Twitter",
-  "pinterest.com": "Pinterest",
+  "pinterest.com": "MessageCircle",
 };
 
 // Function to get icon based on domain

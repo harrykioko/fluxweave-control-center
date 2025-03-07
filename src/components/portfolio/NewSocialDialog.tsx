@@ -1,9 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Instagram, MessageCircle, Twitter, Pinterest } from "lucide-react";
+import { Instagram, MessageCircle, Twitter } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,7 +27,7 @@ const platforms: PlatformOption[] = [
   { id: "instagram", name: "Instagram", icon: <Instagram className="h-5 w-5" /> },
   { id: "tiktok", name: "TikTok", icon: <MessageCircle className="h-5 w-5" /> },
   { id: "twitter", name: "X (Twitter)", icon: <Twitter className="h-5 w-5" /> },
-  { id: "pinterest", name: "Pinterest", icon: <Pinterest className="h-5 w-5" /> },
+  { id: "pinterest", name: "Pinterest", icon: <MessageCircle className="h-5 w-5" /> },
 ];
 
 export function NewSocialDialog({ open, onOpenChange, onSocialAdded }: NewSocialDialogProps) {
@@ -46,7 +45,6 @@ export function NewSocialDialog({ open, onOpenChange, onSocialAdded }: NewSocial
 
     setIsSubmitting(true);
     try {
-      // First get the current user's ID
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         throw new Error("You must be logged in to add a social media account");
@@ -70,7 +68,6 @@ export function NewSocialDialog({ open, onOpenChange, onSocialAdded }: NewSocial
         description: "Social media account added successfully",
       });
 
-      // Reset form
       setSelectedPlatform(null);
       setAccountName("");
       setHandle("");
