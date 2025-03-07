@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Instagram, MessageCircle, Twitter } from "lucide-react";
+import { Instagram, MessageCircle, Twitter, Pinterest } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,7 +16,7 @@ interface NewSocialDialogProps {
   onSocialAdded?: () => void;
 }
 
-type SocialPlatform = "instagram" | "tiktok" | "twitter";
+type SocialPlatform = "instagram" | "tiktok" | "twitter" | "pinterest";
 
 interface PlatformOption {
   id: SocialPlatform;
@@ -28,6 +28,7 @@ const platforms: PlatformOption[] = [
   { id: "instagram", name: "Instagram", icon: <Instagram className="h-5 w-5" /> },
   { id: "tiktok", name: "TikTok", icon: <MessageCircle className="h-5 w-5" /> },
   { id: "twitter", name: "X (Twitter)", icon: <Twitter className="h-5 w-5" /> },
+  { id: "pinterest", name: "Pinterest", icon: <Pinterest className="h-5 w-5" /> },
 ];
 
 export function NewSocialDialog({ open, onOpenChange, onSocialAdded }: NewSocialDialogProps) {

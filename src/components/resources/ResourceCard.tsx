@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
 import { ResourceType } from "./types";
@@ -42,6 +41,7 @@ const domainIconMap: Record<string, keyof typeof Icons> = {
   "facebook.com": "Facebook",
   "instagram.com": "Instagram",
   "twitter.com": "Twitter",
+  "pinterest.com": "Pinterest",
 };
 
 // Function to get icon based on domain
