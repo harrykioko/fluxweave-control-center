@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Globe, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Domain = Database["public"]["Tables"]["domains"]["Row"];
 
@@ -44,21 +45,23 @@ export function DomainsSection() {
           New Domain
         </Button>
       </div>
-      <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-        {isLoadingDomains ? (
-          <div className="text-center text-slate-500">Loading domains...</div>
-        ) : domains && domains.length > 0 ? (
-          domains.map(domain => (
-            <DomainCard
-              key={domain.id}
-              domain={domain}
-              onClick={() => setSelectedDomain(domain)}
-            />
-          ))
-        ) : (
-          <div className="text-center text-slate-500">No domains found</div>
-        )}
-      </div>
+      <ScrollArea className="h-[400px] pr-2">
+        <div className="space-y-4 pr-4">
+          {isLoadingDomains ? (
+            <div className="text-center text-slate-500">Loading domains...</div>
+          ) : domains && domains.length > 0 ? (
+            domains.map(domain => (
+              <DomainCard
+                key={domain.id}
+                domain={domain}
+                onClick={() => setSelectedDomain(domain)}
+              />
+            ))
+          ) : (
+            <div className="text-center text-slate-500">No domains found</div>
+          )}
+        </div>
+      </ScrollArea>
 
       <DomainDetailDialog
         open={!!selectedDomain}
@@ -73,4 +76,3 @@ export function DomainsSection() {
     </section>
   );
 }
-

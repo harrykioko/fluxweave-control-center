@@ -9,6 +9,7 @@ import { Package, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { transformProject } from "@/utils/projectTransforms";
 import type { Project } from "@/types/portfolio";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function ProjectsSection() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -43,8 +44,8 @@ export function ProjectsSection() {
           New Project
         </Button>
       </div>
-      <div className="overflow-x-auto pb-4 -mx-2 px-2">
-        <div className="flex gap-6">
+      <ScrollArea className="pb-4 -mx-2 px-2" orientation="horizontal">
+        <div className="flex gap-6 pb-4">
           {isLoadingProjects ? (
             <div className="text-center text-slate-500">Loading projects...</div>
           ) : projects && projects.length > 0 ? (
@@ -60,7 +61,7 @@ export function ProjectsSection() {
             <div className="text-center text-slate-500">No projects found</div>
           )}
         </div>
-      </div>
+      </ScrollArea>
 
       <ProjectDetailDialog
         open={!!selectedProject}
@@ -75,4 +76,3 @@ export function ProjectsSection() {
     </section>
   );
 }
-

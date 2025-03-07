@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Users, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type SocialAccount = Database["public"]["Tables"]["social_accounts"]["Row"];
 
@@ -44,21 +45,23 @@ export function SocialSection() {
           New Social
         </Button>
       </div>
-      <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-        {isLoadingSocial ? (
-          <div className="text-center text-slate-500">Loading social accounts...</div>
-        ) : socialAccounts && socialAccounts.length > 0 ? (
-          socialAccounts.map(account => (
-            <SocialMediaCard
-              key={account.id}
-              account={account}
-              onClick={() => setSelectedSocial(account)}
-            />
-          ))
-        ) : (
-          <div className="text-center text-slate-500">No social accounts found</div>
-        )}
-      </div>
+      <ScrollArea className="h-[400px] pr-2">
+        <div className="space-y-4 pr-4">
+          {isLoadingSocial ? (
+            <div className="text-center text-slate-500">Loading social accounts...</div>
+          ) : socialAccounts && socialAccounts.length > 0 ? (
+            socialAccounts.map(account => (
+              <SocialMediaCard
+                key={account.id}
+                account={account}
+                onClick={() => setSelectedSocial(account)}
+              />
+            ))
+          ) : (
+            <div className="text-center text-slate-500">No social accounts found</div>
+          )}
+        </div>
+      </ScrollArea>
 
       <SocialDetailDialog
         open={!!selectedSocial}
@@ -73,4 +76,3 @@ export function SocialSection() {
     </section>
   );
 }
-
