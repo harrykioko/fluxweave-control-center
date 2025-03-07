@@ -44,7 +44,7 @@ export function ProjectsSection() {
           New Project
         </Button>
       </div>
-      <ScrollArea className="pb-4 -mx-2 px-2" orientation="horizontal">
+      <ScrollArea className="w-full overflow-x-auto pb-4 -mx-2 px-2">
         <div className="flex gap-6 pb-4">
           {isLoadingProjects ? (
             <div className="text-center text-slate-500">Loading projects...</div>
