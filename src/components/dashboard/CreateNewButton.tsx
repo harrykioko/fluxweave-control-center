@@ -1,5 +1,5 @@
-
-import { useState } from "react";
+import * as React from 'react';
+import { FC, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Lightbulb, CheckSquare, FileText, Layers } from "lucide-react";
@@ -13,7 +13,7 @@ import { PortfolioSelectionDialog } from "@/components/portfolio/PortfolioSelect
 import { NewDomainDialog } from "@/components/portfolio/NewDomainDialog";
 import { NewSocialDialog } from "@/components/portfolio/NewSocialDialog";
 
-export function CreateNewButton() {
+export const CreateNewButton: FC = () => {
   const [expandButtons, setExpandButtons] = useState(false);
   
   // Dialog open states
@@ -76,7 +76,7 @@ export function CreateNewButton() {
                 setIdeaDialogOpen(true);
                 setExpandButtons(false);
               }}
-              className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
+              className="w-full bg-surface backdrop-blur-xl border-subtle hover:bg-surface-hover text-primary shadow-lg shadow-primary-500/20 border-primary-500/30"
             >
               <Lightbulb className="h-4 w-4 mr-2" />
               Idea
@@ -87,7 +87,7 @@ export function CreateNewButton() {
                 setTaskDialogOpen(true);
                 setExpandButtons(false);
               }}
-              className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
+              className="w-full bg-surface backdrop-blur-xl border-subtle hover:bg-surface-hover text-primary shadow-lg shadow-primary-500/20 border-primary-500/30"
             >
               <CheckSquare className="h-4 w-4 mr-2" />
               Task
@@ -98,7 +98,7 @@ export function CreateNewButton() {
                 setResourceDialogOpen(true);
                 setExpandButtons(false);
               }}
-              className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
+              className="w-full bg-surface backdrop-blur-xl border-subtle hover:bg-surface-hover text-primary shadow-lg shadow-primary-500/20 border-primary-500/30"
             >
               <FileText className="h-4 w-4 mr-2" />
               Resource
@@ -109,7 +109,7 @@ export function CreateNewButton() {
                 setPortfolioSelectionOpen(true);
                 setExpandButtons(false);
               }}
-              className="w-full bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/20 text-white shadow-lg shadow-purple-500/20 border-purple-500/30"
+              className="w-full bg-surface backdrop-blur-xl border-subtle hover:bg-surface-hover text-primary shadow-lg shadow-primary-500/20 border-primary-500/30"
             >
               <Layers className="h-4 w-4 mr-2" />
               Portfolio
@@ -120,7 +120,8 @@ export function CreateNewButton() {
           <div className="flex justify-center">
             <Button 
               onClick={() => setExpandButtons(false)}
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
+              variant="gradient"
+              className="shadow-lg hover:shadow-primary-500/20 transition-all duration-300"
               size="lg"
             >
               <Plus className="h-5 w-5 mr-2 rotate-45" />
@@ -133,7 +134,8 @@ export function CreateNewButton() {
           {/* Main Create New Button - Expand configuration */}
           <Button 
             onClick={() => setExpandButtons(true)}
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
+            variant="gradient"
+            className="shadow-lg hover:shadow-primary-500/20 transition-all duration-300"
             size="lg"
           >
             <Plus className="h-5 w-5 mr-2" />
@@ -192,4 +194,4 @@ export function CreateNewButton() {
       />
     </div>
   );
-}
+};

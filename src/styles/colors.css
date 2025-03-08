@@ -1,0 +1,211 @@
+/**
+ * FluxWeave Control Center - Color System
+ * 
+ * This file defines all color variables used throughout the application.
+ * Colors are organized into semantic categories for better maintainability.
+ */
+
+:root {
+  /* ===== PRIMARY COLORS (PURPLE) ===== */
+  --color-primary-50: hsl(265, 100%, 97%);
+  --color-primary-100: hsl(265, 90%, 94%);
+  --color-primary-200: hsl(265, 85%, 88%);
+  --color-primary-300: hsl(265, 80%, 80%);
+  --color-primary-400: hsl(265, 75%, 70%);
+  --color-primary-500: hsl(265, 70%, 60%);
+  --color-primary-600: hsl(265, 65%, 50%);
+  --color-primary-700: hsl(265, 60%, 40%);
+  --color-primary-800: hsl(265, 55%, 30%);
+  --color-primary-900: hsl(265, 50%, 20%);
+  --color-primary-950: hsl(265, 45%, 10%);
+
+  /* ===== SECONDARY COLORS (MAGENTA) ===== */
+  --color-secondary-50: hsl(330, 100%, 97%);
+  --color-secondary-100: hsl(330, 90%, 94%);
+  --color-secondary-200: hsl(330, 85%, 88%);
+  --color-secondary-300: hsl(330, 80%, 80%);
+  --color-secondary-400: hsl(330, 75%, 70%);
+  --color-secondary-500: hsl(330, 70%, 60%);
+  --color-secondary-600: hsl(330, 65%, 50%);
+  --color-secondary-700: hsl(330, 60%, 40%);
+  --color-secondary-800: hsl(330, 55%, 30%);
+  --color-secondary-900: hsl(330, 50%, 20%);
+  --color-secondary-950: hsl(330, 45%, 10%);
+
+  /* ===== NEUTRAL COLORS (GRAYSCALE) ===== */
+  --color-neutral-50: hsl(220, 20%, 97%);
+  --color-neutral-100: hsl(220, 15%, 94%);
+  --color-neutral-200: hsl(220, 13%, 88%);
+  --color-neutral-300: hsl(220, 10%, 80%);
+  --color-neutral-400: hsl(220, 8%, 70%);
+  --color-neutral-500: hsl(220, 7%, 60%);
+  --color-neutral-600: hsl(220, 6%, 50%);
+  --color-neutral-700: hsl(220, 5%, 40%);
+  --color-neutral-800: hsl(220, 4%, 30%);
+  --color-neutral-900: hsl(220, 3%, 20%);
+  --color-neutral-950: hsl(220, 2%, 10%);
+
+  /* ===== STATUS COLORS ===== */
+  /* Info (Blue) */
+  --color-info-50: hsl(210, 100%, 97%);
+  --color-info-100: hsl(210, 90%, 94%);
+  --color-info-200: hsl(210, 85%, 88%);
+  --color-info-300: hsl(210, 80%, 80%);
+  --color-info-400: hsl(210, 75%, 70%);
+  --color-info-500: hsl(210, 70%, 60%);
+  --color-info-600: hsl(210, 65%, 50%);
+  --color-info-700: hsl(210, 60%, 40%);
+  --color-info-800: hsl(210, 55%, 30%);
+  --color-info-900: hsl(210, 50%, 20%);
+
+  /* Success (Green) */
+  --color-success-50: hsl(145, 100%, 97%);
+  --color-success-100: hsl(145, 90%, 94%);
+  --color-success-200: hsl(145, 85%, 88%);
+  --color-success-300: hsl(145, 80%, 80%);
+  --color-success-400: hsl(145, 75%, 70%);
+  --color-success-500: hsl(145, 70%, 50%);
+  --color-success-600: hsl(145, 65%, 40%);
+  --color-success-700: hsl(145, 60%, 30%);
+  --color-success-800: hsl(145, 55%, 25%);
+  --color-success-900: hsl(145, 50%, 20%);
+
+  /* Warning (Yellow/Orange) */
+  --color-warning-50: hsl(40, 100%, 97%);
+  --color-warning-100: hsl(40, 95%, 94%);
+  --color-warning-200: hsl(40, 90%, 88%);
+  --color-warning-300: hsl(40, 85%, 80%);
+  --color-warning-400: hsl(40, 80%, 70%);
+  --color-warning-500: hsl(40, 90%, 60%);
+  --color-warning-600: hsl(40, 85%, 50%);
+  --color-warning-700: hsl(40, 80%, 40%);
+  --color-warning-800: hsl(40, 75%, 30%);
+  --color-warning-900: hsl(40, 70%, 20%);
+
+  /* Error (Red) */
+  --color-error-50: hsl(0, 100%, 97%);
+  --color-error-100: hsl(0, 90%, 94%);
+  --color-error-200: hsl(0, 85%, 88%);
+  --color-error-300: hsl(0, 80%, 80%);
+  --color-error-400: hsl(0, 75%, 70%);
+  --color-error-500: hsl(0, 70%, 60%);
+  --color-error-600: hsl(0, 65%, 50%);
+  --color-error-700: hsl(0, 60%, 40%);
+  --color-error-800: hsl(0, 55%, 30%);
+  --color-error-900: hsl(0, 50%, 20%);
+
+  /* ===== SEMANTIC COLORS - LIGHT MODE ===== */
+  /* Text Colors */
+  --color-text-primary: var(--color-neutral-900);
+  --color-text-secondary: var(--color-neutral-700);
+  --color-text-tertiary: var(--color-neutral-500);
+  --color-text-disabled: var(--color-neutral-400);
+  --color-text-inverse: var(--color-neutral-50);
+  --color-text-link: var(--color-primary-600);
+  --color-text-link-hover: var(--color-primary-700);
+
+  /* Background Colors */
+  --color-bg-surface: rgba(255, 255, 255, 0.1);
+  --color-bg-surface-hover: rgba(255, 255, 255, 0.15);
+  --color-bg-surface-muted: rgba(255, 255, 255, 0.05);
+  --color-bg-elevated: rgba(255, 255, 255, 0.2);
+  --color-bg-elevated-hover: rgba(255, 255, 255, 0.25);
+  --color-bg-overlay: rgba(255, 255, 255, 0.1);
+  --color-bg-overlay-hover: rgba(255, 255, 255, 0.15);
+  --color-bg-page: var(--color-neutral-950);
+
+  /* Border Colors */
+  --color-border-default: rgba(255, 255, 255, 0.2);
+  --color-border-subtle: rgba(255, 255, 255, 0.1);
+  --color-border-focus: var(--color-primary-500);
+  --color-border-error: var(--color-error-500);
+
+  /* Gradient */
+  --color-gradient: linear-gradient(to right, var(--color-primary-600), var(--color-secondary-600));
+  
+  /* Shadow Colors */
+  --color-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --color-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --color-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --color-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --color-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --color-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --color-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  --color-shadow-outline: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+/* ===== DARK MODE COLORS ===== */
+.dark {
+  /* ===== SEMANTIC COLORS - DARK MODE ===== */
+  /* Text Colors */
+  --color-text-primary: var(--color-neutral-50);
+  --color-text-secondary: var(--color-neutral-300);
+  --color-text-tertiary: var(--color-neutral-500);
+  --color-text-disabled: var(--color-neutral-600);
+  --color-text-inverse: var(--color-neutral-900);
+  --color-text-link: var(--color-primary-400);
+  --color-text-link-hover: var(--color-primary-300);
+
+  /* Background Colors */
+  --color-bg-surface: rgba(0, 0, 0, 0.2);
+  --color-bg-surface-hover: rgba(0, 0, 0, 0.25);
+  --color-bg-surface-muted: rgba(0, 0, 0, 0.1);
+  --color-bg-elevated: rgba(0, 0, 0, 0.3);
+  --color-bg-elevated-hover: rgba(0, 0, 0, 0.35);
+  --color-bg-overlay: rgba(0, 0, 0, 0.4);
+  --color-bg-overlay-hover: rgba(0, 0, 0, 0.45);
+  --color-bg-page: var(--color-neutral-950);
+
+  /* Border Colors */
+  --color-border-default: rgba(0, 0, 0, 0.3);
+  --color-border-subtle: rgba(0, 0, 0, 0.2);
+  --color-border-focus: var(--color-primary-400);
+  --color-border-error: var(--color-error-400);
+
+  /* Gradient */
+  --color-gradient: linear-gradient(to right, var(--color-primary-500), var(--color-secondary-500));
+  
+  /* Shadow Colors - Darker for dark mode */
+  --color-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  --color-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.12);
+  --color-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.12);
+  --color-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+  --color-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.08);
+  --color-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  --color-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+  --color-shadow-outline: 0 0 0 3px rgba(66, 153, 225, 0.3);
+}
+
+/* ===== MEDIA QUERY FOR SYSTEM PREFERENCE ===== */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    /* Apply dark mode colors when system prefers dark mode and no light class is set */
+    /* Text Colors */
+    --color-text-primary: var(--color-neutral-50);
+    --color-text-secondary: var(--color-neutral-300);
+    --color-text-tertiary: var(--color-neutral-500);
+    --color-text-disabled: var(--color-neutral-600);
+    --color-text-inverse: var(--color-neutral-900);
+    --color-text-link: var(--color-primary-400);
+    --color-text-link-hover: var(--color-primary-300);
+
+    /* Background Colors */
+    --color-bg-surface: rgba(0, 0, 0, 0.2);
+    --color-bg-surface-hover: rgba(0, 0, 0, 0.25);
+    --color-bg-surface-muted: rgba(0, 0, 0, 0.1);
+    --color-bg-elevated: rgba(0, 0, 0, 0.3);
+    --color-bg-elevated-hover: rgba(0, 0, 0, 0.35);
+    --color-bg-overlay: rgba(0, 0, 0, 0.4);
+    --color-bg-overlay-hover: rgba(0, 0, 0, 0.45);
+    --color-bg-page: var(--color-neutral-950);
+
+    /* Border Colors */
+    --color-border-default: rgba(0, 0, 0, 0.3);
+    --color-border-subtle: rgba(0, 0, 0, 0.2);
+    --color-border-focus: var(--color-primary-400);
+    --color-border-error: var(--color-error-400);
+
+    /* Gradient */
+    --color-gradient: linear-gradient(to right, var(--color-primary-500), var(--color-secondary-500));
+  }
+} 

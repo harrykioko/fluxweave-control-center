@@ -1,4 +1,5 @@
-
+import * as React from 'react';
+import { FC } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,12 +23,12 @@ const CONNECTIONS = [
   }
 ];
 
-export function ConnectSection() {
+export const ConnectSection: FC = () => {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-slate-800">Let's Connect</h2>
-        <Button variant="link" className="text-blue-600">
+        <h2 className="text-xl font-bold text-primary">Let's Connect</h2>
+        <Button variant="link" className="text-primary-600">
           See all
         </Button>
       </div>
@@ -36,28 +37,28 @@ export function ConnectSection() {
         {CONNECTIONS.map((connection) => (
           <div 
             key={connection.id}
-            className="flex items-center justify-between bg-white/30 backdrop-blur-sm rounded-full py-2 px-4"
+            className="flex items-center justify-between bg-surface backdrop-blur-sm rounded-full py-2 px-4"
           >
             <div className="flex items-center">
-              <Avatar className="h-12 w-12 border-2 border-white">
+              <Avatar className="h-12 w-12 border-2 border-default">
                 <AvatarImage src={connection.imageUrl} alt={connection.name} />
                 <AvatarFallback>{connection.name.charAt(0)}</AvatarFallback>
               </Avatar>
               
               <div className="ml-3">
                 <div className="flex items-center">
-                  <h3 className="font-medium text-slate-800">{connection.name}</h3>
+                  <h3 className="font-medium text-primary">{connection.name}</h3>
                   <Badge 
                     className={`ml-2 ${
                       connection.level === 'Senior' 
-                        ? 'bg-amber-500' 
-                        : 'bg-blue-500'
+                        ? 'bg-warning-500' 
+                        : 'bg-info-500'
                     } text-xs`}
                   >
                     {connection.level}
                   </Badge>
                 </div>
-                <p className="text-xs text-slate-500">{connection.role}</p>
+                <p className="text-xs text-secondary">{connection.role}</p>
               </div>
             </div>
             
@@ -73,4 +74,4 @@ export function ConnectSection() {
       </div>
     </div>
   );
-}
+};

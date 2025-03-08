@@ -1,4 +1,5 @@
-
+import * as React from 'react';
+import { FC } from 'react';
 import { MessageSquare, Send, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMessages } from "@/hooks/useMessages";
 import { format, formatDistanceToNow } from "date-fns";
 
-export function MessageBoard() {
+export const MessageBoard: FC = () => {
   const { 
     messages, 
     isLoading, 
@@ -64,7 +65,7 @@ export function MessageBoard() {
         result.push(
           <span 
             key={`mention-${index}`} 
-            className="bg-purple-100 text-purple-800 px-1 rounded font-medium"
+            className="bg-primary-100 text-primary-800 px-1 rounded font-medium"
           >
             {mentions[index]}
           </span>
@@ -76,10 +77,10 @@ export function MessageBoard() {
   };
 
   return (
-    <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-lg overflow-hidden">
+    <div className="glass-panel overflow-hidden">
       {/* Message Content */}
       <div className="p-4 sm:p-6">
-        <h2 className="text-xl font-bold text-white mb-4 flex items-center">
+        <h2 className="text-xl font-bold text-primary mb-4 flex items-center">
           <MessageSquare className="h-5 w-5 mr-2" />
           Message Board
         </h2>
@@ -89,10 +90,10 @@ export function MessageBoard() {
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex items-start gap-3 animate-pulse">
-                  <div className="w-10 h-10 rounded-full bg-white/20"></div>
+                  <div className="w-10 h-10 rounded-full glass-sm"></div>
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-white/20 rounded w-32"></div>
-                    <div className="h-3 bg-white/10 rounded w-full"></div>
+                    <div className="h-4 bg-elevated rounded w-32"></div>
+                    <div className="h-3 bg-surface-hover rounded w-full"></div>
                   </div>
                 </div>
               ))}
@@ -101,28 +102,28 @@ export function MessageBoard() {
             <div className="space-y-4">
               {messages.map((message) => (
                 <div key={message.id} className="flex items-start gap-3 group">
-                  <Avatar className="h-10 w-10 border-2 border-purple-500/30 bg-white/10">
+                  <Avatar className="h-10 w-10 border-2 border-primary-500/30 glass-sm">
                     <AvatarImage src={message.avatar_url || ""} alt={`${message.first_name} ${message.last_name}`} />
-                    <AvatarFallback className="bg-purple-600/30 text-white">
+                    <AvatarFallback className="bg-primary-600/30 text-white">
                       {getInitials(message.first_name, message.last_name)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <div className="bg-white/10 p-3 rounded-xl rounded-tl-none text-white">
+                    <div className="glass-md p-3 rounded-xl rounded-tl-none">
                       <div className="flex justify-between items-baseline mb-1">
-                        <p className="font-medium text-purple-300">
+                        <p className="font-medium text-primary-300">
                           {message.first_name} {message.last_name}
                         </p>
-                        <span className="text-xs text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-xs text-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
                           {formatMessageTime(message.created_at)}
                         </span>
                       </div>
-                      <p className="text-sm text-slate-200 whitespace-pre-line">
+                      <p className="text-sm text-secondary whitespace-pre-line">
                         {formatMessageWithMentions(message.content)}
                       </p>
                     </div>
                     <div className="mt-1 ml-2">
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-tertiary">
                         {formatMessageTime(message.created_at)}
                       </span>
                     </div>
@@ -133,18 +134,18 @@ export function MessageBoard() {
           ) : (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <User className="h-12 w-12 text-purple-400/60 mx-auto mb-2" />
-                <p className="text-slate-400 text-sm">No messages yet. Be the first to post!</p>
+                <User className="h-12 w-12 text-primary-400/60 mx-auto mb-2" />
+                <p className="text-secondary text-sm">No messages yet. Be the first to post!</p>
               </div>
             </div>
           )}
         </ScrollArea>
         
-        <Separator className="my-4 bg-white/20" />
+        <Separator className="my-4 bg-border-default" />
         
         <div className="mt-2 relative">
           <Textarea 
-            className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-sm text-white placeholder:text-slate-400 focus:ring-1 focus:ring-purple-500"
+            className="glass-input w-full p-3 text-sm"
             placeholder="Type a message... Use @username to mention someone"
             rows={2}
             value={newMessage}
@@ -154,24 +155,24 @@ export function MessageBoard() {
           
           {/* User suggestions dropdown */}
           {showSuggestions && profileSuggestions.length > 0 && (
-            <div className="absolute z-10 mt-1 w-64 bg-white/10 backdrop-blur-xl border border-white/20 rounded-lg overflow-hidden shadow-lg">
+            <div className="absolute z-10 mt-1 w-64 glass-tooltip">
               <div className="max-h-48 overflow-y-auto">
                 {profileSuggestions.map((profile) => (
                   <div 
                     key={profile.id} 
-                    className="flex items-center gap-2 p-2 hover:bg-purple-500/20 cursor-pointer transition-colors"
+                    className="flex items-center gap-2 p-2 hover:bg-primary-500/20 cursor-pointer transition-colors"
                     onClick={() => selectUserSuggestion(profile.username || `${profile.first_name}${profile.last_name}`.toLowerCase())}
                   >
                     <Avatar className="h-6 w-6">
                       <AvatarImage src={profile.avatar_url || ""} />
-                      <AvatarFallback className="bg-purple-600/30 text-white text-xs">
+                      <AvatarFallback className="bg-primary-600/30 text-white text-xs">
                         {getInitials(profile.first_name, profile.last_name)}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="text-sm text-white">{profile.first_name} {profile.last_name}</p>
+                      <p className="text-sm text-primary">{profile.first_name} {profile.last_name}</p>
                       {profile.username && (
-                        <p className="text-xs text-slate-400">@{profile.username}</p>
+                        <p className="text-xs text-tertiary">@{profile.username}</p>
                       )}
                     </div>
                   </div>
@@ -182,7 +183,8 @@ export function MessageBoard() {
           
           <div className="flex justify-end mt-2">
             <Button 
-              className="bg-purple-600/90 hover:bg-purple-700/90 text-white border border-purple-500/30"
+              variant="gradient"
+              className="glass-hover glass-active"
               onClick={sendMessage}
               disabled={!newMessage.trim()}
             >
@@ -194,4 +196,4 @@ export function MessageBoard() {
       </div>
     </div>
   );
-}
+};

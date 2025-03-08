@@ -1,0 +1,152 @@
+/**
+ * FluxWeave Control Center - Effects System
+ * 
+ * This file defines standardized effects used throughout the application,
+ * with a focus on glassmorphism effects that leverage our color system.
+ */
+
+/* ===== GLASSMORPHISM EFFECTS ===== */
+
+/* Base glass effect - applies common properties for all glass elements */
+.glass {
+  @apply backdrop-filter backdrop-blur-md bg-clip-padding;
+  transition: background-color 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease;
+}
+
+/* Glass surface variants with different blur intensities */
+.glass-sm {
+  @apply glass backdrop-blur-sm bg-surface bg-opacity-30 border-subtle;
+}
+
+.glass-md {
+  @apply glass backdrop-blur-md bg-surface bg-opacity-40 border-subtle;
+}
+
+.glass-lg {
+  @apply glass backdrop-blur-lg bg-surface bg-opacity-50 border-subtle;
+}
+
+.glass-xl {
+  @apply glass backdrop-blur-xl bg-surface bg-opacity-60 border-subtle;
+}
+
+/* Glass card - for content containers */
+.glass-card {
+  @apply glass-md rounded-xl shadow-md border-default;
+}
+
+/* Glass panel - for larger sections */
+.glass-panel {
+  @apply glass-lg rounded-xl shadow-lg border-default;
+}
+
+/* Glass navbar - optimized for navigation bars */
+.glass-navbar {
+  @apply glass-lg bg-opacity-70 border-b border-subtle shadow-sm;
+  /* Firefox fallback (no backdrop-filter support) */
+  @supports not (backdrop-filter: blur(12px)) {
+    @apply bg-opacity-90;
+  }
+}
+
+/* Glass button - for interactive elements */
+.glass-button {
+  @apply glass-sm rounded-lg hover:bg-surface-hover active:bg-elevated transition-all duration-200;
+}
+
+/* Glass input - for form elements */
+.glass-input {
+  @apply glass-sm rounded-lg focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500/50;
+}
+
+/* Glass modal - for dialogs and popovers */
+.glass-modal {
+  @apply glass-xl rounded-xl shadow-xl border-default;
+}
+
+/* Glass sidebar - for side navigation */
+.glass-sidebar {
+  @apply glass-lg h-full border-r border-subtle;
+}
+
+/* Glass tooltip - for tooltips and small popovers */
+.glass-tooltip {
+  @apply glass-md rounded-lg shadow-lg;
+}
+
+/* ===== INTERACTIVE EFFECTS ===== */
+
+/* Hover effects for glass elements */
+.glass-hover {
+  @apply transition-all duration-200;
+}
+
+.glass-hover:hover {
+  @apply bg-opacity-70 shadow-lg;
+}
+
+/* Active effects for glass elements */
+.glass-active {
+  @apply transition-all duration-100;
+}
+
+.glass-active:active {
+  @apply bg-opacity-80 scale-[0.98];
+}
+
+/* Glow effect for glass elements */
+.glass-glow {
+  @apply relative;
+}
+
+.glass-glow::after {
+  content: "";
+  @apply absolute -inset-px bg-gradient rounded-[inherit] opacity-0 transition-opacity blur-md -z-10;
+}
+
+.glass-glow:hover::after {
+  @apply opacity-70;
+}
+
+/* ===== DARK MODE ADJUSTMENTS ===== */
+
+.dark .glass-sm {
+  @apply bg-opacity-20;
+}
+
+.dark .glass-md {
+  @apply bg-opacity-25;
+}
+
+.dark .glass-lg {
+  @apply bg-opacity-30;
+}
+
+.dark .glass-xl {
+  @apply bg-opacity-35;
+}
+
+.dark .glass-navbar {
+  @apply bg-opacity-50;
+  /* Firefox fallback (no backdrop-filter support) */
+  @supports not (backdrop-filter: blur(12px)) {
+    @apply bg-opacity-80;
+  }
+}
+
+/* ===== FIREFOX FALLBACKS ===== */
+@-moz-document url-prefix() {
+  .glass-sm, .glass-md, .glass-lg, .glass-xl, 
+  .glass-card, .glass-panel, .glass-button, 
+  .glass-input, .glass-modal, .glass-sidebar, 
+  .glass-tooltip {
+    @apply bg-opacity-90;
+  }
+  
+  .dark .glass-sm, .dark .glass-md, .dark .glass-lg, .dark .glass-xl,
+  .dark .glass-card, .dark .glass-panel, .dark .glass-button,
+  .dark .glass-input, .dark .glass-modal, .dark .glass-sidebar,
+  .dark .glass-tooltip {
+    @apply bg-opacity-80;
+  }
+} 

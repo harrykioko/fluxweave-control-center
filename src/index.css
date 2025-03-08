@@ -1,5 +1,6 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import './styles/colors.css';
+@import './styles/effects.css';
 
 @tailwind base;
 @tailwind components;
@@ -43,7 +44,7 @@
   }
 
   body {
-    @apply bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-foreground antialiased;
+    @apply bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 min-h-screen text-primary antialiased;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
     background-size: 200% 200%;
     animation: gradientAnimation 15s ease infinite;
@@ -55,41 +56,16 @@
     100% { background-position: 0% 50%; }
   }
 
-  .glass-card {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg;
-  }
-
   .hover-scale {
     @apply transition-transform duration-200 hover:scale-[1.02];
   }
   
   .text-gradient {
-    @apply bg-gradient-to-br from-white via-white/90 to-white/70 bg-clip-text text-transparent;
+    @apply bg-gradient bg-clip-text text-transparent;
   }
 
   .purple-gradient {
-    @apply bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600;
-  }
-
-  .glass-panel {
-    @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)] rounded-xl;
-  }
-
-  .glass-button {
-    @apply backdrop-blur-md bg-white/10 border border-white/20 hover:bg-white/20 text-white;
-  }
-
-  .glow-effect {
-    @apply relative;
-  }
-  
-  .glow-effect::after {
-    content: "";
-    @apply absolute -inset-px bg-gradient-to-r from-purple-500/50 via-pink-500/50 to-indigo-500/50 rounded-[inherit] opacity-0 transition-opacity blur-md -z-10;
-  }
-  
-  .glow-effect:hover::after {
-    @apply opacity-100;
+    @apply bg-gradient;
   }
 
   .scrollbar-none {

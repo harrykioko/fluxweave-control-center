@@ -1,4 +1,5 @@
-
+import * as React from 'react';
+import { FC } from 'react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
@@ -11,31 +12,37 @@ interface QuickActionCardProps {
   className?: string;
 }
 
-export function QuickActionCard({ title, description, icon, onClick, className }: QuickActionCardProps) {
+export const QuickActionCard: FC<QuickActionCardProps> = ({ 
+  title, 
+  description, 
+  icon, 
+  onClick, 
+  className 
+}) => {
   return (
     <div 
       className={cn(
-        "bg-white/40 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg transition-all duration-200 hover:shadow-xl hover:translate-y-[-2px] hover:bg-white/50 group cursor-pointer",
+        "glass-card p-6 hover-scale hover:translate-y-[-2px] group cursor-pointer",
         className
       )} 
       onClick={onClick}
     >
       <div className="flex items-start space-x-4">
-        <div className="p-3 bg-white/50 backdrop-blur-md rounded-xl group-hover:bg-white/60 transition-colors">
+        <div className="p-3 glass-sm rounded-xl group-hover:bg-elevated-hover transition-colors">
           {icon}
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-slate-800">{title}</h3>
-          <p className="text-sm text-slate-500 mt-1">{description}</p>
+          <h3 className="font-semibold text-primary">{title}</h3>
+          <p className="text-sm text-secondary mt-1">{description}</p>
         </div>
         <Button 
           size="icon" 
           variant="ghost" 
-          className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/50"
+          className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-elevated"
         >
-          <Plus className="h-4 w-4 text-slate-600" />
+          <Plus className="h-4 w-4 text-tertiary" />
         </Button>
       </div>
     </div>
   );
-}
+};

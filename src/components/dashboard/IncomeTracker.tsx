@@ -1,5 +1,5 @@
-
-import { useState } from "react";
+import * as React from 'react';
+import { FC, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { CalendarIcon, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,16 +20,16 @@ const weeklyData = [
 // Time period options
 const timePeriods = ["Today", "Week", "Month", "Year"];
 
-export function IncomeTracker() {
+export const IncomeTracker: FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("Week");
   const [isTimePopoverOpen, setIsTimePopoverOpen] = useState(false);
 
   return (
-    <div className="flex flex-col w-full bg-white/50 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg">
+    <div className="flex flex-col w-full bg-surface backdrop-blur-xl border-subtle rounded-xl p-6 shadow-lg">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
-          <CalendarIcon className="h-5 w-5 mr-3 text-slate-700" />
-          <h2 className="text-2xl font-bold text-slate-800">Income Tracker</h2>
+          <CalendarIcon className="h-5 w-5 mr-3 text-primary" />
+          <h2 className="text-2xl font-bold text-primary">Income Tracker</h2>
         </div>
         
         <Popover open={isTimePopoverOpen} onOpenChange={setIsTimePopoverOpen}>
@@ -59,22 +59,22 @@ export function IncomeTracker() {
         </Popover>
       </div>
       
-      <p className="text-slate-500 mb-6">
+      <p className="text-secondary mb-6">
         Track changes in income over time and access detailed data on each project and payments received
       </p>
       
       <div className="relative h-64 my-4">
-        <div className="absolute top-10 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-3 py-1 rounded-md z-10">
+        <div className="absolute top-10 left-1/2 transform -translate-x-1/2 bg-primary-700 text-white px-3 py-1 rounded-md z-10">
           $2,567
         </div>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={weeklyData} barSize={30}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border-subtle)" />
             <XAxis 
               dataKey="name" 
               axisLine={false} 
               tickLine={false}
-              tick={{ fill: '#94a3b8' }}
+              tick={{ fill: 'var(--color-text-secondary)' }}
             />
             <YAxis hide />
             <Tooltip 
@@ -82,7 +82,7 @@ export function IncomeTracker() {
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div className="bg-slate-800 text-white px-3 py-2 rounded-md">
+                    <div className="bg-primary-700 text-white px-3 py-2 rounded-md">
                       <p>${payload[0].value}</p>
                     </div>
                   );
@@ -92,17 +92,17 @@ export function IncomeTracker() {
             />
             <Bar 
               dataKey="value" 
-              fill="#60a5fa" 
+              fill="var(--color-primary-500)" 
               radius={[4, 4, 0, 0]}
-              activeBar={{ fill: '#3b82f6' }}
+              activeBar={{ fill: 'var(--color-primary-600)' }}
             />
           </BarChart>
         </ResponsiveContainer>
       </div>
       
       <div className="flex items-center mt-6">
-        <div className="text-4xl font-bold text-slate-800">+20%</div>
-        <div className="ml-4 text-sm text-slate-500">
+        <div className="text-4xl font-bold text-primary">+20%</div>
+        <div className="ml-4 text-sm text-secondary">
           This week's income is higher than last week's
         </div>
       </div>
@@ -113,8 +113,8 @@ export function IncomeTracker() {
             key={day + index}
             className={`flex items-center justify-center w-10 h-10 rounded-full ${
               day === 'T' && index === 2 
-                ? 'bg-slate-800 text-white' 
-                : 'bg-slate-200 text-slate-700'
+                ? 'bg-primary-700 text-white' 
+                : 'bg-neutral-200 text-primary'
             }`}
           >
             {day}
@@ -123,4 +123,4 @@ export function IncomeTracker() {
       </div>
     </div>
   );
-}
+};

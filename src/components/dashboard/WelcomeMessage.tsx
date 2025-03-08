@@ -1,8 +1,8 @@
-
-import { useEffect, useState } from "react";
+import * as React from 'react';
+import { FC, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export function WelcomeMessage() {
+export const WelcomeMessage: FC = () => {
   const [firstName, setFirstName] = useState("User");
   const [loading, setLoading] = useState(true);
 
@@ -34,8 +34,8 @@ export function WelcomeMessage() {
   }, []);
 
   return (
-    <h1 className="text-3xl font-bold text-white mb-6">
+    <h1 className="text-3xl font-bold text-primary mb-6">
       {loading ? "Hello" : `Hello, ${firstName}`}
     </h1>
   );
-}
+};

@@ -1,26 +1,28 @@
-
+import * as React from 'react';
+import { FC } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
-export function PremiumFeatures() {
+export const PremiumFeatures: FC = () => {
   return (
     <div 
-      className="w-full bg-gradient-to-br from-blue-50 to-blue-100 backdrop-blur-xl border border-white/20 rounded-xl p-6 shadow-lg"
+      className="w-full bg-gradient backdrop-blur-xl border-subtle rounded-xl p-6 shadow-lg"
     >
-      <h2 className="text-xl font-bold text-slate-800 mb-3">
+      <h2 className="text-xl font-bold text-primary mb-3">
         Unlock Premium Features
       </h2>
       
-      <p className="text-sm text-slate-600 mb-6">
+      <p className="text-sm text-secondary mb-6">
         Get access to exclusive benefits and expand your freelancing opportunities
       </p>
       
       <Button 
-        className="w-full flex items-center justify-between bg-white text-slate-800 hover:bg-slate-100 border border-slate-200"
+        variant="glass"
+        className="w-full flex items-center justify-between"
       >
         <span>Upgrade now</span>
         <ArrowRight className="h-4 w-4" />
       </Button>
     </div>
   );
-}
+};
