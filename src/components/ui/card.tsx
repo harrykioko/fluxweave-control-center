@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { getSpace, getBorderRadius, getShadow } from '@/utils/tokenUtils';
+import { getSpace, getBorderRadius, getShadow, getTypography } from '@/utils/tokenUtils';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -120,11 +120,16 @@ export function Card({
  */
 export function CardHeader({
   className,
+  style,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('mb-4', className)}
+      className={cn(className)}
+      style={{
+        marginBottom: getSpace('4'),
+        ...style
+      }}
       {...props}
     />
   );
@@ -135,14 +140,25 @@ export function CardHeader({
  */
 export function CardTitle({
   className,
+  style,
   ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) {
+  const titleStyles = getTypography('sans', 'xl', 'semibold');
+  
   return (
     <h3
       className={cn(
-        'text-xl font-semibold text-neutral-100',
+        'text-neutral-100',
         className
       )}
+      style={{
+        fontFamily: titleStyles.fontFamily,
+        fontSize: titleStyles.fontSize,
+        fontWeight: titleStyles.fontWeight,
+        lineHeight: titleStyles.lineHeight,
+        letterSpacing: titleStyles.letterSpacing,
+        ...style
+      }}
       {...props}
     />
   );
@@ -153,14 +169,25 @@ export function CardTitle({
  */
 export function CardDescription({
   className,
+  style,
   ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) {
+  const descriptionStyles = getTypography('sans', 'sm', 'normal');
+  
   return (
     <p
       className={cn(
-        'text-sm text-neutral-400',
+        'text-neutral-400',
         className
       )}
+      style={{
+        fontFamily: descriptionStyles.fontFamily,
+        fontSize: descriptionStyles.fontSize,
+        fontWeight: descriptionStyles.fontWeight,
+        lineHeight: descriptionStyles.lineHeight,
+        letterSpacing: descriptionStyles.letterSpacing,
+        ...style
+      }}
       {...props}
     />
   );
@@ -186,11 +213,16 @@ export function CardContent({
  */
 export function CardFooter({
   className,
+  style,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('mt-4 flex items-center', className)}
+      className={cn('flex items-center', className)}
+      style={{
+        marginTop: getSpace('4'),
+        ...style
+      }}
       {...props}
     />
   );

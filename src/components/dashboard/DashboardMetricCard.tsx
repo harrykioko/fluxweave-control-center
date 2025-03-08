@@ -3,6 +3,7 @@ import { FC, useState } from 'react';
 import { cn } from "@/lib/utils";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { getAnimationClasses } from '@/hooks/useAnimation';
+import { getTypography, getSpace, getBorderRadius } from '@/utils/tokenUtils';
 
 interface DashboardMetricCardProps {
   title: string;
@@ -95,48 +96,115 @@ export const DashboardMetricCard: FC<DashboardMetricCardProps> = ({
     'aria-labelledby': `${id}-title`,
   };
 
+  // Typography styles
+  const titleStyles = getTypography('sans', 'sm', 'medium');
+  const valueStyles = getTypography('sans', '2xl', 'bold');
+  const changeStyles = getTypography('sans', 'sm', 'medium');
+  const descriptionStyles = getTypography('sans', 'xs', 'normal');
+
   return (
     <Component
       id={id}
       className={cn(
-        "glass-card p-6",
+        "glass-card",
         animationClasses,
         isPressed && 'scale-98',
         isInteractive && "focus-visible:ring-2 focus-visible:ring-primary-400 outline-none",
         className
       )}
+      style={{
+        padding: getSpace('6'),
+        borderRadius: getBorderRadius('card'),
+      }}
       {...accessibilityProps}
     >
       <div className="flex items-start justify-between">
         {icon && (
-          <div className={cn(
-            "p-3 glass-sm rounded-xl",
-            "transition-transform duration-medium ease-bounce"
-          )} aria-hidden="true">
+          <div 
+            className={cn(
+              "glass-sm transition-transform duration-medium ease-bounce"
+            )}
+            style={{
+              padding: getSpace('3'),
+              borderRadius: getBorderRadius('lg'),
+            }}
+            aria-hidden="true"
+          >
             {icon}
           </div>
         )}
-        <div className={cn("flex-1", icon ? "ml-4" : "")}>
-          <h3 id={`${id}-title`} className="text-sm font-medium text-secondary">{title}</h3>
-          <p className="text-2xl font-bold text-primary mt-1 transition-colors duration-fast" aria-live="polite">{value}</p>
+        <div className={cn("flex-1", icon ? `ml-${getSpace('4')}` : "")}>
+          <h3 
+            id={`${id}-title`} 
+            className="text-secondary"
+            style={{
+              fontFamily: titleStyles.fontFamily,
+              fontSize: titleStyles.fontSize,
+              fontWeight: titleStyles.fontWeight,
+              lineHeight: titleStyles.lineHeight,
+              letterSpacing: titleStyles.letterSpacing,
+            }}
+          >
+            {title}
+          </h3>
+          <p 
+            className="text-primary transition-colors duration-fast" 
+            aria-live="polite"
+            style={{
+              fontFamily: valueStyles.fontFamily,
+              fontSize: valueStyles.fontSize,
+              fontWeight: valueStyles.fontWeight,
+              lineHeight: valueStyles.lineHeight,
+              letterSpacing: valueStyles.letterSpacing,
+              marginTop: getSpace('1'),
+            }}
+          >
+            {value}
+          </p>
           
           {change && (
-            <div className="mt-2 flex items-center">
+            <div 
+              style={{
+                marginTop: getSpace('2'),
+              }}
+              className="flex items-center"
+            >
               <span 
                 className={cn(
-                  "flex items-center text-sm font-medium transition-all duration-fast", 
+                  "flex items-center transition-all duration-fast", 
                   change.isPositive ? "text-success-500" : "text-error-500"
                 )}
+                style={{
+                  fontFamily: changeStyles.fontFamily,
+                  fontSize: changeStyles.fontSize,
+                  fontWeight: changeStyles.fontWeight,
+                  lineHeight: changeStyles.lineHeight,
+                  letterSpacing: changeStyles.letterSpacing,
+                }}
                 aria-live="polite"
               >
                 {change.isPositive ? (
                   <>
-                    <ArrowUp className="w-4 h-4 mr-1 transition-transform duration-fast" aria-hidden="true" />
+                    <ArrowUp className="transition-transform duration-fast" 
+                      style={{
+                        width: getSpace('4'),
+                        height: getSpace('4'),
+                        marginRight: getSpace('1'),
+                      }}
+                      aria-hidden="true" 
+                    />
                     <span className="sr-only">Increased by</span>
                   </>
                 ) : (
                   <>
-                    <ArrowDown className="w-4 h-4 mr-1 transition-transform duration-fast" aria-hidden="true" />
+                    <ArrowDown className="transition-transform duration-fast" 
+                      style={{
+                        width: getSpace('4'),
+                        height: getSpace('4'),
+                        marginRight: getSpace('1'),
+                      }}
+                      aria-hidden="true" 
+                    />
                     <span className="sr-only">Decreased by</span>
                   </>
                 )}
@@ -144,7 +212,20 @@ export const DashboardMetricCard: FC<DashboardMetricCardProps> = ({
               </span>
               
               {description && (
-                <span id={`${id}-desc`} className="text-xs text-tertiary ml-2 transition-opacity duration-fast">{description}</span>
+                <span 
+                  id={`${id}-desc`} 
+                  className="text-tertiary transition-opacity duration-fast"
+                  style={{
+                    fontFamily: descriptionStyles.fontFamily,
+                    fontSize: descriptionStyles.fontSize,
+                    fontWeight: descriptionStyles.fontWeight,
+                    lineHeight: descriptionStyles.lineHeight,
+                    letterSpacing: descriptionStyles.letterSpacing,
+                    marginLeft: getSpace('2'),
+                  }}
+                >
+                  {description}
+                </span>
               )}
             </div>
           )}
