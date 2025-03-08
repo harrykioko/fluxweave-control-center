@@ -1,35 +1,86 @@
 import * as React from 'react';
 import { FC, useState } from 'react';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, Clock } from 'lucide-react';
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import { getSpace, getBorderRadius, getTypography, getShadow } from '@/utils/tokenUtils';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
-declare module 'lucide-react' {
-  import { ComponentType, SVGProps } from 'react';
-  
-  export interface IconProps extends SVGProps<SVGSVGElement> {
-    size?: string | number;
-    color?: string;
-    strokeWidth?: string | number;
+// Sample event data - in a real app, this would come from an API
+const EVENTS = [
+  {
+    id: 1,
+    title: 'Team Meeting',
+    time: '3:00 PM - 4:00 PM',
+    color: 'var(--color-primary-600)'
+  },
+  {
+    id: 2,
+    title: 'Product Review',
+    time: '5:00 PM - 6:00 PM',
+    color: 'var(--color-info-500)'
+  },
+  {
+    id: 3,
+    title: 'Client Call',
+    time: 'Tomorrow, 10:00 AM',
+    color: 'var(--color-success-500)'
   }
-  
-  export type Icon = ComponentType<IconProps>;
-  
-  export const CalendarIcon: Icon;
-  // Add other icons you use from lucide-react
-}
+];
 
 export const DashboardCalendar: FC = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  
+  // Typography styles
+  const titleStyles = getTypography('sans', 'xl', 'bold');
+  const subtitleStyles = getTypography('sans', 'md', 'medium');
+  const eventTitleStyles = getTypography('sans', 'sm', 'medium');
+  const eventTimeStyles = getTypography('sans', 'xs', 'normal');
 
   return (
-    <div className="bg-overlay backdrop-blur-xl border-default rounded-xl p-4 sm:p-6 shadow-lg h-[435px]">
-      <h2 className="text-xl font-bold text-primary mb-4 flex items-center">
-        <CalendarIcon className="h-5 w-5 mr-2" />
-        Calendar
-      </h2>
-      <div className="flex flex-col h-[calc(100%-2rem)]">
-        <div className="bg-elevated border-default rounded-lg p-3 mb-4">
+    <Card
+      variant="glass"
+      shadow="card"
+      style={{
+        height: '435px',
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
+      <CardHeader>
+        <CardTitle
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: getSpace('2')
+          }}
+        >
+          <CalendarIcon 
+            style={{
+              width: getSpace('5'),
+              height: getSpace('5')
+            }}
+          />
+          Calendar
+        </CardTitle>
+      </CardHeader>
+      
+      <CardContent
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          gap: getSpace('4')
+        }}
+      >
+        <div
+          className="glass-sm"
+          style={{
+            padding: getSpace('3'),
+            borderRadius: getBorderRadius('lg'),
+            boxShadow: getShadow('sm')
+          }}
+        >
           <Calendar
             mode="single"
             selected={date}
@@ -49,21 +100,92 @@ export const DashboardCalendar: FC = () => {
           />
         </div>
         
-        <div className="mt-auto">
-          <h3 className="font-medium text-primary mb-2">Upcoming Events</h3>
-          <div className="space-y-2">
-            {[1, 2].map((event) => (
-              <div key={event} className="flex items-center gap-2 p-2 bg-surface border-subtle rounded hover:bg-surface-hover transition-colors">
-                <div className="w-1 h-full min-h-[24px] bg-primary-600 rounded-full"></div>
+        <div
+          style={{
+            marginTop: 'auto'
+          }}
+        >
+          <h3
+            style={{
+              fontFamily: subtitleStyles.fontFamily,
+              fontSize: subtitleStyles.fontSize,
+              fontWeight: subtitleStyles.fontWeight,
+              lineHeight: subtitleStyles.lineHeight,
+              letterSpacing: subtitleStyles.letterSpacing,
+              marginBottom: getSpace('2')
+            }}
+            className="text-primary"
+          >
+            Upcoming Events
+          </h3>
+          
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: getSpace('2')
+            }}
+          >
+            {EVENTS.map((event) => (
+              <div
+                key={event.id}
+                className="glass-sm hover:glass-hover transition-all duration-fast"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: getSpace('2'),
+                  padding: getSpace('2'),
+                  borderRadius: getBorderRadius('md'),
+                  cursor: 'pointer'
+                }}
+              >
+                <div
+                  style={{
+                    width: getSpace('1'),
+                    height: getSpace('6'),
+                    backgroundColor: event.color,
+                    borderRadius: getBorderRadius('full')
+                  }}
+                />
+                
                 <div>
-                  <p className="font-medium text-sm text-primary">Team Meeting</p>
-                  <p className="text-xs text-secondary">3:00 PM - 4:00 PM</p>
+                  <p
+                    className="text-primary"
+                    style={{
+                      fontFamily: eventTitleStyles.fontFamily,
+                      fontSize: eventTitleStyles.fontSize,
+                      fontWeight: eventTitleStyles.fontWeight,
+                      lineHeight: eventTitleStyles.lineHeight,
+                      letterSpacing: eventTitleStyles.letterSpacing
+                    }}
+                  >
+                    {event.title}
+                  </p>
+                  
+                  <p
+                    className="text-secondary flex items-center gap-1"
+                    style={{
+                      fontFamily: eventTimeStyles.fontFamily,
+                      fontSize: eventTimeStyles.fontSize,
+                      fontWeight: eventTimeStyles.fontWeight,
+                      lineHeight: eventTimeStyles.lineHeight,
+                      letterSpacing: eventTimeStyles.letterSpacing
+                    }}
+                  >
+                    <Clock 
+                      style={{
+                        width: getSpace('3'),
+                        height: getSpace('3')
+                      }}
+                    />
+                    {event.time}
+                  </p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
