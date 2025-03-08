@@ -43,9 +43,12 @@
 /* Glass navbar - optimized for navigation bars */
 .glass-navbar {
   @apply glass-lg bg-opacity-70 border-b border-subtle shadow-sm;
-  /* Firefox fallback (no backdrop-filter support) */
-  @supports not (backdrop-filter: blur(12px)) {
-    @apply bg-opacity-90;
+}
+
+/* Firefox fallback for glass-navbar */
+@supports not (backdrop-filter: blur(12px)) {
+  .glass-navbar {
+    background-color: rgba(0, 0, 0, 0.9);
   }
 }
 
@@ -128,25 +131,29 @@
 
 .dark .glass-navbar {
   @apply bg-opacity-50;
-  /* Firefox fallback (no backdrop-filter support) */
-  @supports not (backdrop-filter: blur(12px)) {
-    @apply bg-opacity-80;
+}
+
+/* Firefox fallback for dark mode glass-navbar */
+@supports not (backdrop-filter: blur(12px)) {
+  .dark .glass-navbar {
+    background-color: rgba(0, 0, 0, 0.8);
   }
 }
 
 /* ===== FIREFOX FALLBACKS ===== */
+/* Using standard CSS instead of @apply inside @-moz-document */
 @-moz-document url-prefix() {
   .glass-sm, .glass-md, .glass-lg, .glass-xl, 
   .glass-card, .glass-panel, .glass-button, 
   .glass-input, .glass-modal, .glass-sidebar, 
   .glass-tooltip {
-    @apply bg-opacity-90;
+    background-color: rgba(0, 0, 0, 0.9);
   }
   
   .dark .glass-sm, .dark .glass-md, .dark .glass-lg, .dark .glass-xl,
   .dark .glass-card, .dark .glass-panel, .dark .glass-button,
   .dark .glass-input, .dark .glass-modal, .dark .glass-sidebar,
   .dark .glass-tooltip {
-    @apply bg-opacity-80;
+    background-color: rgba(0, 0, 0, 0.8);
   }
 } 
