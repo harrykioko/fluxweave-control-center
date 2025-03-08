@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -46,7 +45,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <AppSidebar />
-      <div className="min-h-screen pl-20">
+      <div className="min-h-screen ml-16">
         {children}
       </div>
     </>
