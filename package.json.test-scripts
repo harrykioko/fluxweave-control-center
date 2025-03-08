@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:a11y": "jest --testMatch='<rootDir>/src/**/*.a11y.test.(ts|tsx)'",
+    "test:a11y:report": "jest --testMatch='<rootDir>/src/**/*.a11y.test.(ts|tsx)' --json --outputFile=accessibility-report/report.json",
+    "test:visual": "test-storybook",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  }
+} 
