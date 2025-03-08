@@ -59,7 +59,7 @@
 
 /* Glass input - for form elements */
 .glass-input {
-  @apply glass-sm rounded-lg focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500/50;
+  @apply glass-sm rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400;
 }
 
 /* Glass modal - for dialogs and popovers */
