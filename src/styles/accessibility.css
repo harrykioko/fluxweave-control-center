@@ -1,0 +1,226 @@
+/**
+ * FluxWeave Control Center - Accessibility Enhancements
+ * 
+ * This file provides accessibility improvements including:
+ * - Keyboard navigation support
+ * - Focus styles
+ * - Screen reader utilities
+ * - Skip links
+ */
+
+/* ===== FOCUS STYLES ===== */
+
+/* Base focus style for all interactive elements */
+:focus {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: var(--color-focus-ring-offset, 2px);
+}
+
+/* Only show focus styles for keyboard navigation, not mouse clicks */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: var(--color-focus-ring-offset, 2px);
+  box-shadow: var(--color-shadow-outline);
+}
+
+/* Enhanced focus styles for interactive components */
+button:focus-visible,
+[role="button"]:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: var(--color-focus-ring-offset, 2px);
+  box-shadow: var(--color-shadow-outline);
+  position: relative;
+  z-index: 1; /* Ensure focus ring is visible */
+}
+
+/* ===== SKIP LINKS ===== */
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary-600);
+  color: white;
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ===== SCREEN READER UTILITIES ===== */
+
+/* Hide content visually but keep it accessible to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Make content visible again when it receives focus */
+.sr-only-focusable:not(:focus) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ===== REDUCED MOTION ===== */
+
+/* Respect user's preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== KEYBOARD NAVIGATION INDICATORS ===== */
+
+/* Add a subtle indicator for elements that can receive keyboard focus */
+[tabindex]:not([tabindex="-1"]):not(:focus-visible)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+[tabindex]:not([tabindex="-1"]):hover::after {
+  opacity: 1;
+}
+
+/* ===== FORM ACCESSIBILITY ===== */
+
+/* Ensure form labels are visible */
+label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+/* Style for required fields */
+[aria-required="true"]::after,
+[required]::after {
+  content: "*";
+  color: var(--color-error-500);
+  margin-left: 0.25rem;
+}
+
+/* Error states for form elements */
+[aria-invalid="true"],
+.has-error {
+  border-color: var(--color-error-500) !important;
+}
+
+/* Error message styling */
+.error-message {
+  color: var(--color-error-600);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.error-message::before {
+  content: "⚠️";
+}
+
+/* ===== ARIA ENHANCEMENTS ===== */
+
+/* Make sure disabled elements look disabled */
+[aria-disabled="true"],
+[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Style for current/selected items */
+[aria-current="page"],
+[aria-selected="true"] {
+  font-weight: 600;
+  background-color: var(--color-bg-surface-hover);
+}
+
+/* Ensure expandable sections are accessible */
+[aria-expanded] {
+  cursor: pointer;
+}
+
+[aria-expanded]::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 0.5em;
+  margin-left: 0.5em;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+
+[aria-expanded="true"]::after {
+  transform: rotate(-135deg);
+}
+
+/* ===== HIGH CONTRAST MODE SUPPORT ===== */
+
+@media (forced-colors: active) {
+  /* Ensure focus states are visible in high contrast mode */
+  :focus-visible {
+    outline: 3px solid CanvasText !important;
+    outline-offset: 3px !important;
+  }
+  
+  /* Ensure buttons have visible borders */
+  button, 
+  [role="button"] {
+    border: 1px solid CanvasText !important;
+  }
+  
+  /* Ensure links are underlined */
+  a {
+    text-decoration: underline !important;
+  }
+} 
