@@ -2,6 +2,7 @@
 @import './styles/colors.css';
 @import './styles/effects.css';
 @import './styles/accessibility.css';
+@import './styles/animations.css';
 
 @tailwind base;
 @tailwind components;
